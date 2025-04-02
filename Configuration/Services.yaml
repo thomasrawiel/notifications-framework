@@ -5,4 +5,9 @@ services:
     public: false
   TRAW\NotificationsFramework\:
     resource: '../Classes/*'
-    exclude: '../Classes/Domain/Model/*'
+  
+  TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEventListener:
+    tags:
+      - name: event.listener
+        event: TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEvent
+        identifier: 'traw-notifications/database'

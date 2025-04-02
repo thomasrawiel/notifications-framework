@@ -8,6 +8,9 @@
             <trans-unit id="div.configuration">
                 <source>Configuration</source>
             </trans-unit>
+            <trans-unit id="div.audience">
+                <source>Audience</source>
+            </trans-unit>
             <trans-unit id="configuration.title">
                 <source>Title</source>
             </trans-unit>
@@ -16,6 +19,12 @@
             </trans-unit>
             <trans-unit id="configuration.type.description">
                 <source>Notification type description</source>
+            </trans-unit>
+            <trans-unit id="configuration.target_audience">
+                <source>Target Audience</source>
+            </trans-unit>
+            <trans-unit id="configuration.target_audience.description">
+                <source>Target Audience</source>
             </trans-unit>
         </body>
     </file>
