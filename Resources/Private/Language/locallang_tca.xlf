@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext"
+          original="EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf"
+          date="2025-04-02T112:00:00Z" product-name="notifications_framework">
+        <header/>
+        <body>
+            <trans-unit id="div.configuration">
+                <source>Configuration</source>
+            </trans-unit>
+            <trans-unit id="configuration.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="configuration.type">
+                <source>Notification type</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.description">
+                <source>Notification type description</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
