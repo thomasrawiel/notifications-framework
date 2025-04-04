@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Events;
 
 
-use TRAW\NotificationsFramework\Domain\DTO\Settings;
-use TYPO3\CMS\Core\Configuration\Features;
+use TRAW\NotificationsFramework\Utility\SettingsUtility;
 
 /**
  * Class AbstractEventListener
@@ -17,7 +16,9 @@ abstract class AbstractEventListener
      * @var string
      */
     protected string $expectedEventClass = AbstractEvent::class;
-    
+
+    protected SettingsUtility $settingsUtility;
+
     /**
      * @param AbstractEvent $event
      *
@@ -31,6 +32,7 @@ abstract class AbstractEventListener
         if (is_subclass_of($event, AbstractEvent::class)
             && get_class($event) === $this->expectedEventClass
         ) {
+            $this->settingsUtility = new SettingsUtility();
             $this->invokeEventAction($event);
         }
     }

@@ -14,6 +14,15 @@
             <trans-unit id="configuration.title">
                 <source>Title</source>
             </trans-unit>
+            <trans-unit id="configuration.label">
+                <source>Label</source>
+            </trans-unit>
+            <trans-unit id="configuration.notification_text">
+                <source>Message</source>
+            </trans-unit>
+            <trans-unit id="configuration.push">
+                <source>Notification is pushed to users</source>
+            </trans-unit>
             <trans-unit id="configuration.type">
                 <source>Notification type</source>
             </trans-unit>

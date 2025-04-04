@@ -28,7 +28,7 @@ return [
             'showitem' => 'title,--linebreak--,type,--linebreak--,label,--linebreak--,notification_text',
         ],
         'record' => [
-          'showitem' => 'record',
+            'showitem' => 'record',
         ],
         'audience' => [
             'showitem' => 'target_audience',
@@ -116,15 +116,12 @@ return [
             ],
         ],
         'push' => [
-            'label' => 'Notification is pushed to users',
+            'label' => $LLL . 'configuration.push',
             'config' => [
                 'type' => 'check',
                 'renderType' => 'checkboxToggle',
                 'items' => [
-                    [
-                        'label' => '',
-                        'invertStateDisplay' => true,
-                    ],
+                    ['label' => '',],
                 ],
             ],
         ],
@@ -169,11 +166,12 @@ return [
                     'status' => 'Status',
                 ],
                 'items' => [
-                    ['label' => '', 'value' => ''],
-                    ['label' => 'Success', 'value' => 'success', 'icon' => 'actions-check-circle', 'group' => 'status'],
-                    ['label' => 'Warning', 'value' => 'warning', 'icon' => 'actions-exclamation-circle', 'group' => 'status'],
-                    ['label' => 'Info', 'value' => 'info', 'icon' => 'actions-info-circle', 'group' => 'status'],
-                    ['label' => 'Record added', 'value' => 'recordadded', 'icon' => 'actions-plus-circle', 'group' => 'actions'],
+                    ['label' => 'None', 'value' => ''],
+                    ['label' => 'Success', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'icon' => 'actions-check-circle', 'group' => 'status'],
+                    ['label' => 'Warning', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'icon' => 'actions-exclamation-circle', 'group' => 'status'],
+                    ['label' => 'Info', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'icon' => 'actions-info-circle', 'group' => 'status'],
+                    ['label' => 'Record added', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
+                    ['label' => 'Record updated', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
                 ],
                 'sortItems' => [
                     'label' => 'asc',
