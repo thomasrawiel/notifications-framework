@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Events\Database;
 
-use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TRAW\NotificationsFramework\Domain\Model\BackendUserInfo;
+use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 /**
@@ -12,6 +12,9 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
  */
 final class AfterDatabaseOperationsEvent extends AbstractEvent
 {
+    /**
+     * @var string
+     */
     protected string $type = 'afterDatabaseOperation';
 
     /**
@@ -24,14 +27,9 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
      * @param array           $fieldArray
      * @param DataHandler     $pObj
      */
-    public function __construct(private BackendUserInfo $backendUser, private $status, private $table, private $id, private array $fieldArray, private \TYPO3\CMS\Core\DataHandling\DataHandler &$pObj)
+    public function __construct(private BackendUserInfo $backendUser, private $status, private $table, private $id, private array $fieldArray, private \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
     {
         parent::__construct($backendUser);
-        $this->status = $status;
-        $this->table = $table;
-        $this->id = $id;
-        $this->fieldArray = $fieldArray;
-        $this->pObj = $pObj;
     }
 
     /**
@@ -67,10 +65,24 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
     }
 
     /**
-     * @return mixed
+     * @return DataHandler
      */
-    public function getPObj(): \TYPO3\CMS\Core\DataHandling\DataHandler
+    public function getDataHandler(): DataHandler
     {
-        return $this->pObj;
+        return $this->dataHandler;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRecordIdentifier(): ?string
+    {
+        if (!isset($this->dataHandler->substNEWwithIDs_table[$this->id]) || !isset($this->dataHandler->substNEWwithIDs[$this->id])) {
+            return null;
+        }
+
+        return $this->dataHandler->substNEWwithIDs_table[$this->id]
+            . '_'
+            . $this->dataHandler->substNEWwithIDs[$this->id];
     }
 }

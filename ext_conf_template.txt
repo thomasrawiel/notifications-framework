@@ -1,2 +1,2 @@
 # cat=basic/enable; type=string; label=Commalist of allowed tables
-allowedTables = tt_content
+allowedTables = 

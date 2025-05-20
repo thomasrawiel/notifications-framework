@@ -3,26 +3,24 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
 
+use TRAW\NotificationsFramework\Events\Configuration\AllowedTablesEvent;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class SettingsUtility
 {
-    private $config;
-
-    public function __construct()
+    public function __construct(private mixed $config = [])
     {
         $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
         $this->config = $extConf->get('notifications_framework');
     }
 
-
     public function getAllowedTables(): array
     {
-        $tables = array_filter(explode(',', $this->config['allowedTables']), function ($e) {
-            return $e !== 'tx_notifications_framework_configuration';
-        });
+        $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $allowedTablesEvent = new AllowedTablesEvent(GeneralUtility::trimExplode(',', $this->config['allowedTables'], true));
 
-        return $tables;
+        return $dispatcher->dispatch($allowedTablesEvent)->getAllowedTables();
     }
 }

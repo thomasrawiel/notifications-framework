@@ -7,6 +7,7 @@ use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,11 +30,11 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
 
             $data['tx_notifications_framework_configuration'][\TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW')] = [
                 'type' => Type::RECORDADDED,
-                'title' => 'Record added in ' . $event->getTable(),
-//                'label' => 'Record added in ' . $event->getTable(),
-//                'notification_text' => 'Record added in ' . $event->getTable(),
                 'pid' => $event->getFieldArray()['pid'] ?? 0,
-                'record' => $event->getTable() . '_' . $event->getId(),
+                'table' => $table,
+                'title' => 'Record added in ' . $event->getTable(),
+                'label' => BackendUtility::getRecordTitle($table, $event->getFieldArray()),
+                'record' => $event->getRecordIdentifier(),
                 'rowDescription' => 'Automatically created by ' . basename(self::class),
             ];
 

@@ -9,5 +9,7 @@ CREATE TABLE `tx_notifications_framework_configuration`
     `fe_groups`         text,
     `fe_users`          text,
     `label`             varchar(255) DEFAULT ''  NOT NULL,
-    `notification_text` tinytext
+    `notification_text` tinytext,
+    `record`            text,
+    `table`             varchar(255) DEFAULT ''  NOT NULL
 );

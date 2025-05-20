@@ -2,6 +2,35 @@
 
 $LLL = 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:';
 
+$userType = [
+    'showitem' => '--div--;' . $LLL . 'div.configuration,
+        --palette--;;core,
+        --palette--;;record,
+        --div--;' . $LLL . 'div.audience,
+        --palette--;;audience,
+        --palette--;;audience_users,
+        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+        --palette--;;hidden,
+        --palette--;;access,
+        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
+        --palette--;;notes',
+];
+
+$groupType = [
+    'showitem' => '--div--;' . $LLL . 'div.configuration,
+        --palette--;;core,
+        --palette--;;record,
+        --div--;' . $LLL . 'div.audience,
+        --palette--;;audience,
+        --palette--;;audience_groups,
+        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+        --palette--;;hidden,
+        --palette--;;access,
+        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
+        --palette--;;notes',
+];
+
+
 return [
     'ctrl' => [
         'title' => 'Notification configuration',
@@ -25,7 +54,7 @@ return [
     ],
     'palettes' => [
         'core' => [
-            'showitem' => 'title,--linebreak--,type,--linebreak--,label,--linebreak--,notification_text',
+            'showitem' => 'title,push,--linebreak--,type,--linebreak--,label,--linebreak--,notification_text',
         ],
         'record' => [
             'showitem' => 'record',
@@ -45,6 +74,9 @@ return [
         'audience_users' => [
             'showitem' => 'fe_users,be_users',
         ],
+        'notes' => [
+            'showitem' => 'rowDescription,--linebreak--,table',
+        ],
         'hidden' => [
             'showitem' => '
                 hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden
@@ -54,7 +86,8 @@ return [
     'types' => [
         '0' => [
             'showitem' => '--div--;' . $LLL . 'div.configuration,
-                            --palette--;;core,                       
+                            --palette--;;core,     
+                            --palette--;;record,                  
                              --div--;' . $LLL . 'div.audience,
                             --palette--;;audience,
                             --palette--;;audience_fe,
@@ -63,32 +96,14 @@ return [
                             --palette--;;hidden,
                             --palette--;;access,
                             --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-                            rowDescription,',
+                            --palette--;;notes',
         ],
-        'groups' => [
-            'showitem' => '--div--;' . $LLL . 'div.configuration,
-                            --palette--;;core,
-                            --div--;' . $LLL . 'div.audience,
-                            --palette--;;audience,
-                            --palette--;;audience_groups,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-                            --palette--;;hidden,
-                            --palette--;;access,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-                            rowDescription,',
-        ],
-        'users' => [
-            'showitem' => '--div--;' . $LLL . 'div.configuration,
-                            --palette--;;core,
-                            --div--;' . $LLL . 'div.audience,
-                            --palette--;;audience,
-                            --palette--;;audience_users,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-                            --palette--;;hidden,
-                            --palette--;;access,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-                            rowDescription,',
-        ],
+        'groups' => $groupType,
+        'fe_groups' => $groupType,
+        'be_groups' => $groupType,
+        'users' => $userType,
+        'fe_users' => $userType,
+        'be_users' => $userType,
     ],
     'columns' => [
         'pid' => [
@@ -117,16 +132,20 @@ return [
         ],
         'push' => [
             'label' => $LLL . 'configuration.push',
+            'description' => 'If this is true, the configuration will be used to generate notifications',
             'config' => [
                 'type' => 'check',
-                'renderType' => 'checkboxToggle',
+                'renderType' => 'checkboxLabeledToggle',
                 'items' => [
-                    ['label' => '',],
+                    [
+                        'label' => '',
+                        'labelChecked' => 'TRUE',
+                        'labelUnchecked' => 'FALSE',
+                    ],
                 ],
             ],
         ],
         'hidden' => [
-            'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.visible',
             'config' => [
                 'type' => 'check',
@@ -188,6 +207,14 @@ return [
             'label' => $LLL . 'configuration.notification_text',
             'config' => [
                 'type' => 'text',
+            ],
+        ],
+        'table' => [
+            'label' => 'Table',
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim',
+                'readOnly' => true,
             ],
         ],
         'target_audience' => [
@@ -308,10 +335,12 @@ return [
         'record' => [
             'label' => $LLL . 'configuration.record',
             'description' => $LLL . 'configuration.record.description',
-            'displayCond' => 'FIELD:type:=:record',
+            'displayCond' => 'FIELD:type:IN:recordadded,recordupdated',
             'config' => [
                 'type' => 'group',
                 'allowed' => '*',
+                'maxitems' => 1,
+                'size' => 1,
             ],
         ],
     ],
