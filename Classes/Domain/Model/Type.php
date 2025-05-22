@@ -4,6 +4,7 @@ namespace TRAW\NotificationsFramework\Domain\Model;
 
 class Type
 {
+    const DEFAULT = 'default';
     const INFO = 'info';
     const SUCCESS = 'success';
     const WARNING = 'warning';

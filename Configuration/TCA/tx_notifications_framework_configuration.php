@@ -2,35 +2,6 @@
 
 $LLL = 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:';
 
-$userType = [
-    'showitem' => '--div--;' . $LLL . 'div.configuration,
-        --palette--;;core,
-        --palette--;;record,
-        --div--;' . $LLL . 'div.audience,
-        --palette--;;audience,
-        --palette--;;audience_users,
-        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-        --palette--;;hidden,
-        --palette--;;access,
-        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-        --palette--;;notes',
-];
-
-$groupType = [
-    'showitem' => '--div--;' . $LLL . 'div.configuration,
-        --palette--;;core,
-        --palette--;;record,
-        --div--;' . $LLL . 'div.audience,
-        --palette--;;audience,
-        --palette--;;audience_groups,
-        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-        --palette--;;hidden,
-        --palette--;;access,
-        --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-        --palette--;;notes',
-];
-
-
 return [
     'ctrl' => [
         'title' => 'Notification configuration',
@@ -54,7 +25,10 @@ return [
     ],
     'palettes' => [
         'core' => [
-            'showitem' => 'title,push,--linebreak--,type,--linebreak--,label,--linebreak--,notification_text',
+            'showitem' => 'title,push,--linebreak--,type',
+        ],
+        'message' => [
+            'showitem' => 'label,--linebreak--,message',
         ],
         'record' => [
             'showitem' => 'record',
@@ -63,16 +37,13 @@ return [
             'showitem' => 'target_audience',
         ],
         'audience_fe' => [
-            'showitem' => 'fe_groups,fe_users',
-        ],
-        'audience_be' => [
-            'showitem' => 'be_groups,be_users',
+            'showitem' => 'fe_users',
         ],
         'audience_groups' => [
-            'showitem' => 'fe_groups,be_groups',
+            'showitem' => 'fe_groups',
         ],
         'audience_users' => [
-            'showitem' => 'fe_users,be_users',
+            'showitem' => 'fe_users',
         ],
         'notes' => [
             'showitem' => 'rowDescription,--linebreak--,table',
@@ -86,24 +57,19 @@ return [
     'types' => [
         '0' => [
             'showitem' => '--div--;' . $LLL . 'div.configuration,
-                            --palette--;;core,     
-                            --palette--;;record,                  
-                             --div--;' . $LLL . 'div.audience,
-                            --palette--;;audience,
-                            --palette--;;audience_fe,
-                            --palette--;;audience_be,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-                            --palette--;;hidden,
-                            --palette--;;access,
-                            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-                            --palette--;;notes',
+                --palette--;;core,
+                --palette--;;message,
+                --palette--;;record,
+                --div--;' . $LLL . 'div.audience,
+                --palette--;;audience,
+                --palette--;;audience_users,
+                --palette--;;audience_groups,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                --palette--;;hidden,
+                --palette--;;access,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
+                --palette--;;notes',
         ],
-        'groups' => $groupType,
-        'fe_groups' => $groupType,
-        'be_groups' => $groupType,
-        'users' => $userType,
-        'fe_users' => $userType,
-        'be_users' => $userType,
     ],
     'columns' => [
         'pid' => [
@@ -181,16 +147,16 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemGroups' => [
-                    'actions' => 'Actions',
-                    'status' => 'Status',
+                    'actions' => $LLL . 'configuration.type.groups.actions',
+                    'status' => $LLL . 'configuration.type.groups.status',
                 ],
                 'items' => [
-                    ['label' => 'None', 'value' => ''],
-                    ['label' => 'Success', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'icon' => 'actions-check-circle', 'group' => 'status'],
-                    ['label' => 'Warning', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'icon' => 'actions-exclamation-circle', 'group' => 'status'],
-                    ['label' => 'Info', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'icon' => 'actions-info-circle', 'group' => 'status'],
-                    ['label' => 'Record added', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
-                    ['label' => 'Record updated', 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'icon' => 'actions-circle'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'icon' => 'actions-check-circle', 'group' => 'status'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'icon' => 'actions-exclamation-circle', 'group' => 'status'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'icon' => 'actions-info-circle', 'group' => 'status'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'icon' => 'actions-redo', 'group' => 'actions'],
                 ],
                 'sortItems' => [
                     'label' => 'asc',
@@ -203,8 +169,8 @@ return [
                 'type' => 'input',
             ],
         ],
-        'notification_text' => [
-            'label' => $LLL . 'configuration.notification_text',
+        'message' => [
+            'label' => $LLL . 'configuration.message',
             'config' => [
                 'type' => 'text',
             ],
@@ -231,67 +197,16 @@ return [
                 'items' => [
                     ['label' => '', 'value' => ''],
                     ['label' => 'Mixed', 'value' => 'mixed'],
-
-                    ['label' => 'All user groups', 'value' => 'groups', 'group' => 'groups', 'icon' => 'apps-pagetree-page-backend-users-root'],
-                    ['label' => 'Frontend User Groups', 'value' => 'feuser_group', 'group' => 'groups', 'icon' => 'status-user-group-frontend'],
-                    ['label' => 'Backend User Groups', 'value' => 'beuser_group', 'group' => 'groups', 'icon' => 'status-user-group-backend'],
-
-
-                    ['label' => 'All Users', 'value' => 'users', 'group' => 'users', 'icon' => 'apps-pagetree-page-frontend-user-root'],
-                    ['label' => 'Frontend Users', 'value' => 'feusers', 'group' => 'users', 'icon' => 'status-user-frontend'],
-                    ['label' => 'Backend Users', 'value' => 'beusers', 'group' => 'users', 'icon' => 'status-user-backend'],
+                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'icon' => 'status-user-frontend'],
+                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'icon' => 'status-user-group-frontend'],
                 ],
                 'required' => true,
             ],
         ],
-        'be_groups' => [
-            'label' => $LLL . 'configuration.be_user_groups',
-            'description' => $LLL . 'configuration.be_user_groups.description',
-            'displayCond' => 'FIELD:target_audience:IN:mixed,groups,beuser_group',
-            'config' => [
-                'type' => 'group',
-                'allowed' => 'be_groups',
-                'size' => 3,
-                'maxitems' => 50,
-                'fieldControl' => [
-                    'editPopup' => [
-                        'disabled' => true,
-                    ],
-                    'addRecord' => [
-                        'disabled' => true,
-                    ],
-                    'listModule' => [
-                        'disabled' => true,
-                    ],
-                ],
-            ],
-        ],
-        'be_users' => [
-            'label' => $LLL . 'configuration.be_users',
-            'description' => $LLL . 'configuration.be_users.description',
-            'displayCond' => 'FIELD:target_audience:IN:mixed,users,beusers',
-            'config' => [
-                'type' => 'group',
-                'allowed' => 'be_users',
-                'size' => 3,
-                'maxitems' => 50,
-                'fieldControl' => [
-                    'editPopup' => [
-                        'disabled' => true,
-                    ],
-                    'addRecord' => [
-                        'disabled' => true,
-                    ],
-                    'listModule' => [
-                        'disabled' => true,
-                    ],
-                ],
-            ],
-        ],
         'fe_groups' => [
-            'label' => $LLL . 'configuration.fe_user_groups',
+            'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups',
             'description' => $LLL . 'configuration.fe_user_groups.description',
-            'displayCond' => 'FIELD:target_audience:IN:mixed,groups,feuser_group',
+            'displayCond' => 'FIELD:target_audience:IN:mixed,groups',
             'config' => [
                 'type' => 'group',
                 'allowed' => 'fe_groups',
@@ -311,9 +226,9 @@ return [
             ],
         ],
         'fe_users' => [
-            'label' => $LLL . 'configuration.fe_users',
+            'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users',
             'description' => $LLL . 'configuration.fe_users.description',
-            'displayCond' => 'FIELD:target_audience:IN:mixed,users,feusers',
+            'displayCond' => 'FIELD:target_audience:IN:mixed,users',
             'config' => [
                 'type' => 'group',
                 'allowed' => 'fe_users',
@@ -335,7 +250,6 @@ return [
         'record' => [
             'label' => $LLL . 'configuration.record',
             'description' => $LLL . 'configuration.record.description',
-            'displayCond' => 'FIELD:type:IN:recordadded,recordupdated',
             'config' => [
                 'type' => 'group',
                 'allowed' => '*',

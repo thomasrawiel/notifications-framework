@@ -17,7 +17,7 @@
             <trans-unit id="configuration.label">
                 <source>Label</source>
             </trans-unit>
-            <trans-unit id="configuration.notification_text">
+            <trans-unit id="configuration.message">
                 <source>Message</source>
             </trans-unit>
             <trans-unit id="configuration.push">
@@ -29,11 +29,48 @@
             <trans-unit id="configuration.type.description">
                 <source>Notification type description</source>
             </trans-unit>
+            <trans-unit id="configuration.type.groups.actions">
+                <source>Actions</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.groups.status">
+                <source>Status</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.default">
+                <source>Default</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.success">
+                <source>Success</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.warning">
+                <source>Warning</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.info">
+                <source>Information</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.recordadded">
+                <source>New Record</source>
+            </trans-unit>
+            <trans-unit id="configuration.type.recordupdated">
+                <source>Record updated</source>
+            </trans-unit>
             <trans-unit id="configuration.target_audience">
                 <source>Target Audience</source>
             </trans-unit>
             <trans-unit id="configuration.target_audience.description">
                 <source>Target Audience</source>
+            </trans-unit>
+            <trans-unit id="configuration.fe_users.description">
+                <source>Website Users description</source>
+            </trans-unit>
+
+            <trans-unit id="configuration.fe_user_groups.description">
+                <source>Website usergroup description</source>
+            </trans-unit>
+            <trans-unit id="configuration.record">
+                <source>Record</source>
+            </trans-unit>
+            <trans-unit id="configuration.record.description">
+                <source>Record description</source>
             </trans-unit>
         </body>
     </file>
