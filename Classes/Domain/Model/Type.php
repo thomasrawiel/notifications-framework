@@ -2,7 +2,7 @@
 
 namespace TRAW\NotificationsFramework\Domain\Model;
 
-class Type
+final class Type
 {
     const DEFAULT = 'default';
     const INFO = 'info';

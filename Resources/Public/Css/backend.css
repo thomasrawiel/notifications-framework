@@ -1,0 +1,10 @@
+[data-identifier="tx-nf-notification-configure"] {
+    --icon-size: var(--icon-size-medium);
+    width: calc(var(--icon-size, 1em)*1.4);
+}
+
+[data-identifier="tx-nf-notification-configure"] .icon-overlay {
+    height: 50%;
+    width: 50%;
+    right: -2px;
+}

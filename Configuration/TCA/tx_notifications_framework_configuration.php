@@ -22,10 +22,13 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
+        'typeicon_classes' => [
+            'default' => 'tx-nf-notification-configure',
+        ],
     ],
     'palettes' => [
         'core' => [
-            'showitem' => 'title,push,--linebreak--,type',
+            'showitem' => 'title,push,done,--linebreak--,type',
         ],
         'message' => [
             'showitem' => 'label,--linebreak--,message',
@@ -109,6 +112,22 @@ return [
                         'labelUnchecked' => 'FALSE',
                     ],
                 ],
+            ],
+        ],
+        'done' => [
+            'label' => $LLL . 'configuration.done',
+            'description' => 'If this is true, the scheduler has finished working on this configuration',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxLabeledToggle',
+                'items' => [
+                    [
+                        'label' => '',
+                        'labelChecked' => 'TRUE',
+                        'labelUnchecked' => 'FALSE',
+                    ],
+                ],
+                'readonly' => true,
             ],
         ],
         'hidden' => [
