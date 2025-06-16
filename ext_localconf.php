@@ -11,6 +11,10 @@ call_user_func(function ($_EXTKEY = 'notifications_framework') {
     }
 
     $GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets'][$_EXTKEY]
-        = 'EXT:'.$_EXTKEY.'/Resources/Public/Css/backend.css';
+        = 'EXT:' . $_EXTKEY . '/Resources/Public/Css/backend.css';
+
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3api']['operationHandlers'] += [
+        \TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler::class => 500,
+    ];
 
 });

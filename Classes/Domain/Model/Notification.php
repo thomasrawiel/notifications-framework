@@ -5,9 +5,11 @@ namespace TRAW\NotificationsFramework\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-final class Notification extends AbstractEntity
+class Notification extends AbstractEntity
 {
     public const TABLE_NAME = 'tx_notifications_framework_domain_model_notification';
+
+    protected string $title;
 
     protected int $feUser;
 
@@ -25,6 +27,26 @@ final class Notification extends AbstractEntity
         $this->feUser = $feUser;
         $this->configuration = $configuration->getUid();
         $this->pid = $configuration->getPid();
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function getPid(): ?int
+    {
+        return $this->pid;
+    }
+
+    public function setPid(?int $pid): void
+    {
+        $this->pid = $pid;
     }
 
     public function getFeUser(): int

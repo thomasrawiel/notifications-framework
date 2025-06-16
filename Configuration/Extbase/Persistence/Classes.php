@@ -5,6 +5,9 @@ return [
     \TRAW\NotificationsFramework\Domain\Model\Notification::class => [
         'tableName' => \TRAW\NotificationsFramework\Domain\Model\Notification::TABLE_NAME,
     ],
+    \TRAW\NotificationsFramework\Domain\Model\Json\Notification::class => [
+        'tableName' => \TRAW\NotificationsFramework\Domain\Model\Notification::TABLE_NAME,
+    ],
     \TRAW\NotificationsFramework\Domain\Model\Configuration::class => [
         'tableName' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
     ],
