@@ -127,7 +127,7 @@ return [
                         'labelUnchecked' => 'FALSE',
                     ],
                 ],
-                'readonly' => true,
+                'readOnly' => true,
             ],
         ],
         'hidden' => [
@@ -186,12 +186,14 @@ return [
             'label' => $LLL . 'configuration.label',
             'config' => [
                 'type' => 'input',
+                'max' => 255,
             ],
         ],
         'message' => [
             'label' => $LLL . 'configuration.message',
             'config' => [
                 'type' => 'text',
+                'max' => 255,
             ],
         ],
         'table' => [
@@ -199,7 +201,6 @@ return [
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim',
-                'readOnly' => true,
             ],
         ],
         'target_audience' => [

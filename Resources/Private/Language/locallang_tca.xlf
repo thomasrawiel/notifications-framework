@@ -72,6 +72,9 @@
             <trans-unit id="configuration.record.description">
                 <source>Record description</source>
             </trans-unit>
+            <trans-unit id="configuration.done">
+                <source>Is processed</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

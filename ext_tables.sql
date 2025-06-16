@@ -16,5 +16,9 @@ CREATE TABLE `tx_notifications_framework_configuration`
 
 CREATE TABLE `tx_notifications_framework_domain_model_notification`
 (
-    `type`            varchar(64)  DEFAULT ''  NOT NULL,
+    `title`         varchar(255)     DEFAULT ''  NOT NULL,
+    `fe_user`       int(11) unsigned DEFAULT '0' NOT NULL,
+    `configuration` int(11) unsigned DEFAULT '0' NOT NULL,
+    `read`          tinyint(3)       DEFAULT '0' NOT NULL,
+    `read_date`     int(11) unsigned DEFAULT '0' NOT NULL
 );
