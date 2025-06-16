@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
-use SourceBroker\T3api\Annotation as T3Api;
+use SourceBroker\T3api\Annotation as T3api;
 use TRAW\NotificationsFramework\Events\Data\NotificationDataEvent;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+/**
+ * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
+ */
 
 /**
  * @T3api\ApiResource(
@@ -21,10 +25,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *          },
  *     },
  * )
- */
-
-/**
- * @var T3Api\|null  <-- this line prevents PhpStorm from removing the alias
  */
 class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notification
 {
@@ -46,6 +46,14 @@ class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notificatio
      * @var int
      */
     protected int $configuration = 0;
+
+    public function getTitle(): string
+    {
+        if (empty($this->title)) {
+            return "Dummy title";
+        }
+        return $this->title;
+    }
 
 
     /**
@@ -91,9 +99,12 @@ class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notificatio
         $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
 
         return $dispatcher->dispatch(new NotificationDataEvent([
+            'title' => $this->getTitle(),
             'text' => $this->getNotificationText(),
-            'date' => $this->getNotificationDate(),
-            'read' => $this->read,
+            'timestamp' => $this->getNotificationDate(),
+            'isUnread' => !$this->read,
+            'url' => null,
+            'media' => null,
         ], $this->getEventConfiguration()))->getData();
     }
 }
