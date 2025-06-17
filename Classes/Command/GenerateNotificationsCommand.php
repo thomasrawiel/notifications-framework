@@ -52,6 +52,9 @@ final class GenerateNotificationsCommand extends Command
                     $this->notificationRepository->add($notification);
                 }
             }
+
+            $configuration->setDone(true);
+            $this->configurationRepository->update($configuration);
             $this->persistenceManager->persistAll();
         }
 

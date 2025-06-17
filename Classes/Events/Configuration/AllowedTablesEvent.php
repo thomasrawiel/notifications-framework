@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace TRAW\NotificationsFramework\Events\Configuration;
+
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\Notification;
 
 /**
  * Class AllowedTablesEvent
@@ -8,7 +12,8 @@ namespace TRAW\NotificationsFramework\Events\Configuration;
 final class AllowedTablesEvent
 {
     private array $excludedTables = [
-        'tx_notifications_framework_configuration',
+        Configuration::TABLE_NAME,
+        Notification::TABLE_NAME,
     ];
 
     /**
@@ -48,19 +53,19 @@ final class AllowedTablesEvent
      */
     public function addAllowedTables(array $allowedTables): void
     {
-        $excludedTables = $this->excludedTables;
-        $filteredTables = array_filter($allowedTables, static function (mixed $table) use ($excludedTables): bool {
-            return is_string($table)
-                && $table !== ''
-                && !in_array($table, $excludedTables, true)
-                && isset($GLOBALS['TCA'][$table]);
-        });
+        $excluded = array_flip($this->excludedTables);
 
-        $this->allowedTables = array_values(
-            array_unique(
-                array_merge($this->allowedTables, $filteredTables)
-            )
+        $filtered = array_filter(
+            $allowedTables,
+            static function (mixed $table) use ($excluded): bool {
+                return is_string($table)
+                    && $table !== ''
+                    && !isset($excluded[$table])
+                    && isset($GLOBALS['TCA'][$table]);
+            }
         );
+
+        $this->allowedTables = array_values(array_unique([...$this->allowedTables, ...$filtered]));
     }
 
     /**
@@ -80,19 +85,24 @@ final class AllowedTablesEvent
      */
     public function removeAllowedTables(array $allowedTablesToRemove): void
     {
-        $excludedTables = $this->excludedTables;
-        $filteredTables = array_filter($allowedTablesToRemove, static function (mixed $table) use ($excludedTables): bool {
-            return is_string($table)
-                && $table !== ''
-                && !in_array($table, $excludedTables, true)
-                && isset($GLOBALS['TCA'][$table]);
-        });
+        $excluded = array_flip($this->excludedTables);
 
+        $toRemove = array_filter(
+            $allowedTablesToRemove,
+            static function (mixed $table) use ($excluded): bool {
+                return is_string($table)
+                    && $table !== ''
+                    && !isset($excluded[$table])
+                    && isset($GLOBALS['TCA'][$table]);
+            }
+        );
+
+        $toRemoveFlipped = array_flip($toRemove);
         $this->allowedTables = array_values(
             array_filter(
                 $this->allowedTables,
-                static function (string $table) use ($filteredTables): bool {
-                    return !in_array($table, $filteredTables, true);
+                static function (string $table) use ($toRemoveFlipped): bool {
+                    return !isset($toRemoveFlipped[$table]);
                 }
             )
         );

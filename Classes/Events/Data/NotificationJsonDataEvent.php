@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Events\Data;
 
-class NotificationDataEvent
+class NotificationJsonDataEvent
 {
     public function __construct(private array $data, private array $configuration)
     {

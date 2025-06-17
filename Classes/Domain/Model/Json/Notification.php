@@ -5,6 +5,7 @@ namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
 use SourceBroker\T3api\Annotation as T3api;
 use TRAW\NotificationsFramework\Events\Data\NotificationDataEvent;
+use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -98,7 +99,7 @@ class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notificatio
     {
         $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
 
-        return $dispatcher->dispatch(new NotificationDataEvent([
+        return $dispatcher->dispatch(new NotificationJsonDataEvent([
             'title' => $this->getTitle(),
             'text' => $this->getNotificationText(),
             'timestamp' => $this->getNotificationDate(),
