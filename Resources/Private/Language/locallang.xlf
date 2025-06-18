@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext"
+          original="EXT:notifications_framework/Resources/Private/Language/locallang.xlf"
+          date="2025-04-02T112:00:00Z" product-name="notifications_framework">
+        <header/>
+        <body>
+            <trans-unit id="datediff.year_singular">
+                <source>1 year ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.year_plural">
+                <source>%d years ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.month_singular">
+                <source>1 month ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.month_plural">
+                <source>%d months ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.day_singular">
+                <source>1 day ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.day_plural">
+                <source>%d days ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.hour_singular">
+                <source>1 hour ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.hour_plural">
+                <source>%d hours ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.minute_singular">
+                <source>1 minute ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.minute_plural">
+                <source>%d minutes ago</source>
+            </trans-unit>
+            <trans-unit id="datediff.now">
+                <source>just now</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

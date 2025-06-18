@@ -5,8 +5,11 @@ services:
     public: false
   TRAW\NotificationsFramework\:
     resource: '../Classes/*'
-    exclude: '../Classes/Domain/Model/*'
-  
+    #exclude: '../Classes/Domain/Model/*'
+
+  TRAW\NotificationsFramework\Domain\Model\Type:
+    public: true
+
   TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEventListener:
     tags:
       - name: event.listener
@@ -14,6 +17,8 @@ services:
         identifier: 'traw-notifications/database'
 
   TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler:
+    public: true
+  TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler:
     public: true
   TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository:
     public: true

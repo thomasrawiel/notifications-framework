@@ -5,6 +5,13 @@ call_user_func(function ($_EXTKEY = 'notifications_framework') {
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = \TRAW\NotificationsFramework\Hooks\TCEMainHook::class;
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['features']['dispatchEventAfterDatabaseOperations'] ??= true;
 
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1750162623] = [
+        'nodeName' => 'notificationPreview',
+        'priority' => 40,
+        'class' => \TRAW\NotificationsFramework\Form\NotificationPreview::class,
+    ];
+
+
     if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 13) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][\TYPO3\CMS\Core\Imaging\IconFactory::class]['overrideIconOverlay'][]
             = \TRAW\NotificationsFramework\Hooks\OverrideIconOverlayHook::class;
@@ -15,6 +22,7 @@ call_user_func(function ($_EXTKEY = 'notifications_framework') {
 
     $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3api']['operationHandlers'] += [
         \TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler::class => 500,
+        \TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler::class => 510,
     ];
 
 });

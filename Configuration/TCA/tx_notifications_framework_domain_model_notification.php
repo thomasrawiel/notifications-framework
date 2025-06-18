@@ -18,6 +18,10 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
+        'languageField' => 'sys_language_uid',
+        'transOrigPointerField' => 'l10n_parent',
+        'transOrigDiffSourceField' => 'l10n_diffsource',
+        'translationSource' => 'l10n_source',
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
@@ -67,6 +71,30 @@ return [
                         'invertStateDisplay' => true,
                     ],
                 ],
+            ],
+        ],
+        'l10n_parent' => [
+            'displayCond' => 'FIELD:sys_language_uid:>:0',
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'items' => [
+                    [
+                        'label' => '',
+                        'value' => 0,
+                    ],
+                ],
+                'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Notification::TABLE_NAME,
+                // no sys_language_uid = -1 allowed explicitly!
+                'foreign_table_where' => 'AND {#' . \TRAW\NotificationsFramework\Domain\Model\Notification::TABLE_NAME . '}.{#uid}=###CURRENT_PID### AND {#' . \TRAW\NotificationsFramework\Domain\Model\Notification::TABLE_NAME . '}.{#sys_language_uid} = 0',
+                'default' => 0,
+            ],
+        ],
+        'sys_language_uid' => [
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
+            'config' => [
+                'type' => 'language',
             ],
         ],
         'title' => [

@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
 use SourceBroker\T3api\Annotation as T3api;
-use TRAW\NotificationsFramework\Events\Data\NotificationDataEvent;
 use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
  * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
@@ -25,15 +25,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *              },
  *          },
  *     },
+ *     itemOperations={
+ *          "patch_user_notification"={
+ *                 "method"="PATCH",
+ *                 "path"="/users/notifications/read/{id}",
+ *                 "security"="frontend.user.isLoggedIn",
+ *                  "normalizationContext"={
+ *                   "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
+ *                  },
+ *          },
+ *               "patch_user_notifications"={
+ *                  "method"="PATCH",
+ *                  "path"="/users/notifications/read-all",
+ *                  "security"="frontend.user.isLoggedIn",
+ *                   "normalizationContext"={
+ *                    "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
+ *                   },
+ *           },
+ *     }
  * )
  */
-class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notification
+class Notification extends AbstractEntity
 {
-    /**
-     * @var int
-     */
-    protected int $tstamp = 0;
-
 
     /**
      * @var string
@@ -43,10 +56,38 @@ class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notificatio
      */
     protected string $title = '';
 
+    protected int $tstamp = 0;
+
+    protected int $readDate = 0;
+
     /**
      * @var int
+     * @T3api\Serializer\Groups({
+     *      "api_patch_item_notificationsframework_json_users_notifications"
+     *  })
      */
-    protected int $configuration = 0;
+    protected int $read = 0;
+
+    public function getTstamp(): int
+    {
+        return $this->tstamp;
+    }
+
+    public function getRead(): int
+    {
+        return $this->read;
+    }
+
+    public function setRead(int $read): void
+    {
+        if($this->read === 0) {
+            $this->read = 1;
+            $this->readDate = time();
+        }
+    }
+
+
+
 
     public function getTitle(): string
     {
@@ -98,14 +139,14 @@ class Notification extends \TRAW\NotificationsFramework\Domain\Model\Notificatio
     public function getNotificationData(): array
     {
         $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
-
-        return $dispatcher->dispatch(new NotificationJsonDataEvent([
-            'title' => $this->getTitle(),
-            'text' => $this->getNotificationText(),
-            'timestamp' => $this->getNotificationDate(),
-            'isUnread' => !$this->read,
-            'url' => null,
-            'media' => null,
-        ], $this->getEventConfiguration()))->getData();
+return [
+    'title' => $this->getTitle(),
+    'text' => $this->getNotificationText(),
+    'timestamp' => $this->getNotificationDate(),
+    'isUnread' => !$this->read,
+    'url' => null,
+    'media' => null,
+];
+       // return $dispatcher->dispatch(new NotificationJsonDataEvent(, $this->getEventConfiguration()))->getData();
     }
 }

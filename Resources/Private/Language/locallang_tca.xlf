@@ -20,6 +20,9 @@
             <trans-unit id="configuration.message">
                 <source>Message</source>
             </trans-unit>
+            <trans-unit id="configuration.image">
+                <source>Image</source>
+            </trans-unit>
             <trans-unit id="configuration.push">
                 <source>Notification is pushed to users</source>
             </trans-unit>

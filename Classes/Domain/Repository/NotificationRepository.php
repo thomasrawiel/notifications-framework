@@ -11,12 +11,15 @@ class NotificationRepository extends Repository
     public function notificationExists(Notification $notification): bool
     {
         $query = $this->createQuery();
-        $query->matching(
-            $query->logicalAnd(
-                $query->equals('feUser', $notification->getFeUser()),
-                $query->equals('configuration', $notification->getConfiguration()),
 
-            ),
+        $constraints = [
+            $query->equals('feUser', $notification->getFeUser()),
+            $query->equals('configuration', $notification->getConfiguration()),
+            $query->equals('sys_language_uid', $notification->getSysLanguageUid())
+        ];
+
+        $query->matching(
+            $query->logicalAnd(...$constraints),
         );
         return $query->count() > 0;
     }

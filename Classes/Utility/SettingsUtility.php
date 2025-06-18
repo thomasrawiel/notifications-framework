@@ -23,4 +23,8 @@ final class SettingsUtility
 
         return $dispatcher->dispatch($allowedTablesEvent)->getAllowedTables();
     }
+
+    public function getAllowedTablesList(): string {
+        return implode(',', $this->getAllowedTables());
+    }
 }

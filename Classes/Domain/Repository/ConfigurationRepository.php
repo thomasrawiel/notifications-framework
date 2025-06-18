@@ -20,4 +20,18 @@ class ConfigurationRepository extends Repository
         );
         return $query->execute();
     }
+
+    public function getTranslations($configuration) {
+        $query = $this->createQuery();
+        $query->setQuerySettings(
+            $query->getQuerySettings()->setRespectSysLanguage(false),
+        );
+        $query->matching(
+            $query->logicalAnd(
+                $query->greaterThan('sys_language_uid', 0),
+                $query->equals('l10n_parent', $configuration->getUid()),
+            )
+        );
+        return $query->execute();
+    }
 }

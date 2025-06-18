@@ -6,12 +6,25 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class FrontendUserRepository extends Repository
 {
+    public function findUsersByUids(array $uids)
+    {
+        $users = [];
+        foreach ($uids as $uid) {
+            $users[] = $this->findByUid($uid);
+        }
+
+        return $users;
+    }
+
+
     public function findUsersByGroups(array $groups): array
     {
         $users = [];
 
         foreach ($groups as $group) {
-            $users = array_merge($users, $this->findUserByGroup($group));
+            foreach ($this->findUserByGroup($group) as $user) {
+                $users[] = $user;
+            }
         }
 
         return $users;

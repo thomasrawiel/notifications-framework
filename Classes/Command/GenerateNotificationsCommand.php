@@ -8,11 +8,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TRAW\NotificationsFramework\Domain\Factory\NotificationFactory;
-use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\Notification;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
+use TRAW\NotificationsFramework\Events\Data\BeforeNotificationAddedEvent;
 use TRAW\NotificationsFramework\Utility\FilterUtility;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 #[AsCommand(
@@ -26,7 +28,9 @@ final class GenerateNotificationsCommand extends Command
         private readonly ConfigurationRepository     $configurationRepository,
         private readonly FrontendUserRepository      $frontendUserRepository,
         private readonly NotificationRepository      $notificationRepository,
-        private readonly PersistenceManagerInterface $persistenceManager
+        private readonly PersistenceManagerInterface $persistenceManager,
+        private readonly EventDispatcher $eventDispatcher,
+        private readonly NotificationFactory $notificationFactory
     )
     {
         parent::__construct();
@@ -39,20 +43,40 @@ final class GenerateNotificationsCommand extends Command
         foreach ($configurations as $configuration) {
             $audience = FilterUtility::filterAudience($configuration);
 
-            if ($audience['groups']) {
-                $users = $this->frontendUserRepository->findUsersByGroups($audience['groups']);
-                $audience['users'] = array_merge($audience['users'] ?? [], $users);
+            $users = [];
+
+            if (!empty($audience['users'])) {
+                $users = $this->frontendUserRepository->findUsersByUids($audience['users']);
             }
 
-            $audience['users'] = FilterUtility::filterUniqueByUid($audience['users']);
+            if (!empty($audience['groups'])) {
+                $groupUsers = $this->frontendUserRepository->findUsersByGroups($audience['groups']);
+                $users = [...$users, ...$groupUsers];
+            }
 
-            foreach ($audience['users'] as $user) {
-                $notification = NotificationFactory::createNotification($configuration, $user);
-                if (!$this->notificationRepository->notificationExists($notification)) {
-                    $this->notificationRepository->add($notification);
+            $users = FilterUtility::filterUniqueByUid($users);
+
+            foreach ($users as $user) {
+                $notifications[] = new Notification($user->getUid(), $configuration);
+
+
+
+
+                if (!$this->notificationRepository->notificationExists($notifications[0])) {
+                    $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($notifications[0]));
+                    if($event->isAddNotification()) {
+                        $this->notificationRepository->add($notifications[0]);
+                        $this->persistenceManager->persistAll();
+
+                        $translations = $this->configurationRepository->getTranslations($configuration);
+                        if($translations->count()) {
+
+                        }
+                    }
                 }
             }
 
+            // Mark configuration as done and persist
             $configuration->setDone(true);
             $this->configurationRepository->update($configuration);
             $this->persistenceManager->persistAll();
