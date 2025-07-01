@@ -15,6 +15,7 @@ class Notification extends AbstractEntity
      *
      */
     public const TABLE_NAME = 'tx_notifications_framework_domain_model_notification';
+    public const IMAGE_FIELD = 'image';
 
     /**
      * @var string
@@ -57,7 +58,7 @@ class Notification extends AbstractEntity
      */
     protected int $l10nParent = 0;
 
-
+    protected string $type = '';
     /**
      * @var int
      */
@@ -89,6 +90,11 @@ class Notification extends AbstractEntity
         $this->feUser = $feUser;
         $this->configuration = $configuration->getUid();
         $this->pid = $configuration->getPid();
+        $this->label = $configuration->getLabel();
+        $this->message = $configuration->getMessage();
+        $this->tstamp = time();
+        $this->type = $configuration->getType();
+        $this->image = $configuration->getImage();
     }
 
     /**
@@ -225,6 +231,16 @@ class Notification extends AbstractEntity
         return $this->label;
     }
 
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
     /**
      * @param string $label
      *
@@ -287,6 +303,7 @@ class Notification extends AbstractEntity
     public function setSysLanguageUid(int $sysLanguageUid): void
     {
         $this->sysLanguageUid = $sysLanguageUid;
+        $this->_languageUid = $sysLanguageUid;
     }
 
     /**

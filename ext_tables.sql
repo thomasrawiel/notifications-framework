@@ -27,5 +27,5 @@ CREATE TABLE `tx_notifications_framework_domain_model_notification`
     `label`         varchar(255)     DEFAULT ''  NOT NULL,
     `message`       tinytext,
     `image`         int(11) unsigned DEFAULT '0' NOT NULL,
-    `url`           varchar(1024)    DEFAULT ''  NOT NULL,
+    `url`           varchar(1024)    DEFAULT ''  NOT NULL
 );

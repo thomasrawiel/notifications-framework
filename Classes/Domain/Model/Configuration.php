@@ -8,6 +8,7 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 final class Configuration extends AbstractEntity
 {
     public const TABLE_NAME = 'tx_notifications_framework_configuration';
+    public const IMAGE_FIELD = 'image';
 
     public const AUDIENCE = ['users', 'groups', 'mixed'];
 
@@ -29,9 +30,18 @@ final class Configuration extends AbstractEntity
 
     protected string $message;
 
+    protected int $image;
+
+    protected string $url;
+
     protected string $record;
 
     protected string $table;
+
+    protected int $sysLanguageUid = 0;
+
+    protected int $l10nParent;
+
 
     public function isDone(): bool
     {
@@ -123,6 +133,26 @@ final class Configuration extends AbstractEntity
         $this->message = $message;
     }
 
+    public function getImage(): int
+    {
+        return $this->image;
+    }
+
+    public function setImage(int $image): void
+    {
+        $this->image = $image;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
     public function getRecord(): string
     {
         return $this->record;
@@ -141,5 +171,25 @@ final class Configuration extends AbstractEntity
     public function setTable(string $table): void
     {
         $this->table = $table;
+    }
+
+    public function getSysLanguageUid(): int
+    {
+        return $this->_languageUid;
+    }
+
+    public function setSysLanguageUid(int $sysLanguageUid): void
+    {
+        $this->sysLanguageUid = $sysLanguageUid;
+    }
+
+    public function getL10nParent(): int
+    {
+        return $this->l10nParent;
+    }
+
+    public function setL10nParent(int $l10nParent): void
+    {
+        $this->l10nParent = $l10nParent;
     }
 }

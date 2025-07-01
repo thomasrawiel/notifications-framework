@@ -55,6 +55,7 @@ final class Type
     {
         return $this->eventDispatcher->dispatch(new TypesWithCustomMessageEvent(
             [
+                '',
                 self::DEFAULT,
                 SELF::INFO,
                 SELF::SUCCESS,

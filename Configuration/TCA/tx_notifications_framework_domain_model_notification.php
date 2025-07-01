@@ -1,6 +1,9 @@
 <?php
 
 $LLL = 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:';
+$typeClass = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TRAW\NotificationsFramework\Domain\Model\Type::class);
+$typesWithCustomMessageList = $typeClass->getTypesWithCustomMessageList();
+$typesWithRecordFieldList = $typeClass->getTypesWithRecordFieldList();
 
 return [
     'ctrl' => [
@@ -32,8 +35,11 @@ return [
                 title,
                 fe_user,
                 configuration,
+                label,
+                message,
                 read,
                 read_date,
+                
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                 --palette--;;hidden,
                 --palette--;;access,
@@ -147,6 +153,64 @@ return [
                 'readOnly' => true,
                 'default' => 0,
             ],
+        ],
+        'type' => [
+            'label' => $LLL . 'configuration.type',
+            'description' => $LLL . 'configuration.type.description',
+            'onChange' => 'reload',
+            'config' => [
+                'type' => 'input',
+                'behaviour' => [
+                    'allowLanguageSynchronization' => true,
+                ],
+            ],
+        ],
+
+        'label' => [
+            'label' => $LLL . 'configuration.label',
+            'config' => [
+                'type' => 'input',
+                'max' => 255,
+            ],
+            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+        ],
+        'message' => [
+            'label' => $LLL . 'configuration.message',
+            'config' => [
+                'type' => 'text',
+                'max' => 255,
+            ],
+            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+        ],
+        'image' => [
+            'label' => $LLL . 'configuration.image',
+            'config' => [
+                'type' => 'file',
+                'maxitems' => 1,
+                'allowed' => 'common-image-types',
+                'overrideChildTca' => [
+                    'columns' => [
+                        'title' => false,
+                        'link' => false,
+                        'description' => false,
+                    ],
+                ],
+            ],
+            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+        ],
+        'url' => [
+            'label' => 'URL',
+            'config' => [
+                'type' => 'link',
+                'size' => 50,
+                'appearance' => [
+                    'browserTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
+                ],
+                'behaviour' => [
+                    'allowLanguageSynchronization' => true,
+                ],
+            ],
+            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
     ],
 ];

@@ -14,4 +14,7 @@ return [
     \TRAW\NotificationsFramework\Domain\Model\FrontendUser::class => [
         'tableName' => \TRAW\NotificationsFramework\Domain\Model\FrontendUser::TABLE_NAME,
     ],
+    \TRAW\NotificationsFramework\Domain\Model\FileReference::class => [
+        'tableName' => 'sys_file_reference',
+    ]
 ];

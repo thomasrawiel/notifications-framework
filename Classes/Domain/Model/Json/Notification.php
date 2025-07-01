@@ -5,9 +5,11 @@ namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
 use SourceBroker\T3api\Annotation as T3api;
 use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
+use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
@@ -47,18 +49,32 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
  */
 class Notification extends AbstractEntity
 {
+    /** @var ObjectStorage<\TRAW\NotificationsFramework\Domain\Model\FileReference>|null */
+    protected ?ObjectStorage $image = null;
+
+    public function __construct()
+    {
+        $this->image = new ObjectStorage();
+    }
 
     /**
      * @var string
-     * @T3api\Serializer\Groups({
-     *     "api_get_collection_notificationsframework_json_users_notifications"
-     * })
      */
     protected string $title = '';
 
-    protected int $tstamp = 0;
+    /**
+     * @var string
+     */
+    protected string $label = '';
+    /**
+     * @var string
+     */
+    protected string $message = '';
 
-    protected int $readDate = 0;
+    /**
+     * @var int
+     */
+    protected int $tstamp = 0;
 
     /**
      * @var int
@@ -68,54 +84,96 @@ class Notification extends AbstractEntity
      */
     protected int $read = 0;
 
-    public function getTstamp(): int
-    {
-        return $this->tstamp;
-    }
-
-    public function getRead(): int
-    {
-        return $this->read;
-    }
-
-    public function setRead(int $read): void
-    {
-        if($this->read === 0) {
-            $this->read = 1;
-            $this->readDate = time();
-        }
-    }
-
-
-
-
-    public function getTitle(): string
-    {
-        if (empty($this->title)) {
-            return "Dummy title";
-        }
-        return $this->title;
-    }
-
+    /**
+     * @var int
+     */
+    protected int $readDate = 0;
 
     /**
-     * @return \DateTime
+     * @var string
      */
-    private function getNotificationDate(): \DateTime
-    {
-        $d = new \DateTime();
-        $d->setTimestamp($this->tstamp);
-        return $d;
-    }
+    protected string $type = '';
+
+    protected string $url = '';
+
+    protected int $feUser = 0;
+    protected int $configuration = 0;
 
 
     /**
      * @return string
      */
-    private function getNotificationText(): string
+    public function getTitle(): string
     {
-        return 'hello darkness my old friend!';
+        return $this->title;
     }
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTstamp(): int
+    {
+        return $this->tstamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRead(): int
+    {
+        return $this->read;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReadDate(): int
+    {
+        return $this->readDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param int $read
+     *
+     * @return void
+     */
+    public function setRead(int $read): void
+    {
+        if ($this->read === 0) {
+            $this->read = 1;
+            $this->readDate = time();
+        }
+    }
+
 
     /**
      * @return array
@@ -139,14 +197,22 @@ class Notification extends AbstractEntity
     public function getNotificationData(): array
     {
         $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
-return [
-    'title' => $this->getTitle(),
-    'text' => $this->getNotificationText(),
-    'timestamp' => $this->getNotificationDate(),
-    'isUnread' => !$this->read,
-    'url' => null,
-    'media' => null,
-];
-       // return $dispatcher->dispatch(new NotificationJsonDataEvent(, $this->getEventConfiguration()))->getData();
+        $tstampIso = new \DateTime();
+        $tstampIso->setTimestamp($this->tstamp);
+
+        $data = [
+            'title' => $this->label,
+            'text' => $this->message,
+            'timestamp' => $tstampIso,
+            'isUnread' => !$this->read,
+            'type' => $this->type,
+            'url' => $this->url,
+            'media' => null,
+        ];
+        if($this->image instanceof ObjectStorage && $this->image->count()) {
+            $data['media'] = ImageUtility::getProcessedImage($this->image->getArray()[0] ?? []);
+        }
+
+        return $dispatcher->dispatch(new NotificationJsonDataEvent($data, $this->getEventConfiguration()))->getData();
     }
 }

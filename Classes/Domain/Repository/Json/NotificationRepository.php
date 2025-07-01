@@ -21,20 +21,37 @@ class NotificationRepository extends CommonRepository
     public function findFiltered(array $apiFilters, Request $request): QueryInterface
     {
         $query = parent::findFiltered($apiFilters, $request);
+        $querySettings = $query->getQuerySettings()
+            ->setRespectStoragePage(false);
+            //->setRespectSysLanguage(false);
+        $query->setQuerySettings($querySettings);
 
-        $query->setQuerySettings($query->getQuerySettings()->setRespectStoragePage(false));
+        $language = $request->attributes->get('language');
+        $constraints = [
+            $query->equals('feUser', $request->attributes->get('frontend.user')->user['uid']),
+            $query->logicalOr(
+                $query->equals('sys_language_uid', 0),
+                $query->equals('sys_language_uid', $language->getLanguageId),
+            )
+        ];
 
-        $constraint = $query->equals('feUser', $request->attributes->get('frontend.user')->user['uid']);
         if ($query->getConstraint()) {
             $query->matching(
                 $query->logicalAnd(
-                    $constraint,
-                    $query->getConstraint()
+                    $query->getConstraint(),
+                    ...$constraints
                 )
             );
         } else {
-            $query->matching($constraint);
+            $query->matching(
+                $query->logicalAnd(
+                    ...$constraints
+                )
+            );
         }
+
+        $orignalQuery = $query;
+
 
         return $query;
     }
