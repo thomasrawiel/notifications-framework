@@ -5,7 +5,7 @@ namespace TRAW\NotificationsFramework\Events\Data;
 
 use TRAW\NotificationsFramework\Domain\Model\Notification;
 
-class BeforeNotificationAddedEvent
+final class BeforeNotificationAddedEvent
 {
     public bool $addNotification = true;
 
