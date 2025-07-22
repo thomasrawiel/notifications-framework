@@ -59,7 +59,8 @@ final class GenerateNotificationsCommand extends Command
             $_SERVER['HTTPS'] = 'on';
 
             Bootstrap::initializeBackendAuthentication();
-            $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageServiceFactory::class)->createFromUserPreferences($GLOBALS['BE_USER']);
+            $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageServiceFactory::class)
+                ->createFromUserPreferences($GLOBALS['BE_USER']);
         }
 
         $configurations = FilterUtility::filterConfigurations($this->configurationRepository->findAll()->toArray());
