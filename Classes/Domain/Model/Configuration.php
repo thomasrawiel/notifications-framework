@@ -125,7 +125,7 @@ final class Configuration extends AbstractEntity
 
     public function getMessage(): string
     {
-        return $this->message;
+        return $this->message ?? '';
     }
 
     public function setMessage(string $message): void

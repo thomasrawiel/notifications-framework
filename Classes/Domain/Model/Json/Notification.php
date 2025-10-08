@@ -7,7 +7,9 @@ use SourceBroker\T3api\Annotation as T3api;
 use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -210,7 +212,10 @@ class Notification extends AbstractEntity
             'media' => null,
         ];
         if($this->image instanceof ObjectStorage && $this->image->count()) {
-            $data['media'] = ImageUtility::getProcessedImage($this->image->getArray()[0] ?? []);
+            $processedImage = ImageUtility::getProcessedImage($this->image->getArray()[0] ?? []);
+            if($processedImage instanceof ProcessedFile) {
+                $data['media'] = PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
+            }
         }
 
         return $dispatcher->dispatch(new NotificationJsonDataEvent($data, $this->getEventConfiguration()))->getData();

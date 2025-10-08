@@ -143,6 +143,7 @@ return [
             ],
         ],
         'push' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.push',
             'description' => 'If this is true, the configuration will be used to generate notifications',
             'config' => [
@@ -161,6 +162,8 @@ return [
             ],
         ],
         'done' => [
+            'l10n_mode' => 'exclude',
+            'exclude' => true,
             'label' => $LLL . 'configuration.done',
             'description' => 'If this is true, the scheduler has finished working on this configuration',
             'config' => [
@@ -174,9 +177,6 @@ return [
                     ],
                 ],
                 'readOnly' => getenv('TYPO3_CONTEXT') !== 'Development/DDEV',
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ],
             ],
         ],
         'hidden' => [
@@ -193,6 +193,7 @@ return [
             ],
         ],
         'title' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.title',
             'config' => [
                 'type' => 'input',
@@ -212,6 +213,7 @@ return [
             ],
         ],
         'type' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.type',
             'description' => $LLL . 'configuration.type.description',
             'onChange' => 'reload',
@@ -239,6 +241,7 @@ return [
             ],
         ],
         'label' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.label',
             'config' => [
                 'type' => 'input',
@@ -247,6 +250,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'message' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.message',
             'config' => [
                 'type' => 'text',
@@ -255,6 +259,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'image' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.image',
             'config' => [
                 'type' => 'file',
@@ -271,6 +276,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'record' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.record',
             'description' => $LLL . 'configuration.record.description',
             'config' => [
@@ -285,6 +291,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithRecordFieldList,
         ],
         'url' => [
+            'exclude' => true,
             'label' => 'URL',
             'config' => [
                 'type' => 'link',
@@ -299,6 +306,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'target_audience' => [
+            'exclude' => true,
             'label' => $LLL . 'configuration.target_audience',
             'description' => $LLL . 'configuration.target_audience.description',
             'onChange' => 'reload',
@@ -322,6 +330,7 @@ return [
             ],
         ],
         'fe_groups' => [
+            'exclude' => true,
             'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups',
             'description' => $LLL . 'configuration.fe_user_groups.description',
             'displayCond' => 'FIELD:target_audience:IN:mixed,groups',
@@ -348,6 +357,7 @@ return [
             ],
         ],
         'fe_users' => [
+            'exclude' => true,
             'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users',
             'description' => $LLL . 'configuration.fe_users.description',
             'displayCond' => 'FIELD:target_audience:IN:mixed,users',
@@ -374,6 +384,7 @@ return [
             ],
         ],
         'automatic' => [
+            'exclude' => true,
             'label' => 'Automatically created',
             'config' => [
                 'type' => 'check',
@@ -385,6 +396,7 @@ return [
             ],
         ],
         'table' => [
+            'exclude' => true,
             'label' => 'Table',
             'config' => [
                 'type' => 'input',

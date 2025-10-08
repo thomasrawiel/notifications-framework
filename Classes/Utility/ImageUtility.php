@@ -16,9 +16,8 @@ class ImageUtility
 {
     public static function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference $fileReference): FileInterface
     {
-        $arguments = $fileReference->getProperties();
-        $cropVariantCollection = CropVariantCollection::create((string)($arguments['crop'] ?? ''));
-        $cropVariantName = ($arguments['cropVariant'] ?? false) ? : 'default';
+        $cropVariantCollection = CropVariantCollection::create($fileReference->getCrop());
+        $cropVariantName = 'default';
         $cropArea = $cropVariantCollection->getCropArea($cropVariantName);
         $crop = $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile());
 
@@ -44,18 +43,24 @@ class ImageUtility
 
     public function createFileReferenceForNotification(Notification $notification, FileReference $configurationFileReference)
     {
-        $arguments = $configurationFileReference->getProperties();
-        $fileObject = $configurationFileReference->getOriginalFile();
+        $referenceProperties = $configurationFileReference->getReferenceProperties();
+       foreach(['uid','crdate','tstamp','uid_local','tablenames','uid_foreign','fieldname','pid'] as $removeProperty) {
+           unset($referenceProperties[$removeProperty]);
+       }
 
         $newId = StringUtility::getUniqueId('NEW');
-        $data = [];
-        $data['sys_file_reference'][$newId] = [
+        $fileObject = $configurationFileReference->getOriginalFile();
+
+        $referenceProperties = array_replace($referenceProperties, [
             'uid_local' => $fileObject->getUid(),
             'tablenames' => Notification::TABLE_NAME,
             'uid_foreign' => $notification->getUid(),
             'fieldname' => Notification::IMAGE_FIELD,
             'pid' => $notification->getPid(),
-        ];
+        ]);
+
+        $data = [];
+        $data['sys_file_reference'][$newId] = $referenceProperties;
         $data[Notification::TABLE_NAME][$notification->getUid()] = [
             'pid' => $notification->getPid(),
             Notification::IMAGE_FIELD => $newId,

@@ -23,8 +23,8 @@ final class RecordIconOverlayUtility
             return self::ICON_IDENTIFIER_QUESTION;
         }
 
-        $configurationRecord = BackendUtility::getRecord(Configuration::TABLE_NAME, $row['uid']);
-        if ($configurationRecord['done']) {
+        $configurationRecord = BackendUtility::getRecord(Configuration::TABLE_NAME, $row['sys_language_uid'] > 0 ? ($row['l10n_parent'][0] ?? $row['l10n_parent']) : $row['uid']);
+        if ($configurationRecord['done'] ?? false) {
             return self::ICON_IDENTIFIER_CHECK;
         }
 

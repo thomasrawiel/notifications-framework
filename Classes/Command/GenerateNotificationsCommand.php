@@ -87,15 +87,6 @@ final class GenerateNotificationsCommand extends Command
                     $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($notification));
                     if ($event->isAddNotification()) {
 
-                        if ($configuration->getImage()) {
-                            $fileReference = $this->fileRepository->findByRelation(Configuration::TABLE_NAME, Configuration::IMAGE_FIELD, $configuration->getUid());
-                            if (isset($fileReference[0]) && $fileReference[0] instanceof FileReference) {
-                                $this->imageUtility->createFileReferenceForNotification($notification, $fileReference[0]);
-                            }
-
-                        }
-
-
                         $this->notificationRepository->add($notification);
                         $this->persistenceManager->persistAll();
 
@@ -104,18 +95,15 @@ final class GenerateNotificationsCommand extends Command
                             if (isset($fileReference[0]) && $fileReference[0] instanceof FileReference) {
                                 $this->imageUtility->createFileReferenceForNotification($notification, $fileReference[0]);
                             }
-
                         }
-
 
                         $translations = $this->configurationRepository->getTranslations($configuration);
                         if ($translations->count()) {
                             foreach ($translations as $translation) {
-                                $this->notificationRepository->add(
-                                    $this->notificationFactory->createNotificationTranslation($notification, $translation, $user),
-                                );
+                                $translatedNotification = $this->notificationFactory->createNotificationTranslation($notification, $translation, $user);
+                                $this->notificationRepository->add($translatedNotification);
+                                $this->persistenceManager->persistAll();
                             }
-                            $this->persistenceManager->persistAll();
                         }
                     }
                 }

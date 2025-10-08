@@ -69,6 +69,10 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
      * @var string
      */
     protected $link = '';
+    /**
+     * @var string
+     */
+    protected string $crop = '';
 
     /**
      * This empty constructor is necessary so class is fully
@@ -241,5 +245,15 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
             $this->originalFile = $this->getFileObject($this->uidLocal);
         }
         return $this->originalFile;
+    }
+
+    public function getCrop(): string
+    {
+        return $this->crop;
+    }
+
+    public function setCrop(string $crop): void
+    {
+        $this->crop = $crop;
     }
 }
