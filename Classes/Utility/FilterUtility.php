@@ -31,23 +31,6 @@ class FilterUtility
         }));
     }
 
-    public static function filterAudience(Configuration $configuration): array
-    {
-        $validTargetAudiences = Configuration::AUDIENCE;
-        $targetAudience = $configuration->getTargetAudience();
-        $audience = [];
-        if (empty($targetAudience) || !in_array($targetAudience, $validTargetAudiences, true)) {
-            return $audience;
-        }
-        if ($configuration->getTargetAudience() === 'users' || $configuration->getTargetAudience() === 'mixed') {
-            $audience['users'] = self::filterUnique($configuration->getFeUsers());
-        }
-        if ($configuration->getTargetAudience() === 'groups' || $configuration->getTargetAudience() === 'mixed') {
-            $audience['groups'] = self::filterUnique($configuration->getFeGroups());
-        }
-        return $audience;
-    }
-
     public static function filterUnique(string $unfilteredCsv, string $sep = ','): array
     {
         $csvArray = GeneralUtility::trimExplode($sep, $unfilteredCsv, true);

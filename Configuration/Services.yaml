@@ -5,7 +5,7 @@ services:
     public: false
   TRAW\NotificationsFramework\:
     resource: '../Classes/*'
-    #exclude: '../Classes/Domain/Model/*'
+    exclude: '../Classes/Domain/Model/*'
 
   TRAW\NotificationsFramework\Domain\Model\Type:
     public: true
@@ -21,4 +21,6 @@ services:
   TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler:
     public: true
   TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository:
+    public: true
+  TRAW\NotificationsFramework\Utility\AudienceUtility:
     public: true

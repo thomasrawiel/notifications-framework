@@ -13,6 +13,7 @@ use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Events\Data\BeforeNotificationAddedEvent;
+use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\FilterUtility;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -44,6 +45,7 @@ final class GenerateNotificationsCommand extends Command
         private readonly NotificationFactory         $notificationFactory,
         private readonly FileRepository              $fileRepository,
         private readonly ImageUtility                $imageUtility,
+        private readonly AudienceUtility             $audienceUtility,
     )
     {
         parent::__construct();
@@ -65,20 +67,7 @@ final class GenerateNotificationsCommand extends Command
 
         $configurations = FilterUtility::filterConfigurations($this->configurationRepository->findAll()->toArray());
         foreach ($configurations as $configuration) {
-            $audience = FilterUtility::filterAudience($configuration);
-
-            $users = [];
-
-            if (!empty($audience['users'])) {
-                $users = $this->frontendUserRepository->findUsersByUids($audience['users']);
-            }
-
-            if (!empty($audience['groups'])) {
-                $groupUsers = $this->frontendUserRepository->findUsersByGroups($audience['groups']);
-                $users = [...$users, ...$groupUsers];
-            }
-
-            $users = FilterUtility::filterUniqueByUid($users);
+            $users = AudienceUtility::getUsersFromConfiguration($configuration);
 
             foreach ($users as $user) {
                 $notification = $this->notificationFactory->createNotification($configuration, $user);
