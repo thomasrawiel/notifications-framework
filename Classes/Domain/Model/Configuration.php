@@ -12,35 +12,35 @@ final class Configuration extends AbstractEntity
 
     public const AUDIENCE = ['users', 'groups', 'mixed'];
 
-    protected bool $done;
+    protected bool $done = false;
 
-    protected bool $push;
+    protected bool $push = false;
 
-    protected string $targetAudience;
+    protected string $targetAudience = '';
 
-    protected string $type;
+    protected string $type = '';
 
-    protected string $feGroups;
+    protected string $feGroups = '';
 
-    protected string $feUsers;
+    protected string $feUsers = '';
 
-    protected string $title;
+    protected string $title = '';
 
-    protected string $label;
+    protected string $label = '';
 
-    protected string $message;
+    protected string $message = '';
 
-    protected int $image;
+    protected int $image = 0;
 
-    protected string $url;
+    protected string $url = '';
 
-    protected string $record;
+    protected string $record = '';
 
-    protected string $table;
+    protected string $table = '';
 
     protected int $sysLanguageUid = 0;
 
-    protected int $l10nParent;
+    protected int $l10nParent = 0;
 
 
     public function isDone(): bool

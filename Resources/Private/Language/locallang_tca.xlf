@@ -78,6 +78,19 @@
             <trans-unit id="configuration.done">
                 <source>Is processed</source>
             </trans-unit>
+
+			<trans-unit id="notification_estimate.noselection">
+				<source>Select an audience to calculate notification estimate.</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.count.groups">
+				<source>group(s) selected</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.count.users">
+				<source>user(s) selected</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.totalusers">
+				<source>notification(s) will be generated for this configuration</source>
+			</trans-unit>
         </body>
     </file>
 </xliff>

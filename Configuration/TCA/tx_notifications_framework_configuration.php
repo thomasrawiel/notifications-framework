@@ -82,6 +82,7 @@ return [
                 preview,
                 --div--;' . $LLL . 'div.audience,
                 --palette--;;audience,
+                notification_estimate,
                 --palette--;;audience_users,
                 --palette--;;audience_groups,
                  --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
@@ -407,6 +408,19 @@ return [
                 ],
             ],
         ],
-
+        'notification_estimate' => [
+            'exclude' => true,
+            'label' => 'Notification Estimate',
+            'description' => 'Depending on your audience selection, this will be the number of generated notifications',
+            'config' => [
+                'type' => 'none',
+                'renderType' => 'notificationEstimate',
+                'fieldInformation' => [
+                    'tcaDescription' => [
+                        'renderType' => 'tcaDescription',
+                    ],
+                ],
+            ]
+        ],
     ],
 ];

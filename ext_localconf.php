@@ -11,6 +11,12 @@ call_user_func(function ($_EXTKEY = 'notifications_framework') {
         'class' => \TRAW\NotificationsFramework\Form\NotificationPreview::class,
     ];
 
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1752824456] = [
+        'nodeName' => 'notificationEstimate',
+        'priority' => 70,
+        'class' => \TRAW\NotificationsFramework\Backend\FieldInformation\NotificationEstimate::class,
+    ];
+
 
     if ((new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 13) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][\TYPO3\CMS\Core\Imaging\IconFactory::class]['overrideIconOverlay'][]
