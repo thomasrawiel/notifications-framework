@@ -233,6 +233,7 @@ return [
                     ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
                     ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'icon' => 'actions-redo', 'group' => 'actions'],
                 ],
+                'default' => \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT,
                 'sortItems' => [
                     'label' => 'asc',
                 ],
@@ -320,7 +321,7 @@ return [
                 ],
                 'items' => [
                     ['label' => '', 'value' => ''],
-                    ['label' => 'Mixed', 'value' => 'mixed'],
+                    ['label' => $LLL . 'configuration.target_audience.mixed', 'value' => 'mixed'],
                     ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'icon' => 'status-user-frontend'],
                     ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'icon' => 'status-user-group-frontend'],
                 ],
@@ -420,7 +421,7 @@ return [
                         'renderType' => 'tcaDescription',
                     ],
                 ],
-            ]
+            ],
         ],
     ],
 ];

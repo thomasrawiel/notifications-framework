@@ -62,6 +62,9 @@
             <trans-unit id="configuration.target_audience.description">
                 <source>Target Audience</source>
             </trans-unit>
+			<trans-unit id="configuration.target_audience.mixed">
+				<source>Mixed</source>
+			</trans-unit>
             <trans-unit id="configuration.fe_users.description">
                 <source>Website Users description</source>
             </trans-unit>
@@ -90,6 +93,13 @@
 			</trans-unit>
 			<trans-unit id="notification_estimate.totalusers">
 				<source>notification(s) will be generated for this configuration</source>
+			</trans-unit>
+
+			<trans-unit id="notification_create">
+				<source>Create notification for this record</source>
+			</trans-unit>
+			<trans-unit id="notification_create.description">
+				<source>(If automatic creation is enabled)</source>
 			</trans-unit>
         </body>
     </file>

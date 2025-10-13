@@ -67,15 +67,15 @@ final class GenerateNotificationsCommand extends Command
 
         $configurations = FilterUtility::filterConfigurations($this->configurationRepository->findAll()->toArray());
         foreach ($configurations as $configuration) {
-            $users = AudienceUtility::getUsersFromConfiguration($configuration);
+            $users = $this->audienceUtility->getUsersFromConfiguration($configuration);
 
             foreach ($users as $user) {
                 $notification = $this->notificationFactory->createNotification($configuration, $user);
 
                 if (!$this->notificationRepository->notificationExists($notification)) {
                     $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($notification));
+                    $notification = $event->getNotification();
                     if ($event->isAddNotification()) {
-
                         $this->notificationRepository->add($notification);
                         $this->persistenceManager->persistAll();
 
