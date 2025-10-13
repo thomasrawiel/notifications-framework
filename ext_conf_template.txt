@@ -1,2 +1,5 @@
+# cat=basic/enable; type=boolean; label=Automatically create notification for new records (in allowed tables)
+autoCreateNotifications = 0
 # cat=basic/enable; type=string; label=Commalist of allowed tables
-allowedTables = 
+allowedTables = pages
+

@@ -9,6 +9,8 @@ use TRAW\NotificationsFramework\Events\AbstractEvent;
  */
 final class BeforeConfigurationAddedEvent
 {
+    private bool $addConfiguration = true;
+
     /**
      * @param array              $data
      * @param AbstractEvent|null $event
@@ -35,11 +37,18 @@ final class BeforeConfigurationAddedEvent
         return $this->data;
     }
 
-    /**
-     * @return AbstractEvent|null
-     */
-    public function getEvent(): ?AbstractEvent
+    public function isConfigurationIsAllowed(): bool
     {
-        return $this->event;
+        return $this->configurationIsAallowed;
+    }
+
+    public function isAddConfiguration(): bool
+    {
+        return $this->addConfiguration;
+    }
+
+    public function setAddConfiguration(bool $addConfiguration): void
+    {
+        $this->addConfiguration = $addConfiguration;
     }
 }

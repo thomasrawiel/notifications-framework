@@ -77,12 +77,19 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
      */
     public function getRecordIdentifier(): ?string
     {
-        if (!isset($this->dataHandler->substNEWwithIDs_table[$this->id]) || !isset($this->dataHandler->substNEWwithIDs[$this->id])) {
-            return null;
-        }
+        if($this->status === 'new') {
+            if (!isset($this->dataHandler->substNEWwithIDs_table[$this->id]) || !isset($this->dataHandler->substNEWwithIDs[$this->id])) {
+                return null;
+            }
 
-        return $this->dataHandler->substNEWwithIDs_table[$this->id]
-            . '_'
-            . $this->dataHandler->substNEWwithIDs[$this->id];
+            return $this->dataHandler->substNEWwithIDs_table[$this->id]
+                . '_'
+                . $this->dataHandler->substNEWwithIDs[$this->id];
+        }
+        
+        return $this->table
+            . '_' 
+            . $this->id;
+        
     }
 }

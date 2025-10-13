@@ -24,7 +24,13 @@ final class SettingsUtility
         return $dispatcher->dispatch($allowedTablesEvent)->getAllowedTables();
     }
 
-    public function getAllowedTablesList(): string {
+    public function getAllowedTablesList(): string
+    {
         return implode(',', $this->getAllowedTables());
+    }
+
+    public function automaticallyCreateNotifications(): bool
+    {
+        return (bool)$this->config['autoCreateNotifications'];
     }
 }
