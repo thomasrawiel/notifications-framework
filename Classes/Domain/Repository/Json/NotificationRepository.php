@@ -27,12 +27,10 @@ class NotificationRepository extends CommonRepository
         $query->setQuerySettings($querySettings);
 
         $language = $request->attributes->get('language');
+
+
         $constraints = [
             $query->equals('feUser', $request->attributes->get('frontend.user')->user['uid']),
-            $query->logicalOr(
-                $query->equals('sys_language_uid', 0),
-                $query->equals('sys_language_uid', $language->getLanguageId),
-            )
         ];
 
         if ($query->getConstraint()) {
@@ -49,6 +47,8 @@ class NotificationRepository extends CommonRepository
                 )
             );
         }
+
+        $query->setOrderings(['tstamp' => 'DESC']);
 
         $orignalQuery = $query;
 

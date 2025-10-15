@@ -173,7 +173,7 @@ return [
                 'type' => 'input',
                 'max' => 255,
             ],
-            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+            //'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'message' => [
             'label' => $LLL . 'configuration.message',
@@ -181,7 +181,7 @@ return [
                 'type' => 'text',
                 'max' => 255,
             ],
-            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'image' => [
             'label' => $LLL . 'configuration.image',
@@ -197,7 +197,7 @@ return [
                     ],
                 ],
             ],
-            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'url' => [
             'label' => 'URL',
@@ -211,7 +211,7 @@ return [
                     'allowLanguageSynchronization' => true,
                 ],
             ],
-            'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
     ],
 ];

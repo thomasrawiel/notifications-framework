@@ -6,6 +6,8 @@ final class Notification
 {
     public const defaultTCA = [
         'notification_create' => [
+            'exclude' => true,
+           // 'l10n_mode' => 'exclude',
             'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_create',
             'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_create.description',
             'config' => [
