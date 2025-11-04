@@ -79,13 +79,6 @@ final class GenerateNotificationsCommand extends Command
                         $this->notificationRepository->add($notification);
                         $this->persistenceManager->persistAll();
 
-                        if ($configuration->getImage()) {
-                            $fileReference = $this->fileRepository->findByRelation(Configuration::TABLE_NAME, Configuration::IMAGE_FIELD, $configuration->getUid());
-                            if (isset($fileReference[0]) && $fileReference[0] instanceof FileReference) {
-                                $this->imageUtility->createFileReferenceForNotification($notification, $fileReference[0]);
-                            }
-                        }
-
                         $translations = $this->configurationRepository->getTranslations($configuration);
                         if ($translations->count()) {
                             foreach ($translations as $translation) {
