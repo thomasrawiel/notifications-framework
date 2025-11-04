@@ -90,6 +90,7 @@ return [
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                 --palette--;;hidden,
                 --palette--;;access,
+                table,
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
                 --palette--;;notes',
         ],
@@ -407,6 +408,7 @@ return [
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
                 ],
+                'default' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
             ],
         ],
         'notification_estimate' => [

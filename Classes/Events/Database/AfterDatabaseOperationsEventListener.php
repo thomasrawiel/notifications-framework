@@ -31,19 +31,21 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        if ($this->settingsUtility->automaticallyCreateNotifications() === false) {
-            return;
-        }
-
         $table = $event->getTable();
         if ($table === Configuration::TABLE_NAME
             || !in_array($table, $this->settingsUtility->getAllowedTables())) {
             return;
         }
 
+        $record = $event->getFieldArray();
+        if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($record['notification_create'] ?? true) === false) {
+            return;
+        }
+
+
 
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        $record = $event->getFieldArray();
+
         $recordId = $event->getId();
 
         $createNotificationConfiguration = (bool)($record['notification_create'] ?? true);
