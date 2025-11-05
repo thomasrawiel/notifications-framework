@@ -11,6 +11,15 @@
             <trans-unit id="div.audience">
                 <source>Audience</source>
             </trans-unit>
+			<trans-unit id="palette.audience">
+				<source>Target audience</source>
+			</trans-unit>
+			<trans-unit id="palette.audience.description">
+				<source>Select who should be notified with this configuration</source>
+			</trans-unit>
+			<trans-unit id="palette.message">
+				<source>Custom message for this notification</source>
+			</trans-unit>
             <trans-unit id="configuration.title">
                 <source>Title</source>
             </trans-unit>
@@ -26,6 +35,9 @@
             <trans-unit id="configuration.push">
                 <source>Notification is pushed to users</source>
             </trans-unit>
+			<trans-unit id="configuration.push.description">
+				<source>If enabled, the configuration will be used to generate notifications according to its properties.</source>
+			</trans-unit>
             <trans-unit id="configuration.type">
                 <source>Notification type</source>
             </trans-unit>
@@ -66,24 +78,34 @@
 				<source>Mixed</source>
 			</trans-unit>
             <trans-unit id="configuration.fe_users.description">
-                <source>Website Users description</source>
+                <source>Select specific website users that should be notified with this configuration.</source>
             </trans-unit>
-
             <trans-unit id="configuration.fe_user_groups.description">
-                <source>Website usergroup description</source>
+                <source>Select specific website usergroups that should be notified with this configuration.</source>
             </trans-unit>
             <trans-unit id="configuration.record">
                 <source>Record</source>
             </trans-unit>
             <trans-unit id="configuration.record.description">
-                <source>Record description</source>
+                <source>The notification will take label, message, image and link from this record</source>
             </trans-unit>
+			<trans-unit id="configuration.url">
+				<source>Link</source>
+			</trans-unit>
             <trans-unit id="configuration.done">
                 <source>Is processed</source>
             </trans-unit>
-
+			<trans-unit id="configuration.done.description">
+				<source>If enabled, the scheduler has finished working on this configuration. Disable to re-generate notifications.</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate">
+				<source>Notification count estimate</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.description">
+				<source>Depending on the extension's settings and your audience selection, this will be the number of generated notifications</source>
+			</trans-unit>
 			<trans-unit id="notification_estimate.noselection">
-				<source>Select an audience to calculate notification estimate.</source>
+				<source>Select an audience to calculate or narrow down the notification count estimate.</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.count.groups">
 				<source>group(s) selected</source>
@@ -92,14 +114,16 @@
 				<source>user(s) selected</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.totalusers">
-				<source>notification(s) will be generated for this configuration</source>
+				<source>notification(s) will be generated for this configuration.</source>
 			</trans-unit>
-
 			<trans-unit id="notification_create">
 				<source>Create notification for this record</source>
 			</trans-unit>
 			<trans-unit id="notification_create.description">
 				<source>(If automatic creation is enabled)</source>
+			</trans-unit>
+			<trans-unit id="table">
+				<source>Database table</source>
 			</trans-unit>
         </body>
     </file>

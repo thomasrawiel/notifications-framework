@@ -33,4 +33,19 @@ final class SettingsUtility
     {
         return (bool)$this->config['autoCreateNotifications'];
     }
+
+    public function sendToEveryoneIfNoAudienceIsSelected(): bool
+    {
+        return (bool)$this->config['sendToEveryoneIfNoAudienceIsSelected'];
+    }
+
+    public function getFeUserLookupUids(): array
+    {
+        return array_map('intval', GeneralUtility::trimExplode(',', $this->config['feUserLookupUids'], true));
+    }
+
+    public function getFeUserLookupRecursive(): int
+    {
+        return (int)$this->config['feUserLookupRecursive'];
+    }
 }

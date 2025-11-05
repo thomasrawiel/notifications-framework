@@ -52,7 +52,7 @@ class NotificationEstimate extends AbstractFormElement
         if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid'])) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
         } else {
-            $configuration = $this->configurationRepository->findByUid($this->data['databaseRow']['uid']);
+            $configuration = $this->configurationRepository->findByUid($row['uid']);
             $audience = $this->audienceUtility->getAudienceFromConfiguration($configuration);
             $totalUsers = $this->audienceUtility->getUsersCountFromConfiguration($configuration);
 

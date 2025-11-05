@@ -1,16 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AudienceUtility
 {
     public function __construct(
         private readonly ConfigurationRepository $configurationRepository,
-        private readonly FrontendUserRepository  $frontendUserRepository
+        private readonly FrontendUserRepository  $frontendUserRepository,
+        private readonly SettingsUtility         $settingsUtility
     )
     {
     }
@@ -36,6 +39,17 @@ class AudienceUtility
     {
         $users = [];
 
+        if (empty($audience) && $this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected()) {
+            $pidList = $this->settingsUtility->getFeUserLookupUids();
+            $recursive = $this->settingsUtility->getFeUserLookupRecursive();
+            if ($pidList !== [] && $recursive > 0) {
+                $treeListUtility = GeneralUtility::makeInstance(TreeListUtility::class);
+                $pidList = $treeListUtility->getTreeListArrayFromArray($pidList, $recursive);
+            }
+
+            return $this->frontendUserRepository->findAllUsers($pidList);
+        }
+
         if (!empty($audience['users'])) {
             $users = $this->frontendUserRepository->findUsersByUids($audience['users']);
         }
@@ -54,7 +68,7 @@ class AudienceUtility
 
         return $this->getUsersFromAudience($audience);
     }
-    
+
     public function getUsersCountFromConfiguration(Configuration $configuration): int
     {
         return count($this->getUsersFromConfiguration($configuration));

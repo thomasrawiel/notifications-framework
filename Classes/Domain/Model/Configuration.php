@@ -10,7 +10,7 @@ final class Configuration extends AbstractEntity
     public const TABLE_NAME = 'tx_notifications_framework_configuration';
     public const IMAGE_FIELD = 'image';
 
-    public const AUDIENCE = ['users', 'groups', 'mixed'];
+    public const AUDIENCE = ['', 'users', 'groups', 'mixed'];
 
     protected bool $done = false;
 

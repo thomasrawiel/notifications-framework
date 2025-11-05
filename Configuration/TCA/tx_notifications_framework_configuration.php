@@ -40,7 +40,7 @@ return [
             'showitem' => 'title,push,done,--linebreak--,type',
         ],
         'message' => [
-            'label' => 'Custom message for this notification',
+            'label' => $LLL . 'palette.message',
             'showitem' => 'label,--linebreak--,message,--linebreak--,image,--linebreak--,url',
         ],
         'record' => [
@@ -51,8 +51,8 @@ return [
             'showitem' => 'sys_language_uid,l10n_parent',
         ],
         'audience' => [
-            'label' => 'Target Audience',
-            'description' => 'blablabla',
+            'label' => $LLL . 'palette.audience',
+            'description' => $LLL . 'palette.audience.description',
             'showitem' => 'target_audience',
         ],
         'audience_fe' => [
@@ -147,15 +147,15 @@ return [
         'push' => [
             'exclude' => true,
             'label' => $LLL . 'configuration.push',
-            'description' => 'If this is true, the configuration will be used to generate notifications',
+            'description' => $LLL . 'configuration.push.description',
             'config' => [
                 'type' => 'check',
                 'renderType' => 'checkboxLabeledToggle',
                 'items' => [
                     [
                         'label' => '',
-                        'labelChecked' => 'TRUE',
-                        'labelUnchecked' => 'FALSE',
+                        'labelChecked' => 'ENABLED',
+                        'labelUnchecked' => 'DISABLED',
                     ],
                 ],
                 'behaviour' => [
@@ -167,15 +167,15 @@ return [
             'l10n_mode' => 'exclude',
             'exclude' => true,
             'label' => $LLL . 'configuration.done',
-            'description' => 'If this is true, the scheduler has finished working on this configuration',
+            'description' => $LLL . 'configuration.done.description',
             'config' => [
                 'type' => 'check',
                 'renderType' => 'checkboxLabeledToggle',
                 'items' => [
                     [
                         'label' => '',
-                        'labelChecked' => 'TRUE',
-                        'labelUnchecked' => 'FALSE',
+                        'labelChecked' => 'ENABLED',
+                        'labelUnchecked' => 'DISABLED',
                     ],
                 ],
                 'readOnly' => getenv('TYPO3_CONTEXT') !== 'Development/DDEV',
@@ -295,7 +295,7 @@ return [
         ],
         'url' => [
             'exclude' => true,
-            'label' => 'URL',
+            'label' => $LLL . 'configuration.url',
             'config' => [
                 'type' => 'link',
                 'size' => 50,
@@ -326,7 +326,6 @@ return [
                     ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'icon' => 'status-user-frontend'],
                     ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'icon' => 'status-user-group-frontend'],
                 ],
-                'required' => true,
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
                 ],
@@ -353,7 +352,6 @@ return [
                         'disabled' => true,
                     ],
                 ],
-                'required' => true,
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
                 ],
@@ -380,7 +378,6 @@ return [
                         'disabled' => true,
                     ],
                 ],
-                'required' => true,
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
                 ],
@@ -400,7 +397,7 @@ return [
         ],
         'table' => [
             'exclude' => true,
-            'label' => 'Table',
+            'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:table',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim',
@@ -413,8 +410,8 @@ return [
         ],
         'notification_estimate' => [
             'exclude' => true,
-            'label' => 'Notification Estimate',
-            'description' => 'Depending on your audience selection, this will be the number of generated notifications',
+            'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate',
+            'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.description',
             'config' => [
                 'type' => 'none',
                 'renderType' => 'notificationEstimate',

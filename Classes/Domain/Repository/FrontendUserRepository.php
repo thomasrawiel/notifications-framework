@@ -30,6 +30,24 @@ class FrontendUserRepository extends Repository
         return $users;
     }
 
+    public function findAllUsers($pids = []): array
+    {
+        $query = $this->createQuery();
+        $query->setQuerySettings(
+            $query->getQuerySettings()->setRespectStoragePage(false)
+        );
+
+        if (!empty($pids)) {
+            $query->matching(
+                $query->in('pid', $pids)
+            );
+        }
+
+        return $query
+            ->execute()
+            ->toArray();
+    }
+
     public function findUserByGroup(int $groupId): array
     {
         $query = $this->createQuery();

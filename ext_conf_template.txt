@@ -2,4 +2,10 @@
 autoCreateNotifications = 0
 # cat=basic/enable; type=string; label=Commalist of allowed tables
 allowedTables = pages
+# cat=basic/enable; type=boolean; label=Send notifications to every fe_user if no audience is selected
+sendToEveryoneIfNoAudienceIsSelected = 0
+# cat=basic/enable; type=string; label=Look for fe_users in these folders
+feUserLookupUids = 0
+# cat=basic/enable; type=int; label=Feuser lookup recursive levels
+feUserLookupRecursive = 0
 
