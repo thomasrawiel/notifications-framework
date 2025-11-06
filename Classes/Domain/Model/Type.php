@@ -93,4 +93,28 @@ final class Type
     {
         return $this->getTypesWithRecordField()->__toString();
     }
+
+    public static function isValidType(?string $type = null): bool
+    {
+        return match ($type) {
+            self::DEFAULT,
+            self::SUCCESS,
+            self::ERROR,
+            self::INFO,
+            self::WARNING,
+            self::RECORDADDED,
+            self::RECORDUPDATED => true,
+            default => false,
+        };
+    }
+
+    public static function isRecordType(string $type): bool
+    {
+        return self::isValidType($type)
+            && match ($type) {
+                self::RECORDADDED,
+                self::RECORDUPDATED => true,
+                default => false,
+            };
+    }
 }

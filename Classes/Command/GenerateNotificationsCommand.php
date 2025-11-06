@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TRAW\NotificationsFramework\Domain\Factory\NotificationFactory;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
@@ -26,6 +27,7 @@ use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\FileRepository;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
@@ -80,9 +82,26 @@ final class GenerateNotificationsCommand extends Command
                         $this->persistenceManager->persistAll();
 
                         $translations = $this->configurationRepository->getTranslations($configuration);
+                        $translationsDone = [$notification->getSysLanguageUid()]; // we already saved this
                         if ($translations->count()) {
                             foreach ($translations as $translation) {
                                 $translatedNotification = $this->notificationFactory->createNotificationTranslation($notification, $translation, $user);
+                                $this->notificationRepository->add($translatedNotification);
+                                $this->persistenceManager->persistAll();
+                                $translationsDone[] = $translatedNotification->getSysLanguageUid();
+                            }
+                        }
+                        //fill translations when autotranslate=1 with the content from the default language
+                        if ($configuration->isAutotranslate()) {
+                            $site = GeneralUtility::makeInstance(SiteFinder::class)
+                                ->getSiteByPageId($configuration->getPid());
+                            foreach ($site->getAllLanguages() as $language) {
+                                if (in_array($language->getLanguageId(), $translationsDone)) {
+                                    //skip, because we already have that one
+                                    continue;
+                                }
+                                $translatedNotification = $this->notificationFactory->createNotificationTranslation(
+                                    $notification, $configuration, $user, $language->getLanguageId());
                                 $this->notificationRepository->add($translatedNotification);
                                 $this->persistenceManager->persistAll();
                             }

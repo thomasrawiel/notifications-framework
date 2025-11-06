@@ -9,15 +9,17 @@ use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
-use TYPO3\CMS\Core\Utility\GeneralUtility
-    ;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 
 class ImageUtility
 {
-    public static function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference $fileReference): FileInterface
+    public static function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference|FileReference|null $fileReference): ?FileInterface
     {
-        $cropVariantCollection = CropVariantCollection::create($fileReference->getCrop());
+        if (is_null($fileReference)) {
+            return null;
+        }
+        $cropVariantCollection = CropVariantCollection::create($fileReference->getProperty('crop'));
         $cropVariantName = 'default';
         $cropArea = $cropVariantCollection->getCropArea($cropVariantName);
         $crop = $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile());
@@ -45,9 +47,9 @@ class ImageUtility
     public function createFileReferenceForNotification(Notification $notification, FileReference $configurationFileReference)
     {
         $referenceProperties = $configurationFileReference->getReferenceProperties();
-       foreach(['uid','crdate','tstamp','uid_local','tablenames','uid_foreign','fieldname','pid'] as $removeProperty) {
-           unset($referenceProperties[$removeProperty]);
-       }
+        foreach (['uid', 'crdate', 'tstamp', 'uid_local', 'tablenames', 'uid_foreign', 'fieldname', 'pid'] as $removeProperty) {
+            unset($referenceProperties[$removeProperty]);
+        }
 
         $newId = StringUtility::getUniqueId('NEW');
         $fileObject = $configurationFileReference->getOriginalFile();
@@ -81,7 +83,13 @@ class ImageUtility
         }
     }
 
-    public static function getProcessedImageUri(Filereference $fileReference) {
-        return self::getProcessedImage($fileReference)->getOriginalFile()->getUri();
+    public static function guessImageField(string $table): array
+    {
+        return match ($table) {
+            'pages' => ['media'],
+            'tt_content' => ['assets', 'image'],
+            'tx_news_domain_model_news' => ['fal_media'],
+            default => [],
+        };
     }
 }

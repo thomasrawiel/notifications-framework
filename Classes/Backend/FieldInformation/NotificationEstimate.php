@@ -49,10 +49,11 @@ class NotificationEstimate extends AbstractFormElement
 
         $estimateHtml = [];
         $noSelection = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.noselection');
-        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid'])) {
+        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] === 1 || $row['deleted'] === 1) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
         } else {
             $configuration = $this->configurationRepository->findByUid($row['uid']);
+
             $audience = $this->audienceUtility->getAudienceFromConfiguration($configuration);
             $totalUsers = $this->audienceUtility->getUsersCountFromConfiguration($configuration);
 

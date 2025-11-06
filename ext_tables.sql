@@ -14,7 +14,8 @@ CREATE TABLE `tx_notifications_framework_configuration`
 	`table`           varchar(255)     DEFAULT ''  NOT NULL,
 	`automatic`       tinyint(3)       DEFAULT '0' NOT NULL,
 	`push`            tinyint(3)       DEFAULT '0' NOT NULL,
-	`done`            tinyint(3)       DEFAULT '0' NOT NULL
+	`done`            tinyint(3)       DEFAULT '0' NOT NULL,
+	`autotranslate`   tinyint(3)       DEFAULT '0' NOT NULL
 );
 
 CREATE TABLE `tx_notifications_framework_domain_model_notification`

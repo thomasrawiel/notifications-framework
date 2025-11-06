@@ -20,6 +20,9 @@
 			<trans-unit id="palette.message">
 				<source>Custom message for this notification</source>
 			</trans-unit>
+			<trans-unit id="palette.settings">
+				<source>Notification settings</source>
+			</trans-unit>
             <trans-unit id="configuration.title">
                 <source>Title</source>
             </trans-unit>
@@ -97,6 +100,12 @@
             </trans-unit>
 			<trans-unit id="configuration.done.description">
 				<source>If enabled, the scheduler has finished working on this configuration. Disable to re-generate notifications.</source>
+			</trans-unit>
+			<trans-unit id="configuration.autotranslate">
+				<source>Auto translate notification</source>
+			</trans-unit>
+			<trans-unit id="configuration.autotranslate.description">
+				<source>When enabled, the notification message for this record is automatically translated without the need to translate the configuration. If the configuration is not translated into all languages, the translations are created with the content from the default language.</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate">
 				<source>Notification count estimate</source>

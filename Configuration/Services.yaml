@@ -15,6 +15,11 @@ services:
       - name: event.listener
         event: TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEvent
         identifier: 'traw-notifications/database'
+  TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEventListener:
+    tags:
+      - name: event.listener
+        event: TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent
+        identifier: 'traw-notifications/notifcation-json-data'
 
   TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler:
     public: true

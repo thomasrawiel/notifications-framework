@@ -37,7 +37,11 @@ return [
     ],
     'palettes' => [
         'core' => [
-            'showitem' => 'title,push,done,--linebreak--,type',
+            'showitem' => 'title',
+        ],
+        'settings' => [
+            'label' => $LLL . 'palette.settings',
+            'showitem' => 'type,push,autotranslate,done',
         ],
         'message' => [
             'label' => $LLL . 'palette.message',
@@ -77,12 +81,12 @@ return [
         '0' => [
             'showitem' => '--div--;' . $LLL . 'div.configuration,
                 --palette--;;core,
+                --palette--;;settings,
+                notification_estimate,
                 --palette--;;message,
                 --palette--;;record,
-                preview,
                 --div--;' . $LLL . 'div.audience,
                 --palette--;;audience,
-                notification_estimate,
                 --palette--;;audience_users,
                 --palette--;;audience_groups,
                  --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
@@ -179,6 +183,22 @@ return [
                     ],
                 ],
                 'readOnly' => getenv('TYPO3_CONTEXT') !== 'Development/DDEV',
+            ],
+        ],
+        'autotranslate' => [
+            'l10n_mode' => 'exclude',
+            'exclude' => true,
+            'label' => $LLL . 'configuration.autotranslate',
+            'description' => $LLL . 'configuration.autotranslate.description',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        'label' => '',
+                    ],
+                ],
+                'default' => 1,
             ],
         ],
         'hidden' => [

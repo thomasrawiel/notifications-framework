@@ -13,7 +13,6 @@ use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\LinkHandling\TypoLinkCodecService;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\FileRepository;
-use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -33,42 +32,16 @@ class NotificationFactory
 
     public function createNotification(Configuration $configuration, FrontendUser $frontendUser): Notification
     {
+        $type = $configuration->getType();
+        if (!Type::isValidType($type)) {
+            throw new \Exception('Notification type not supported');
+        }
 
         $notification = new Notification($frontendUser->getUid(), $configuration);
-        $type = $configuration->getType();
         $notification->setTitle($type . ' Notification');
         $notification->setUrl($this->createLink($configuration) ?? '');
 
 
-        switch ($type) {
-            case Type::DEFAULT:
-            case Type::SUCCESS:
-            case Type::ERROR:
-            case Type::INFO:
-            case Type::WARNING:
-
-
-//                try {
-//                    /** @var FileReference[] $fileObjects */
-//                    $fileObjects = $this->fileRepository->findByRelation(Configuration::TABLE_NAME, Configuration::IMAGE_FIELD, $configuration->getUid());
-//                    if(isset($fileObjects[0]) && $fileObjects[0] instanceof FileReference) {
-//
-//                        $file  = $fileObjects[0]->getOriginalFile()->getUid();
-//
-//
-//                    }
-//
-//                } catch (FileDoesNotExistException $e) {
-//                    // ... do some exception handling
-//                }
-
-                break;
-            case Type::RECORDADDED:
-            case Type::RECORDUPDATED:
-                break;
-            default:
-                throw new \Exception('Notification type not supported');
-        }
 
         return $notification;
     }
@@ -112,11 +85,21 @@ class NotificationFactory
     }
 
 
-    public function createNotificationTranslation(Notification $notification, Configuration $translatedConfiguration, FrontendUser $frontendUser): Notification
+    public function createNotificationTranslation(Notification $notification, Configuration $translatedConfiguration, FrontendUser $frontendUser, ?int $languageUid = null): Notification
     {
-        $translation = $this->createNotification($translatedConfiguration, $frontendUser);
-        $translation->setSysLanguageUid($translatedConfiguration->getSysLanguageUid());
-        $translation->setL10nParent($notification->getUid());
+        $targetLanguageUid = null;
+
+        if ($translatedConfiguration->getSysLanguageUid() > 0) {
+            $targetLanguageUid = $translatedConfiguration->getSysLanguageUid();
+        } elseif ($translatedConfiguration->isAutotranslate() && $languageUid !== null) {
+            $targetLanguageUid = $languageUid;
+        }
+
+        if ($targetLanguageUid !== null) {
+            $translation = $this->createNotification($translatedConfiguration, $frontendUser);
+            $translation->setSysLanguageUid($targetLanguageUid);
+            $translation->setL10nParent($notification->getUid());
+        }
 
         return $translation;
     }

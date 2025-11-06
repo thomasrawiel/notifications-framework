@@ -16,6 +16,8 @@ final class Configuration extends AbstractEntity
 
     protected bool $push = false;
 
+    protected bool $autotranslate = false;
+
     protected string $targetAudience = '';
 
     protected string $type = '';
@@ -61,6 +63,16 @@ final class Configuration extends AbstractEntity
     public function setPush(bool $push): void
     {
         $this->push = $push;
+    }
+
+    public function isAutotranslate(): bool
+    {
+        return $this->autotranslate;
+    }
+
+    public function setAutotranslate(bool $autotranslate): void
+    {
+        $this->autotranslate = $autotranslate;
     }
 
     public function getTargetAudience(): string
