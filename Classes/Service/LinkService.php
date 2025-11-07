@@ -6,6 +6,8 @@ namespace TRAW\NotificationsFramework\Service;
 use Psr\Http\Message\ServerRequestInterface;
 use Reelworx\TYPO3\FakeFrontend\FakeFrontendService;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\Type;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\TypoScriptAspect;
 use TYPO3\CMS\Core\Context\UserAspect;
@@ -18,6 +20,8 @@ use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\TypoScript\PageTsConfig;
+use TYPO3\CMS\Core\TypoScript\PageTsConfigFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
@@ -44,16 +48,29 @@ class LinkService
             return null;
         }
 
-        $linkDetails = $this->linkService->resolve($configuration->getUrl());
-        if (!isset($linkDetails['type'], $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']])) {
-            return null;
-        }
+
+
 
         //fake-frontend
         $this->createGlobals($site, $configuration, $languageUid);
         $controller = $this->bootFrontendController($site, [], $this->request);
+
+        if (Type::isRecordType($configuration->getType())) {
+            $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
+            $linkDetails = [
+                'type' => 'record',
+                'identifier' => $identifier,
+                'uid' => (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1)
+            ];
+        } else {
+            $linkDetails = $this->linkService->resolve($configuration->getUrl());
+        }
         //unset request, we dont need that anymore
         $this->request = null;
+
+        if (!isset($linkDetails['type'], $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']])) {
+            return null;
+        }
         $linkBuilder = GeneralUtility::makeInstance(
             $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']],
             $controller->cObj,
@@ -75,6 +92,20 @@ class LinkService
             $this->cleanupTSFE();
             return null;
         }
+    }
+
+    private function getLinkHandlerIdentifierFromTable(string $table, TypoScriptFrontendController $controller): ?string {
+        $tsConfig = $this->getPageTsConfig($controller, $this->request)['TCEMAIN.']['linkHandler.'] ?? null;
+        if ($tsConfig === null) {
+            return null;
+        }
+        foreach($tsConfig as $identifier => $linkhandlerConfig) {
+            if(($linkhandlerConfig['configuration.']['table']??'') === $table) {
+                return str_ends_with($identifier, '.') ? rtrim($identifier, '.') : $identifier;
+            }
+        }
+
+return null;
     }
 
     private function createGlobals(Site $site, Configuration $configuration, ?int $languageUid = null): void
@@ -141,5 +172,22 @@ class LinkService
         $context->unsetAspect('typoscript');
         $context->unsetAspect('frontend.preview');
         unset($GLOBALS['TSFE']);
+    }
+
+    protected function getPageTsConfig(TypoScriptFrontendController $tsfe, ServerRequestInterface $request): array
+    {
+        $id = $tsfe->id;
+        $runtimeCache = GeneralUtility::makeInstance(CacheManager::class)->getCache('runtime');
+        $pageTsConfig = $runtimeCache->get('pageTsConfig-' . $id);
+        if ($pageTsConfig instanceof PageTsConfig) {
+            return $pageTsConfig->getPageTsConfigArray();
+        }
+        $fullRootLine = $tsfe->rootLine;
+        ksort($fullRootLine);
+        $site = $request->getAttribute('site') ?? new NullSite();
+        $pageTsConfigFactory = GeneralUtility::makeInstance(PageTsConfigFactory::class);
+        $pageTsConfig = $pageTsConfigFactory->create($fullRootLine, $site);
+        $runtimeCache->set('pageTsConfig-' . $id, $pageTsConfig);
+        return $pageTsConfig->getPageTsConfigArray();
     }
 }

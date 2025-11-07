@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Domain\Factory;
 
@@ -45,17 +46,13 @@ class NotificationFactory
         return $notification;
     }
 
-    protected function createLink(Configuration $configuration, ?int $languageUid = null): ?string
+    protected function createLink(Configuration $configuration, ?int $languageUid = null): string
     {
-        if (empty($configuration->getUrl())) {
-            return null;
+        if (empty($configuration->getUrl()) && empty($configuration->getRecord())) {
+            return '';
         }
-        if (Type::isRecordType($configuration->getType())) {
-            return null;
-        }
-        return $this->linkService->createLink($configuration, $languageUid);
+        return $this->linkService->createLink($configuration, $languageUid) ?? '';
     }
-
 
     public function createNotificationTranslation(Notification $notification, Configuration $translatedConfiguration, FrontendUser $frontendUser, ?int $languageUid = null): Notification
     {
