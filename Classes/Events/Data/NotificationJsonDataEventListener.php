@@ -34,8 +34,12 @@ class NotificationJsonDataEventListener
         $event->setData($data);
     }
 
-    protected function attachConfigurationImageUrl(Configuration $configuration): ?string
+    protected function attachConfigurationImageUrl(?Configuration $configuration): ?string
     {
+        if(empty($configuration)) {
+            return null;
+        }
+
         $image = $configuration->getImage();
         if ($image === 0 && !in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED])) {
             return null;
