@@ -149,6 +149,7 @@ return [
             ],
         ],
         'push' => [
+            'l10n_mode' => 'exclude',
             'exclude' => true,
             'label' => $LLL . 'configuration.push',
             'description' => $LLL . 'configuration.push.description',

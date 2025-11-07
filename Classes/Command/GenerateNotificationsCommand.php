@@ -85,7 +85,7 @@ final class GenerateNotificationsCommand extends Command
                         $translationsDone = [$notification->getSysLanguageUid()]; // we already saved this
                         if ($translations->count()) {
                             foreach ($translations as $translation) {
-                                $translatedNotification = $this->notificationFactory->createNotificationTranslation($notification, $translation, $user);
+                                $translatedNotification = $this->notificationFactory->createNotificationTranslation($notification, $translation, $user, $translation->getSysLanguageUid());
                                 $this->notificationRepository->add($translatedNotification);
                                 $this->persistenceManager->persistAll();
                                 $translationsDone[] = $translatedNotification->getSysLanguageUid();

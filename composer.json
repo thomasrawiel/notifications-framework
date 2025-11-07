@@ -1,28 +1,29 @@
 {
-  "name": "traw/notifications-framework",
-  "type": "typo3-cms-extension",
-  "description": "",
-  "authors": [
-    {
-      "name": "Thomas Rawiel",
-      "role": "Developer"
-    }
-  ],
-  "require": {
-    "php": "^8.1",
-    "typo3/cms-core": "^12 || ^13",
-    "typo3/cms-frontend": "^12 || ^13",
-    "sourcebroker/t3api": "^4.0 || dev-main"
-  },
-  "license": "GPL-3.0-or-later",
-  "autoload": {
-    "psr-4": {
-      "TRAW\\NotificationsFramework\\": "Classes/"
-    }
-  },
-  "extra": {
-    "typo3/cms": {
-      "extension-key": "notifications_framework"
-    }
-  }
+	"name": "traw/notifications-framework",
+	"type": "typo3-cms-extension",
+	"description": "",
+	"authors": [
+		{
+			"name": "Thomas Rawiel",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": "^8.1",
+		"typo3/cms-core": "^12 || ^13",
+		"typo3/cms-frontend": "^12 || ^13",
+		"sourcebroker/t3api": "^4.0 || dev-main",
+		"reelworx/t3-fakefrontend": "^3.1"
+	},
+	"license": "GPL-3.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"TRAW\\NotificationsFramework\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "notifications_framework"
+		}
+	}
 }

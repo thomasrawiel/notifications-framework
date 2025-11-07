@@ -6,26 +6,27 @@ use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
 use TRAW\NotificationsFramework\Domain\Model\Type;
+use TRAW\NotificationsFramework\Service\LinkService;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\LinkHandling\LinkService;
-use TYPO3\CMS\Core\LinkHandling\TypoLinkCodecService;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Typolink\LinkFactory;
 
 class NotificationFactory
 {
     public function __construct(
-        private readonly FileRepository       $fileRepository,
-        private readonly ImageUtility         $imageUtility,
-        private readonly UriBuilder           $uriBuilder,
-        private readonly LinkService          $linkService,
-        private readonly TypoLinkCodecService $typoLinkCodecService,
+        private readonly FileRepository $fileRepository,
+        private readonly ImageUtility   $imageUtility,
+        private readonly LinkService    $linkService,
     )
     {
     }
@@ -39,49 +40,20 @@ class NotificationFactory
 
         $notification = new Notification($frontendUser->getUid(), $configuration);
         $notification->setTitle($type . ' Notification');
-        $notification->setUrl($this->createLink($configuration) ?? '');
-
-
+        $notification->setUrl($this->createLink($configuration));
 
         return $notification;
     }
 
-    protected function createLink($configuration): ?string
+    protected function createLink(Configuration $configuration, ?int $languageUid = null): ?string
     {
         if (empty($configuration->getUrl())) {
             return null;
         }
-
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-        $site = $siteFinder->getSiteByPageId($configuration->getPid()); // pick a site root page
-        $language = $site->getDefaultLanguage();
-
-        $url = '';
-
-        try {
-            $typoLinkConfiguration = $this->typoLinkCodecService->decode($configuration->getUrl());
-            $linkResult = $this->linkService->resolve($configuration->getUrl(), $site, $language);
-            //$url = $linkResult->getUrl();
-            $cObj = $this->getContentObjectRenderer($site);
-            $url = $cObj->typoLink_URL(['parameter' => $typoLinkConfiguration['url'], 'forceAbsoluteUrl' => true]);
-
-        } catch (\Throwable $e) {
-
+        if (Type::isRecordType($configuration->getType())) {
+            return null;
         }
-
-        return $url;
-    }
-
-    private function getContentObjectRenderer(Site $site): ContentObjectRenderer
-    {
-        $request = (new ServerRequest())
-            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
-            ->withAttribute('site', $site);
-
-        $cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-        $cObj->setRequest($request);
-
-        return $cObj;
+        return $this->linkService->createLink($configuration, $languageUid);
     }
 
 
@@ -99,6 +71,7 @@ class NotificationFactory
             $translation = $this->createNotification($translatedConfiguration, $frontendUser);
             $translation->setSysLanguageUid($targetLanguageUid);
             $translation->setL10nParent($notification->getUid());
+            $translation->setUrl($this->createLink($translatedConfiguration, $targetLanguageUid));
         }
 
         return $translation;
