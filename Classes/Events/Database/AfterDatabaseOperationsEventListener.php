@@ -30,10 +30,24 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
             // not allowed to create notifications
             return;
         }
+        $recordId = $event->getId();
 
         $table = $event->getTable();
-        if ($table === Configuration::TABLE_NAME
-            || !in_array($table, $this->settingsUtility->getAllowedTables())) {
+        //if we're updating a default to a record config, we need to write the table name
+        if ($table === Configuration::TABLE_NAME) {
+            $record = BackendUtility::getRecord($table, $recordId, 'type,record,table');
+            
+            if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
+                $data[Configuration::TABLE_NAME][$recordId] = [
+                    'table' => preg_replace('/_\d+$/', '', $record['record']),
+                ];
+                $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+                $dataHandler->start($data, []);
+                $dataHandler->process_datamap();
+            }
+        }
+
+        if (!in_array($table, $this->settingsUtility->getAllowedTables())) {
             return;
         }
 
@@ -41,12 +55,6 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
         if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($record['notification_create'] ?? true) === false) {
             return;
         }
-
-
-
-        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-
-        $recordId = $event->getId();
 
         $createNotificationConfiguration = (bool)($record['notification_create'] ?? true);
         if ($event->getStatus() === 'update' && MathUtility::canBeInterpretedAsInteger($recordId)) {
@@ -67,7 +75,6 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
         if ($pid === 0 && $event->getStatus() === 'update') {
             $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? 0;
         }
-
 
         $newId = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW');
         $data[Configuration::TABLE_NAME][$newId] = [
@@ -96,6 +103,7 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($data, $event));
 
         if ($dataEvent->isAddConfiguration()) {
+            $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
             $dataHandler->start($dataEvent->getData(), []);
             $dataHandler->process_datamap();
         }
