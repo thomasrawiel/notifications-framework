@@ -40,6 +40,10 @@ final class Type
      *
      */
     const RECORDUPDATED = 'recordupdated';
+    /**
+     *
+     */
+    const USEREVENT = 'userevent';
 
     /**
      * @param EventDispatcher $eventDispatcher
@@ -74,6 +78,7 @@ final class Type
             [
                 self::RECORDADDED,
                 self::RECORDUPDATED,
+                self::USEREVENT,
             ]
         ));
     }
@@ -102,6 +107,7 @@ final class Type
             self::ERROR,
             self::INFO,
             self::WARNING,
+            self::USEREVENT,
             self::RECORDADDED,
             self::RECORDUPDATED => true,
             default => false,
@@ -112,6 +118,7 @@ final class Type
     {
         return self::isValidType($type)
             && match ($type) {
+                self::USEREVENT,
                 self::RECORDADDED,
                 self::RECORDUPDATED => true,
                 default => false,

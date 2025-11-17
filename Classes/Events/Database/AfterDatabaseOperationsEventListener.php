@@ -36,7 +36,7 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
         //if we're updating a default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME) {
             $record = BackendUtility::getRecord($table, $recordId, 'type,record,table');
-            
+
             if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
                 $data[Configuration::TABLE_NAME][$recordId] = [
                     'table' => preg_replace('/_\d+$/', '', $record['record']),

@@ -83,18 +83,33 @@ class Notification extends AbstractEntity
      * @param Configuration $configuration
      */
     public function __construct(
-        int           $feUser,
-        Configuration $configuration,
+        int            $feUser,
+        ?Configuration $configuration,
+        array          $data = []
     )
     {
+        if (empty($configuration) && empty($data)) {
+            throw new \Exception('Configuration and/or data are required to create a notification.');
+        }
+
+        if (empty($configuration)) {
+            $this->pid = $data['pid'];
+            $this->label = $data['label'];
+            $this->message = $data['message'];
+            $this->configuration = 0;
+            $this->type = $data['type'];
+            $this->image = $data['image'];
+        } else {
+            $this->pid = $configuration->getPid();
+            $this->label = $configuration->getLabel();
+            $this->message = $configuration->getMessage();
+            $this->configuration = $configuration->getUid();
+            $this->type = $configuration->getType();
+            $this->image = $configuration->getImage();
+        }
         $this->feUser = $feUser;
-        $this->configuration = $configuration->getUid();
-        $this->pid = $configuration->getPid();
-        $this->label = $configuration->getLabel();
-        $this->message = $configuration->getMessage();
         $this->tstamp = time();
-        $this->type = $configuration->getType();
-        $this->image = $configuration->getImage();
+
     }
 
     /**
