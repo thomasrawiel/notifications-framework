@@ -34,6 +34,7 @@ class BitmaskUtility
         $bitmask = 0;
 
         foreach ($checkedValues as $val) {
+            if ($val === null) continue;
             if ($useValues) {
                 if (!self::isPowerOfTwo($val)) {
                     throw new InvalidArgumentException("Value $val is not a power of 2.");
