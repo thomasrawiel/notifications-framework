@@ -2,9 +2,27 @@
 
 namespace TRAW\NotificationsFramework\Events\FrontendUser;
 
-use LINGNER\LinImpleniaUserprofile\Domain\Model\FrontendUser;
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-
 final class BeforeUpdateFrontendUserEvent extends AbstractFrontendUserEvent
 {
+    protected array $notifications = [];
+
+    public function __construct(AbstractEntity $frontendUser, $notifications = [])
+    {
+        parent::__construct($frontendUser);
+        if (empty($notifications)) {
+            $this->notifications = $this->convertNotificationBitMaskToArray($frontendUser->getNotifications());
+        } else {
+            $this->frontendUser->setNotifications($this->convertNotificationArrayToBitMask($notifications));
+        }
+    }
+
+    public function getNotifications(): array
+    {
+        return $this->notifications;
+    }
+
+    public function setNotifications(array $notifications): void
+    {
+        $this->notifications = $notifications;
+    }
 }

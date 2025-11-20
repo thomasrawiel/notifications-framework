@@ -12,5 +12,4 @@
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
     'fe_users',
     'notifications',
-
 );
