@@ -21,13 +21,43 @@ namespace TRAW\NotificationsFramework\Utility;
 class BitmaskUtility
 {
     /**
-     * Encodes an array of checked checkboxes into a bitmask.
+     * Encodes an array of checked checkboxes into a single bitmask integer.
      *
-     * @param array $checkedValues Array of either bit indexes (e.g. [0, 2]) or bit values (e.g. [1, 4])
-     * @param bool  $useValues     If true, input is treated as bit values (1, 2, 4, ...). If false, as bit indexes (0,
-     *                             1, 2).
+     * Each checked checkbox is represented as a bit in the returned bitmask.
+     * Unchecked checkboxes should either be absent from the array or set to null.
      *
-     * @return int Bitmask result
+     *
+     * @param array $checkedValues An array of integers representing the checked checkboxes.
+     *                             - In **index mode** ($useValues = false), each value is the **zero-based index** of
+     *                             the checked checkbox. Example: [0, 2] → bits 0 and 2 are set → bitmask 0b101 →
+     *                             decimal 5.
+     *                             - In **value mode** ($useValues = true), each value must be a **power of two** (1,
+     *                             2, 4, 8, ...) and is directly OR-ed into the bitmask. Example: [1, 4] → bitmask
+     *                             0b101 → decimal 5.
+     *                             - Any null values are ignored.
+     *                             - In value mode, a value that is **not a power of two** will throw an
+     *                             InvalidArgumentException.
+     *
+     * @param bool  $useValues     Determines how to interpret the input array:
+     *                             - false (default): $checkedValues are **indexes** (0-based).
+     *                             - true: $checkedValues are **bit values** (powers of two).
+     *
+     * ### Example Usage:
+     *
+     * // Index mode (default), 3 or more checkboxes (first and third checked)
+     * encodeCheckboxes([0, 2]); // returns 5 (0b101)
+     * same as encodeCheckboxes([0, null, 2, null, ...]); // returns 5 (0b101)
+     *
+     *  // Ignoring nulls, 3 or more checkboxes
+     *  encodeCheckboxes([0, null, 2]); // returns 9 (0b1001)
+     *  encodeCheckboxes([0, null, 2, null, ...]); // returns 9 (0b1001)
+     *
+     * // Value mode, 2 or more checkboxes, only the first 2 are checked
+     * encodeCheckboxes([1, 4], true); // returns 5 (0b101)
+     * same as encodeCheckboxes([1, 4, null, ....], true); // returns 5 (0b101)
+     *
+     * @return int The resulting bitmask as an integer.
+     * @throws \InvalidArgumentException If a value in value mode is not a power of two.
      */
     public static function encodeCheckboxes(array $checkedValues, bool $useValues = false): int
     {
