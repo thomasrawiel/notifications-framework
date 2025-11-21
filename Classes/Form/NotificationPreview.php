@@ -26,8 +26,8 @@ class NotificationPreview extends AbstractFormElement
             ?? 'default';
 
         $typeClass = GeneralUtility::makeInstance(Type::class);
-        $recordTypes = $typeClass->getTypesWithRecordField()->getTypes();
-        $customTypes = $typeClass->getTypesWithCustomMessage()->getTypes();
+        $recordTypes = $typeClass->getTypesWithRecordField();
+        $customTypes = $typeClass->getTypesWithCustomMessage();
 
         if (in_array($type, $recordTypes, true)) {
             $previewData = $this->renderRecordPreview();
@@ -50,8 +50,8 @@ class NotificationPreview extends AbstractFormElement
                       <p class="notification-item__preview__timestamp">%s</p>
                       <div class="notification-item__preview__link">
                         <div>Link: %s</div>
-                       
-                    
+
+
                         </div>
                     </div>',
                 "https://picsum.photos/300/300", $previewData['title'], $previewData['title'], $previewData['text'], $previewData['timestamp'], $previewData['url'])

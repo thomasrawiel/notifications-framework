@@ -55,7 +55,7 @@ final class Type
     /**
      * @return string
      */
-    public function getTypesWithCustomMessage(): TypesWithCustomMessageEvent
+    public function getTypesWithCustomMessage(): array
     {
         return $this->eventDispatcher->dispatch(new TypesWithCustomMessageEvent(
             [
@@ -66,13 +66,13 @@ final class Type
                 SELF::WARNING,
                 self::ERROR,
             ]
-        ));
+        ))->getTypes();
     }
 
     /**
      * @return string
      */
-    public function getTypesWithRecordField(): TypesWithRecordFieldEvent
+    public function getTypesWithRecordField(): array
     {
         return $this->eventDispatcher->dispatch(new TypesWithRecordFieldEvent(
             [
@@ -80,7 +80,7 @@ final class Type
                 self::RECORDUPDATED,
                 self::USEREVENT,
             ]
-        ));
+        ))->getTypes();
     }
 
     /**
@@ -88,7 +88,7 @@ final class Type
      */
     public function getTypesWithCustomMessageList(): string
     {
-        return $this->getTypesWithCustomMessage()->__toString();
+        return implode(',', $this->getTypesWithCustomMessage());
     }
 
     /**
@@ -96,7 +96,7 @@ final class Type
      */
     public function getTypesWithRecordFieldList(): string
     {
-        return $this->getTypesWithRecordField()->__toString();
+        return implode(',', $this->getTypesWithRecordField());
     }
 
     public static function isValidType(?string $type = null): bool
