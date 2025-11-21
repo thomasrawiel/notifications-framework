@@ -28,6 +28,7 @@ class NotificationFactory
         private readonly FileRepository $fileRepository,
         private readonly ImageUtility   $imageUtility,
         private readonly LinkService    $linkService,
+        private readonly Type $type
     )
     {
     }
@@ -41,7 +42,18 @@ class NotificationFactory
 
         $notification = new Notification($frontendUser->getUid(), $configuration);
         $notification->setTitle($type . ' Notification');
+        //$notification->setLabel($type . ' Notification');
         $notification->setUrl($this->createLink($configuration));
+
+        if(in_array($type, $this->type->getTypesWithCustomMessage())) {
+            $notification->setLabel($configuration->getLabel());
+            $notification->setMessage($configuration->getMessage());
+        }
+
+        if(in_array($type, $this->type->getTypesWithRecordField())) {
+            $notification->setLabel('Set the label in your BeforeNotificationAddedEvent');
+            $notification->setMessage('Set the message in your BeforeNotificationAddedEvent');
+        }
 
         return $notification;
     }
