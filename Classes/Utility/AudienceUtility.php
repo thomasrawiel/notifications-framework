@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
 
-use Microsoft\Graph\Model\Filter;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;

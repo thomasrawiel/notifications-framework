@@ -31,10 +31,10 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
         $recordId = $event->getId();
-
         $table = $event->getTable();
-        //if we're updating a default to a record config, we need to write the table name
-        if ($table === Configuration::TABLE_NAME) {
+
+        //if we're updating an existing default to a record config, we need to write the table name
+        if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
             $record = BackendUtility::getRecord($table, $recordId, 'type,record,table');
 
             if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
@@ -45,6 +45,7 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
                 $dataHandler->start($data, []);
                 $dataHandler->process_datamap();
             }
+            return;
         }
 
         if (!in_array($table, $this->settingsUtility->getAllowedTables())) {
