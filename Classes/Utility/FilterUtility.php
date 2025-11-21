@@ -30,10 +30,8 @@ class FilterUtility
         $settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
         $allowEveryone = $settingsUtility->sendToEveryoneIfNoAudienceIsSelected();
 
-        $validTargetAudiences = Configuration::AUDIENCE;
-
-        return array_values(array_filter($configurations, function (Configuration $configuration) use ($allowEveryone, $validTargetAudiences) {
-            if (!$configuration->isPush() || !in_array($configuration->getTargetAudience(), $validTargetAudiences, true)) {
+        return array_values(array_filter($configurations, function (Configuration $configuration) use ($allowEveryone) {
+            if (!$configuration->isPush()) {
                 return false;
             }
             return self::isValidForAudience($configuration, $allowEveryone);
@@ -42,12 +40,15 @@ class FilterUtility
 
     private static function isValidForAudience(Configuration $configuration, bool $allowEveryone): bool
     {
-        return match ($configuration->getTargetAudience()) {
+        $target = $configuration->getTargetAudience();
+
+        return match ($target) {
             '' => $allowEveryone,
             'mixed' => !empty($configuration->getFeGroups()) || !empty($configuration->getFeUsers()),
             'users' => !empty($configuration->getFeUsers()),
             'groups' => !empty($configuration->getFeGroups()),
-            default => false,
+            //Treat placeholders as always valid, because I expect the event handlers to do the work
+            default => in_array($target, Configuration::PLACEHOLDER_AUDIENCES, true),
         };
     }
 

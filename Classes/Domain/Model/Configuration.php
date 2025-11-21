@@ -7,10 +7,11 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 final class Configuration extends AbstractEntity
 {
-    public const TABLE_NAME = 'tx_notifications_framework_configuration';
-    public const IMAGE_FIELD = 'image';
+    public const string TABLE_NAME = 'tx_notifications_framework_configuration';
+    public const string IMAGE_FIELD = 'image';
 
-    public const AUDIENCE = ['', 'users', 'groups', 'mixed'];
+    public const array AUDIENCE = ['', 'users', 'groups', 'mixed',];
+    public const array PLACEHOLDER_AUDIENCES = ['subscribers', 'admins', 'moderators', 'genericList', 'specialList', 'myList', 'myList2', 'myList3'];
 
     protected bool $done = false;
 

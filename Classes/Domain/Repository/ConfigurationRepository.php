@@ -11,17 +11,20 @@ class ConfigurationRepository extends Repository
     public function findAll()
     {
         $query = $this->createQuery();
+
+        $targetAudiences = array_merge(Configuration::AUDIENCE, Configuration::PLACEHOLDER_AUDIENCES);
         $query->matching(
             $query->logicalAnd(
-                $query->equals('push', '1'),
-                $query->equals('done', '0'),
-                $query->in('target_audience', Configuration::AUDIENCE)
+                $query->equals('push', 1),
+                $query->equals('done', 0),
+                $query->in('target_audience', $targetAudiences)
             )
         );
         return $query->execute();
     }
 
-    public function getTranslations($configuration) {
+    public function getTranslations($configuration)
+    {
         $query = $this->createQuery();
         $query->setQuerySettings(
             $query->getQuerySettings()->setRespectSysLanguage(false),

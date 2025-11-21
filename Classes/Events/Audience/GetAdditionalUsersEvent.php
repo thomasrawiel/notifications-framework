@@ -5,9 +5,9 @@ namespace TRAW\NotificationsFramework\Events\Audience;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 
-final class GetAdditionalUsersEvent
+class GetAdditionalUsersEvent
 {
-    private array $additionalUsers = [];
+    protected array $additionalUsers = [];
 
     public function __construct(private readonly Configuration $configuration)
     {

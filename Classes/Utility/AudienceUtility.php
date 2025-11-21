@@ -11,6 +11,8 @@ use TRAW\NotificationsFramework\Events\Audience\GetAdditionalAudienceEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalGroupsCsvEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersCsvEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersEvent;
+use TRAW\NotificationsFramework\Events\Audience\GetGenericUsersEvent;
+use TRAW\NotificationsFramework\Events\Audience\GetSubscribedUsersEvent;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -85,12 +87,52 @@ class AudienceUtility
         $audience = $this->getAudienceFromConfiguration($configuration);
 
         $users = $this->getUsersFromAudience($audience);
-        $additionalUsers = $this->eventDispatcher
-            ->dispatch(new GetAdditionalUsersEvent($configuration))
-            ->getAdditionalUsers();
-        if (!empty($additionalUsers)) {
-            $users = FilterUtility::filterUniqueByUid([...$users, ...$additionalUsers]);
+        $additionalUsers = [];
+
+        $target = $configuration->getTargetAudience();
+
+        switch ($target) {
+            case 'subscribers':
+                //You need to implement your own logic how to determine if a user is subscribed by creating an event listener for GetSubscribedUsersEvent
+                $additionalUsers = $this->eventDispatcher
+                    ->dispatch(new GetSubscribedUsersEvent($configuration))
+                    ->getAdditionalUsers();
+                break;
+            case 'mixed':
+            case 'users':
+            case 'groups':
+                //in case there's another "subscription" mechanic dispatch the event so you can add more users with your own logic
+                $additionalUsers = $this->eventDispatcher
+                    ->dispatch(new GetAdditionalUsersEvent($configuration))
+                    ->getAdditionalUsers();
+                break;
+            case '':
+                // All users are already selected already if $this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected() is true
+                if ($this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected()) {
+                    break;
+                }
+            // else fall through to generic audience event
+            case 'admins':
+            case 'moderators':
+            case 'genericList':
+            case 'specialList':
+            case 'myList':
+            case 'myList2':
+            case 'myList3':
+                //these are placeholders, add your own logic using the GetGenericUsersEvent
+                $additionalUsers = $this->eventDispatcher
+                    ->dispatch(new GetGenericUsersEvent($configuration))
+                    ->getAdditionalUsers();
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid audience: ' . $target);
         }
+
+        $users = FilterUtility::filterUniqueByUid([
+            ...$users,
+            ...$additionalUsers,
+        ]);
+
         return $users;
     }
 
