@@ -94,7 +94,6 @@ return [
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                 --palette--;;hidden,
                 --palette--;;access,
-                table,
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
                 --palette--;;notes',
         ],
@@ -338,14 +337,14 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemGroups' => [
-                    'groups' => 'Groups',
-                    'users' => 'Users',
+                    'users' => ' Frontend Users',
+                    'other' => 'Other',
                 ],
                 'items' => [
                     ['label' => '', 'value' => ''],
-                    ['label' => $LLL . 'configuration.target_audience.mixed', 'value' => 'mixed'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'icon' => 'status-user-frontend'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'icon' => 'status-user-group-frontend'],
+                    ['label' => $LLL . 'configuration.target_audience.mixed', 'value' => 'mixed', 'group' => 'users'],
+                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'group' => 'users', 'icon' => 'status-user-frontend'],
+                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'group' => 'users', 'icon' => 'status-user-group-frontend'],
                 ],
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
