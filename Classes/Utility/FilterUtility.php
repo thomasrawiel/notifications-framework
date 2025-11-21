@@ -51,13 +51,27 @@ class FilterUtility
         };
     }
 
-    public static function filterUnique(string $unfilteredCsv, string $sep = ','): array
+    /**
+     * Takes one or more CSV strings, splits them, trims them, removes empty values,
+     * keeps only numeric entries, and returns a unique array.
+     *
+     * @param string ...$csvStrings One or more CSV strings
+     * @param string $sep           Separator (default ",")
+     *
+     * @return array<int, string>
+     */
+    public static function filterUniqueAndJoin($sep = ',', string ...$csvStrings): array
     {
-        $csvArray = GeneralUtility::trimExplode($sep, $unfilteredCsv, true);
+        $allValues = [];
+
+        foreach ($csvStrings as $csv) {
+            $parts = GeneralUtility::trimExplode($sep, $csv, true);
+            $allValues = array_merge($allValues, $parts);
+        }
 
         return array_unique(
             array_filter(
-                $csvArray,
+                $allValues,
                 'is_numeric'
             )
         );
@@ -69,7 +83,17 @@ class FilterUtility
         $filtered = [];
 
         foreach ($elements as $element) {
-            $uid = $element->getUid();
+            if (method_exists($element, 'getUid')) {
+                $uid = $element->getUid();
+            } elseif (method_exists($element, '_getProperty')) {
+                $uid = $element->_getProperty('uid');
+            } elseif (property_exists($element, 'uid')) {
+                $uid = $element->uid;
+            } elseif (is_array($element)) {
+                $uid = $element['uid'];
+            } else {
+                throw new \Exception('Could not determine uid');
+            }
 
             if (!isset($seen[$uid])) {
                 $seen[$uid] = true;

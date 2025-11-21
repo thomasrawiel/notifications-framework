@@ -3,9 +3,15 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
 
+use Microsoft\Graph\Model\Filter;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
+use TRAW\NotificationsFramework\Events\Audience\GetAdditionalAudienceEvent;
+use TRAW\NotificationsFramework\Events\Audience\GetAdditionalGroupsCsvEvent;
+use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersCsvEvent;
+use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersEvent;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AudienceUtility
@@ -13,7 +19,8 @@ class AudienceUtility
     public function __construct(
         private readonly ConfigurationRepository $configurationRepository,
         private readonly FrontendUserRepository  $frontendUserRepository,
-        private readonly SettingsUtility         $settingsUtility
+        private readonly SettingsUtility         $settingsUtility,
+        private readonly EventDispatcher         $eventDispatcher
     )
     {
     }
@@ -22,17 +29,28 @@ class AudienceUtility
     {
         $validTargetAudiences = Configuration::AUDIENCE;
         $targetAudience = $configuration->getTargetAudience();
-        $audience = [];
+        $users = $groups = '';
         if (empty($targetAudience) || !in_array($targetAudience, $validTargetAudiences, true)) {
-            return $audience;
+            return [];
         }
         if ($configuration->getTargetAudience() === 'users' || $configuration->getTargetAudience() === 'mixed') {
-            $audience['users'] = FilterUtility::filterUnique($configuration->getFeUsers());
+            $users = $configuration->getFeUsers();
         }
         if ($configuration->getTargetAudience() === 'groups' || $configuration->getTargetAudience() === 'mixed') {
-            $audience['groups'] = FilterUtility::filterUnique($configuration->getFeGroups());
+            $groups = $configuration->getFeGroups();
         }
-        return $audience;
+
+        $additionalUsers = $this->eventDispatcher
+            ->dispatch(new GetAdditionalUsersCsvEvent($configuration))
+            ->getAdditionalUsersCsv();
+        $additionalGroups = $this->eventDispatcher
+            ->dispatch(new GetAdditionalGroupsCsvEvent($configuration))
+            ->getAdditionalGroupsCsv();
+
+        return [
+            'users' => FilterUtility::filterUniqueAndJoin(',', $users, $additionalUsers),
+            'groups' => FilterUtility::filterUniqueAndJoin(',', $groups, $additionalGroups),
+        ];
     }
 
     public function getUsersFromAudience(array $audience): array
@@ -66,7 +84,14 @@ class AudienceUtility
     {
         $audience = $this->getAudienceFromConfiguration($configuration);
 
-        return $this->getUsersFromAudience($audience);
+        $users = $this->getUsersFromAudience($audience);
+        $additionalUsers = $this->eventDispatcher
+            ->dispatch(new GetAdditionalUsersEvent($configuration))
+            ->getAdditionalUsers();
+        if (!empty($additionalUsers)) {
+            $users = FilterUtility::filterUniqueByUid([...$users, ...$additionalUsers]);
+        }
+        return $users;
     }
 
     public function getUsersCountFromConfiguration(Configuration $configuration): int
