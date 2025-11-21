@@ -75,7 +75,7 @@ final class GenerateNotificationsCommand extends Command
                 $notification = $this->notificationFactory->createNotification($configuration, $user);
 
                 if (!$this->notificationRepository->notificationExists($notification)) {
-                    $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($notification));
+                    $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($notification, $configuration));
                     $notification = $event->getNotification();
                     if ($event->isAddNotification()) {
                         $this->notificationRepository->add($notification);
@@ -86,7 +86,8 @@ final class GenerateNotificationsCommand extends Command
                         if ($translations->count()) {
                             foreach ($translations as $translation) {
                                 $translatedNotification = $this->notificationFactory->createNotificationTranslation($notification, $translation, $user, $translation->getSysLanguageUid());
-                                $this->notificationRepository->add($translatedNotification);
+                                $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($translatedNotification, $configuration));
+                                $this->notificationRepository->add($event->getNotification());
                                 $this->persistenceManager->persistAll();
                                 $translationsDone[] = $translatedNotification->getSysLanguageUid();
                             }
@@ -102,7 +103,8 @@ final class GenerateNotificationsCommand extends Command
                                 }
                                 $translatedNotification = $this->notificationFactory->createNotificationTranslation(
                                     $notification, $configuration, $user, $language->getLanguageId());
-                                $this->notificationRepository->add($translatedNotification);
+                                $event = $this->eventDispatcher->dispatch(new BeforeNotificationAddedEvent($translatedNotification, $configuration));
+                                $this->notificationRepository->add($event->getNotification());
                                 $this->persistenceManager->persistAll();
                             }
                         }
