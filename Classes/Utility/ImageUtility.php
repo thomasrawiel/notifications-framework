@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Notification;
+use TRAW\NotificationsFramework\Events\Utility\ImageFieldPerTableEvent;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -14,7 +16,11 @@ use TYPO3\CMS\Core\Utility\StringUtility;
 
 class ImageUtility
 {
-    public static function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference|FileReference|null $fileReference): ?FileInterface
+    public function __construct(private readonly EventDispatcher $eventDispatcher)
+    {
+    }
+
+    public function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference|FileReference|null $fileReference): ?FileInterface
     {
         if (is_null($fileReference)) {
             return null;
@@ -83,13 +89,16 @@ class ImageUtility
         }
     }
 
-    public static function guessImageField(string $table): array
+    public function guessImageField(string $table): array
     {
-        return match ($table) {
-            'pages' => ['media'],
-            'tt_content' => ['assets', 'image'],
-            'tx_news_domain_model_news' => ['fal_media'],
-            default => [],
-        };
+        $tableImageFields = $this->eventDispatcher->dispatch(
+            new ImageFieldPerTableEvent([
+                'pages' => ['media'],
+                'tt_content' => ['assets', 'image'],
+                'tx_news_domain_model_news' => ['fal_media'],
+            ])
+        )->getTableConfiguration();
+
+        return $tableImageFields[$table] ?? [];
     }
 }

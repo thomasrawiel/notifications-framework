@@ -212,7 +212,8 @@ class Notification extends AbstractEntity
             'media' => null,
         ];
         if ($this->image instanceof ObjectStorage && $this->image->count()) {
-            $processedImage = ImageUtility::getProcessedImage($this->image->getArray()[0] ?? []);
+            $imageUtility = GeneralUtility::makeInstance(ImageUtility::class);
+            $processedImage = $imageUtility->getProcessedImage($this->image->getArray()[0] ?? []);
             if ($processedImage instanceof ProcessedFile) {
                 $data['media'] = PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
             }

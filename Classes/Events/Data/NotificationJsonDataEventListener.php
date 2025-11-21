@@ -18,7 +18,10 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 )]
 class NotificationJsonDataEventListener
 {
-    public function __construct(private readonly ConfigurationRepository $configurationRepository)
+    public function __construct(
+        private readonly ConfigurationRepository $configurationRepository,
+        private readonly ImageUtility $imageUtility,
+    )
     {
     }
 
@@ -53,7 +56,7 @@ class NotificationJsonDataEventListener
         if (in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED])) {
             //tx_news_domain_model_news_12345 => (int)12345
             $lookupUid = (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1);
-            foreach (ImageUtility::guessImageField($lookupTable) as $field) {
+            foreach ($this->imageUtility->guessImageField($lookupTable) as $field) {
                 $fileObjects = $fileRepository->findByRelation($lookupTable, $field, $lookupUid);
                 if (!empty($fileObjects)) {
                     return $this->getProcessedImageUrl($fileObjects[0]);
@@ -73,7 +76,7 @@ class NotificationJsonDataEventListener
 
     private function getProcessedImageUrl(FileReference $fileReference): ?string
     {
-        $processedImage = ImageUtility::getProcessedImage($fileReference);
+        $processedImage = $this->imageUtility->getProcessedImage($fileReference);
         if ($processedImage instanceof ProcessedFile) {
             return PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
         }
