@@ -16,7 +16,6 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 /**
  * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
  */
-
 /**
  * @T3api\ApiResource(
  *     collectionOperations={
@@ -31,20 +30,20 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
  *     },
  *     itemOperations={
  *          "patch_user_notification"={
- *                 "method"="PATCH",
- *                 "path"="/users/notifications/read/{id}",
- *                 "security"="frontend.user.isLoggedIn",
- *                  "normalizationContext"={
- *                   "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
- *                  },
+ *             "method"="PATCH",
+ *             "path"="/users/notification/read/{id}",
+ *             "security"="frontend.user.isLoggedIn",
+ *              "normalizationContext"={
+ *                 "groups"={"api_patch_item_notificationsframework_json_users_notification"}
+ *              },
  *          },
- *               "patch_user_notifications"={
- *                  "method"="PATCH",
- *                  "path"="/users/notifications/read-all",
- *                  "security"="frontend.user.isLoggedIn",
- *                   "normalizationContext"={
- *                    "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
- *                   },
+ *          "patch_user_notifications"={
+ *              "method"="PATCH",
+ *              "path"="/users/notification/read-all",
+ *              "security"="frontend.user.isLoggedIn",
+ *              "normalizationContext"={
+ *                 "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
+ *               },
  *           },
  *     }
  * )

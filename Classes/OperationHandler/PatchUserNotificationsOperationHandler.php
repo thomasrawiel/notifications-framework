@@ -43,7 +43,7 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
 
         $result = null;
 
-        //all objects
+        //mark all notifications as read
         if ($operation->getKey() === 'patch_user_notifications') {
             $notificationRepository = GeneralUtility::makeInstance(NotificationRepository::class);
             $userNotifications = $notificationRepository->findByFeUser($feUid);
@@ -57,6 +57,7 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
             $persistenceManager->persistAll();
             $result =  ['success' => true];
         }
+        //mark a specific notification as read
         if ($operation->getKey() === 'patch_user_notification') {
             $repository = $this->getRepositoryForOperation($operation);
             $object = parent::handle($operation, $request, $route, $response);
