@@ -3,17 +3,13 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\OperationHandler;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use SourceBroker\T3api\Domain\Model\OperationInterface;
 use SourceBroker\T3api\Exception\OperationNotAllowedException;
 use SourceBroker\T3api\OperationHandler\AbstractItemOperationHandler;
-use SourceBroker\T3api\Security\OperationAccessChecker;
-use SourceBroker\T3api\Serializer\ContextBuilder\DeserializationContextBuilder;
-use SourceBroker\T3api\Service\SerializerService;
-use SourceBroker\T3api\Service\ValidationService;
 use Symfony\Component\HttpFoundation\Request;
-use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
+use TRAW\NotificationsFramework\Domain\Model\Json\Notification;
+use TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -43,28 +39,33 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
 
         $result = null;
 
+        $repository = GeneralUtility::makeInstance(NotificationRepository::class);
+        $repository->setObjectType(Notification::class);
+
         //mark all notifications as read
         if ($operation->getKey() === 'patch_user_notifications') {
-            $notificationRepository = GeneralUtility::makeInstance(NotificationRepository::class);
-            $userNotifications = $notificationRepository->findByFeUser($feUid);
+            $userNotifications = $repository->findByFeUser($feUid);
             foreach ($userNotifications as $userNotification) {
                 if ($userNotification->getRead() === 0) {
-                    $userNotification->setRead(1);
-                    $userNotification->setReadDate(time());
-                    $notificationRepository->update($userNotification);
+                    $this->setRead($userNotification, $repository);
+                    $persist = true;
                 }
             }
-            $persistenceManager->persistAll();
-            $result =  ['success' => true];
+            if($persist ?? false) {
+                $persistenceManager->persistAll();
+            }
+            $result = ['success' => true];
         }
         //mark a specific notification as read
         if ($operation->getKey() === 'patch_user_notification') {
-            $repository = $this->getRepositoryForOperation($operation);
             $object = parent::handle($operation, $request, $route, $response);
             $this->deserializeOperation($operation, $request, $object);
             $this->validationService->validateObject($object);
-            $repository->update($object);
-            $persistenceManager->persistAll();
+
+            if ($object->getRead() === 0) {
+                $this->setRead($object, $repository);
+                $persistenceManager->persistAll();
+            }
 
             $result = $object;
         }
@@ -72,5 +73,16 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
         return $result;
     }
 
+    private function setRead(Notification &$notification, NotificationRepository &$repository): void
+    {
+        $notification->setRead(1);
+        $repository->update($notification);
 
+        if ($notification->_getProperty('_localizedUid') === $notification->getUid()) {
+            foreach ($repository->findByL10nParent($notification->getUid()) as $translatedNotification) {
+                $translatedNotification->setRead(1);
+                $repository->update($translatedNotification);
+            }
+        }
+    }
 }

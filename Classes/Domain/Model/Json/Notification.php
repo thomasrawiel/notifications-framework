@@ -169,10 +169,8 @@ class Notification extends AbstractEntity
      */
     public function setRead(int $read): void
     {
-        if ($this->read === 0) {
-            $this->read = 1;
-            $this->readDate = time();
-        }
+        $this->read = $read;
+        $this->readDate = $read === 1 ? ($this->readDate ?: time()) : 0;
     }
 
     public function getImage(): ?ObjectStorage

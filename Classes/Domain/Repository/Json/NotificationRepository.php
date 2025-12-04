@@ -23,7 +23,7 @@ class NotificationRepository extends CommonRepository
         $query = parent::findFiltered($apiFilters, $request);
         $querySettings = $query->getQuerySettings()
             ->setRespectStoragePage(false);
-            //->setRespectSysLanguage(false);
+        //->setRespectSysLanguage(false);
         $query->setQuerySettings($querySettings);
 
         $language = $request->attributes->get('language');
@@ -54,5 +54,28 @@ class NotificationRepository extends CommonRepository
 
 
         return $query;
+    }
+
+    public function findByFeUser(int $feuserUid) {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
+
+        $query->matching(
+            $query->equals('fe_user', $feuserUid),
+        );
+
+        return $query->execute();
+    }
+
+    public function findByL10nParent(int $uid)
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false)->setRespectSysLanguage(false);
+
+        $query->matching(
+            $query->equals('l10n_parent', $uid),
+        );
+
+        return $query->execute();
     }
 }
