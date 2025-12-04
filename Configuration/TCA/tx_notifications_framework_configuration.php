@@ -305,6 +305,7 @@ return [
             'config' => [
                 'type' => 'group',
                 'allowed' => $settingsUtility->getAllowedTablesList(),
+                'minitems' => 1,
                 'maxitems' => 1,
                 'size' => 1,
                 'behaviour' => [
