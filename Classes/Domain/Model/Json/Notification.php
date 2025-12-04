@@ -175,6 +175,10 @@ class Notification extends AbstractEntity
         }
     }
 
+    public function getImage(): ?ObjectStorage
+    {
+        return $this->image;
+    }
 
     /**
      * @return array
