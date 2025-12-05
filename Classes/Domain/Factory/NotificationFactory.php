@@ -9,6 +9,7 @@ use TRAW\NotificationsFramework\Domain\Model\Notification;
 use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Service\LinkService;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
+use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -28,7 +29,8 @@ class NotificationFactory
         private readonly FileRepository $fileRepository,
         private readonly ImageUtility   $imageUtility,
         private readonly LinkService    $linkService,
-        private readonly Type $type
+        private readonly Type           $type,
+        private SettingsUtility         $settingsUtility,
     )
     {
     }
@@ -45,14 +47,18 @@ class NotificationFactory
         //$notification->setLabel($type . ' Notification');
         $notification->setUrl($this->createLink($configuration));
 
-        if(in_array($type, $this->type->getTypesWithCustomMessage())) {
+        if (in_array($type, $this->type->getTypesWithCustomMessage())) {
             $notification->setLabel($configuration->getLabel());
             $notification->setMessage($configuration->getMessage());
         }
 
-        if(in_array($type, $this->type->getTypesWithRecordField())) {
+        if (in_array($type, $this->type->getTypesWithRecordField())) {
             $notification->setLabel('Set the label in your BeforeNotificationAddedEvent');
             $notification->setMessage('Set the message in your BeforeNotificationAddedEvent');
+        }
+
+        if (!$this->settingsUtility->storeNotificationsOnRecordPid()) {
+            $notification->setPid($this->settingsUtility->getNotificationStorage());
         }
 
         return $notification;

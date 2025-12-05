@@ -8,16 +8,21 @@ use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
+use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 
 /**
  * Class AfterDatabaseOperationsEventListener
  */
-class AfterDatabaseOperationsEventListener extends AbstractEventListener
+#[AsEventListener(
+    identifier: 'traw-notifications/database',
+)]
+final class AfterDatabaseOperationsEventListener extends AbstractEventListener
 {
     /**
      * @var string
@@ -35,11 +40,11 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
 
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
-            $record = BackendUtility::getRecord($table, $recordId, 'type,record,table');
+            $recordFieldArray = BackendUtility::getRecord($table, $recordId, 'type,record,table');
 
-            if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
+            if (Type::isRecordType($recordFieldArray['type']) && !empty($recordFieldArray['record']) && !str_starts_with($recordFieldArray['record'], $recordFieldArray['table'] . '_')) {
                 $data[Configuration::TABLE_NAME][$recordId] = [
-                    'table' => preg_replace('/_\d+$/', '', $record['record']),
+                    'table' => preg_replace('/_\d+$/', '', $recordFieldArray['record']),
                 ];
                 $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
                 $dataHandler->start($data, []);
@@ -52,12 +57,18 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        $record = $event->getFieldArray();
-        if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($record['notification_create'] ?? true) === false) {
+        $recordFieldArray = $event->getFieldArray();
+        if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($recordFieldArray['notification_create'] ?? true) === false) {
             return;
         }
 
-        $createNotificationConfiguration = (bool)($record['notification_create'] ?? true);
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $recordAllowedEvent = $eventDispatcher->dispatch(new RecordAllowedEvent($table, $recordId, $recordFieldArray, $event->getDataHandler()));
+        if (!$recordAllowedEvent->isRecordAllowed()) {
+            return;
+        }
+
+        $createNotificationConfiguration = (bool)($recordFieldArray['notification_create'] ?? true);
         if ($event->getStatus() === 'update' && MathUtility::canBeInterpretedAsInteger($recordId)) {
             $history = $event->getDataHandler()->getHistoryRecords()[$table . ':' . $recordId];
             $createNotificationConfiguration = (bool)($history['newRecord']['notification_create'] ?? false);
@@ -72,9 +83,13 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        $pid = $record['pid'] ?? 0;
-        if ($pid === 0 && $event->getStatus() === 'update') {
-            $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? 0;
+        $pid = $recordFieldArray['pid'] ?? false;
+        if ($pid === false && $event->getStatus() === 'update') {
+            if ($this->settingsUtility->storeNotificationsOnRecordPid()) {
+                $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? 0;
+            } else {
+                $pid = $this->settingsUtility->getNotificationStorage();
+            }
         }
 
         $newId = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW');
@@ -99,8 +114,6 @@ class AfterDatabaseOperationsEventListener extends AbstractEventListener
                 $data[Configuration::TABLE_NAME][$newId]['fe_groups'] = $feGroups;
             }
         }
-
-        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
         $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($data, $event));
 
         if ($dataEvent->isAddConfiguration()) {

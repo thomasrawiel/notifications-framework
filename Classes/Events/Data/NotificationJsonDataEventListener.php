@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 
 #[AsEventListener(
     identifier: 'traw-notifications/notifcation-json-data',

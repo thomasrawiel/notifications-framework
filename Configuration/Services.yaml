@@ -20,6 +20,11 @@ services:
       - name: event.listener
         event: TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent
         identifier: 'traw-notifications/notifcation-json-data'
+  TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEventListener:
+    tags:
+      - name: event.listener
+        event: TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent
+        identifier: 'traw-notifications/record-allowed'
 
   TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler:
     public: true

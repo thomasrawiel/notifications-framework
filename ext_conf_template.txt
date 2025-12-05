@@ -8,4 +8,9 @@ sendToEveryoneIfNoAudienceIsSelected = 0
 feUserLookupUids = 0
 # cat=basic/enable; type=int; label=Feuser lookup recursive levels
 feUserLookupRecursive = 0
+# cat=basic/enable; type=int; label=Notification Storage
+notificationStorage = 0
+# cat=basic/enable; type=boolean; label=Store notifications on record pid
+storeNotificationsOnRecordPid = 1
+
 

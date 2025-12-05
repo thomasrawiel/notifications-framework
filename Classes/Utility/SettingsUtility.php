@@ -48,4 +48,13 @@ final class SettingsUtility
     {
         return (int)$this->config['feUserLookupRecursive'];
     }
+
+    public function storeNotificationsOnRecordPid(): bool
+    {
+        return (bool)($this->config['storeNotificationsOnRecordPid'] ?? true);
+    }
+
+    public function getNotificationStorage():int {
+        return (int)$this->config['notificationStorage'];
+    }
 }
