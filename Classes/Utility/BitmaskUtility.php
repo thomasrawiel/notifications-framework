@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Class BitmaskUtility
  *
@@ -59,9 +62,13 @@ class BitmaskUtility
      * @return int The resulting bitmask as an integer.
      * @throws \InvalidArgumentException If a value in value mode is not a power of two.
      */
-    public static function encodeCheckboxes(array $checkedValues, bool $useValues = false): int
+    public static function encodeCheckboxes(string|array $checkedValues, bool $useValues = false): int
     {
         $bitmask = 0;
+
+        if (is_string($checkedValues)) {
+            $checkedValues = GeneralUtility::trimExplode(',', $checkedValues, true);
+        }
 
         foreach ($checkedValues as $val) {
             if ($val === null) continue;
