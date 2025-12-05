@@ -37,14 +37,13 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         }
         $recordId = $event->getId();
         $table = $event->getTable();
+        $record = BackendUtility::getRecord($table, $recordId);
 
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
-            $recordFieldArray = BackendUtility::getRecord($table, $recordId, 'type,record,table');
-
-            if (Type::isRecordType($recordFieldArray['type']) && !empty($recordFieldArray['record']) && !str_starts_with($recordFieldArray['record'], $recordFieldArray['table'] . '_')) {
+            if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
                 $data[Configuration::TABLE_NAME][$recordId] = [
-                    'table' => preg_replace('/_\d+$/', '', $recordFieldArray['record']),
+                    'table' => preg_replace('/_\d+$/', '', $record['record']),
                 ];
                 $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
                 $dataHandler->start($data, []);
@@ -54,6 +53,11 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         }
 
         if (!in_array($table, $this->settingsUtility->getAllowedTables())) {
+            return;
+        }
+
+        //we dont need translations for record configurations, we translate the notifications in the Generate command
+        if(($record['sys_language_uid'] ?? false)!== 0) {
             return;
         }
 
@@ -70,6 +74,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
 
         $createNotificationConfiguration = (bool)($recordFieldArray['notification_create'] ?? true);
         if ($event->getStatus() === 'update' && MathUtility::canBeInterpretedAsInteger($recordId)) {
+            //if we update a record, we check if the notification_create field has changed
             $history = $event->getDataHandler()->getHistoryRecords()[$table . ':' . $recordId];
             $createNotificationConfiguration = (bool)($history['newRecord']['notification_create'] ?? false);
         }
@@ -114,7 +119,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
                 $data[Configuration::TABLE_NAME][$newId]['fe_groups'] = $feGroups;
             }
         }
-        $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($data, $event));
+        $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($data, $newId, $event));
 
         if ($dataEvent->isAddConfiguration()) {
             $dataHandler = GeneralUtility::makeInstance(DataHandler::class);

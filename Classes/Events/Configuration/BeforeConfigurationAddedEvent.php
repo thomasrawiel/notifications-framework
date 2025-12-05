@@ -15,7 +15,7 @@ final class BeforeConfigurationAddedEvent
      * @param array              $data
      * @param AbstractEvent|null $event
      */
-    public function __construct(private array $data = [], private ?AbstractEvent $event = null)
+    public function __construct(private array $data = [], private int|string $newId, private ?AbstractEvent $event = null)
     {
     }
 
@@ -37,6 +37,16 @@ final class BeforeConfigurationAddedEvent
         return $this->data;
     }
 
+    public function getNewId(): int|string
+    {
+        return $this->newId;
+    }
+
+    public function getEvent(): ?AbstractEvent
+    {
+        return $this->event;
+    }
+
     public function isConfigurationIsAllowed(): bool
     {
         return $this->configurationIsAallowed;
@@ -51,4 +61,5 @@ final class BeforeConfigurationAddedEvent
     {
         $this->addConfiguration = $addConfiguration;
     }
+
 }
