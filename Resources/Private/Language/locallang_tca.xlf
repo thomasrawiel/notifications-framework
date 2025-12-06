@@ -5,6 +5,9 @@
           date="2025-04-02T112:00:00Z" product-name="notifications_framework">
         <header/>
         <body>
+			<trans-unit id="configuration.model.title">
+				<source>Notification configuration</source>
+			</trans-unit>
             <trans-unit id="div.configuration">
                 <source>Configuration</source>
             </trans-unit>

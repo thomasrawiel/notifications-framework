@@ -9,7 +9,7 @@ $typesWithRecordFieldList = $typeClass->getTypesWithRecordFieldList();
 
 return [
     'ctrl' => [
-        'title' => 'Notification configuration',
+        'title' => $LLL . 'configuration.model.title',
         'label' => 'title',
         'descriptionColumn' => 'rowDescription',
         'tstamp' => 'tstamp',
@@ -106,19 +106,16 @@ return [
             ],
         ],
         'crdate' => [
-            'label' => 'crdate',
             'config' => [
                 'type' => 'passthrough',
             ],
         ],
         'tstamp' => [
-            'label' => 'tstamp',
             'config' => [
                 'type' => 'passthrough',
             ],
         ],
         'sorting' => [
-            'label' => 'sorting',
             'config' => [
                 'type' => 'passthrough',
             ],

@@ -1,0 +1,89 @@
+<html
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+        data-namespace-typo3-fluid="true">
+
+<f:layout name="Backend/Default"/>
+<f:section name="headline">
+    <h1>
+        <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_widgets_mod.xlf:module.index.title"/>
+    </h1>
+</f:section>
+<f:section name="content">
+    <div style="margin-bottom:24px" class="infolist-container">
+        <div class="infolist">
+            <div class="infolist-content">
+                <div class="table-fit mb-0">
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>
+                                <f:render partial="Backend/Sort" section="FieldNameSort"
+                                          arguments="{action:action,demand:demand, field:'uid', label:'UID', disableSort:1}"/>
+                            </th>
+                            <f:if condition="{showPidColumn}">
+                                <th>
+                                    <f:render partial="Backend/Sort" section="FieldNameSort"
+                                              arguments="{action:action,demand:demand, field:'pid', label:'PID'}"/>
+                                </th>
+                            </f:if>
+                            <th>
+                                <f:render partial="Backend/Sort" section="FieldNameSort"
+                                          arguments="{action:action,demand:demand, field:'crdate', label:'Created', disableSort:1}"/>
+                            </th>
+                            <th>
+                                <f:render partial="Backend/Sort" section="FieldNameSort"
+                                          arguments="{action:action,demand:demand, field:'type', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
+                            </th>
+                            <th>
+                                <f:render partial="Backend/Sort" section="FieldNameSort"
+                                          arguments="{action:action,demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}', disableSort:1}"/>
+                            </th>
+                            <th>
+
+                            </th>
+                            <th>
+
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                        <f:for as="configuration" each="{configurations}">
+                            <tr>
+                                <td>
+                                    <core:icon identifier="actions-search"/>
+                                    {configuration.uid}
+                                </td>
+                                <f:if condition="{showPidColumn}">
+                                <td>
+                                    {configuration.pid}
+                                </td>
+                                </f:if>
+                                <td>
+                                    <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                </td>
+                                <td>
+                                    <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}" />
+                                </td>
+
+                                <td>
+                                    <f:link.action action="detailConfiguration" arguments="{configuration:configuration.uid}">
+                                        <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
+                                    </f:link.action>
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        </f:for>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</f:section>
+</html>

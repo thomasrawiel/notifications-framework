@@ -1,0 +1,35 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<f:section name="FieldNameSort">
+    <f:if condition="{disableSort}">
+        <f:then>{label}</f:then>
+        <f:else>
+            <span class="{f:if(condition: '{demand.sortField} == {field}', else:'hidden')}">
+                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+                               class="{f:if(condition:'{demand.sortDirection} == \'asc\'', then:'hidden')}"
+                               action="{action}"
+                               arguments="{demand:{sortField:demand.sortField,sortDirection:'asc'}}">
+                     {label}
+                    <core:icon identifier="actions-sort-amount-down"/>
+                </f:link.action>
+                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+                               class="{f:if(condition:'{demand.sortDirection} == \'desc\'', then:'hidden')}"
+                               action="{action}"
+                               arguments="{demand:{sortField:demand.sortField,sortDirection:'desc'}}">
+                     {label}
+                    <core:icon identifier="actions-sort-amount-up"/>
+                </f:link.action>
+            </span>
+            <span class="{f:if(condition: '{demand.sortField} == {field}', then:'hidden')}">
+                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+                               action="{action}"
+                               arguments="{demand:{sortField:field,sortDirection:'{f:if(condition: \'{defaultSort}\',then:defaultSort,else:\'asc\')}'}}">
+                     {label}
+                    <core:icon identifier="actions-sort-amount"/>
+                </f:link.action>
+            </span>
+        </f:else>
+    </f:if>
+</f:section>
+</html>
