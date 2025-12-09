@@ -48,6 +48,7 @@ class NotificationFactory
         $notification->setUrl($this->createLink($configuration));
 
         if (in_array($type, $this->type->getTypesWithCustomMessage())) {
+            $notification->setTitle($configuration->getLabel());
             $notification->setLabel($configuration->getLabel());
             $notification->setMessage($configuration->getMessage());
         }

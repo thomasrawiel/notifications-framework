@@ -119,7 +119,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
                 $data[Configuration::TABLE_NAME][$newId]['fe_groups'] = $feGroups;
             }
         }
-        $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($data, $newId, $event));
+        $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($newId, $data, $event));
 
         if ($dataEvent->isAddConfiguration()) {
             $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
