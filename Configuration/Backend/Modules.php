@@ -20,6 +20,7 @@ return [
         'controllerActions' => [
             \TRAW\NotificationsFramework\Controller\Backend\ConfigurationsController::class => [
                 'listConfigurations',
+                'detailConfiguration',
             ],
         ],
         'navigationComponent' => '',

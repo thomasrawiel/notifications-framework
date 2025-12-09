@@ -1,0 +1,35 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<tr>
+    <td>
+        <core:icon identifier="actions-search"/>
+        {configuration.uid}
+    </td>
+    <f:if condition="{showPidColumn}">
+        <td>
+            {configuration.pid}
+        </td>
+    </f:if>
+    <td>
+        <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+    </td>
+    <td>
+        <f:translate
+            key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}"/>
+    </td>
+
+    <td>
+        <f:link.action action="detailConfiguration"
+                       arguments="{configuration:configuration.uid}">
+            <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
+        </f:link.action>
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+</tr>
+</html>

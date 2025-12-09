@@ -53,4 +53,8 @@ class ConfigurationsController extends ActionController
 
         return $this->moduleTemplate->renderResponse('ListConfigurations');
     }
+
+    public function detailConfigurationAction(): ResponseInterface {
+        return $this->moduleTemplate->renderResponse('DetailConfiguration');
+    }
 }
