@@ -54,7 +54,7 @@ class NotificationJsonDataEventListener
 
         $fileRepository = GeneralUtility::makeInstance(FileRepository::class);
 
-        if (in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED])) {
+        if (in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED], true)) {
             //tx_news_domain_model_news_12345 => (int)12345
             $lookupUid = (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1);
             foreach ($this->imageUtility->guessImageField($lookupTable) as $field) {

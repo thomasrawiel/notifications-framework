@@ -110,11 +110,11 @@ final class Type
 
     public function isRecordType(?string $type = null): bool
     {
-        return in_array($type, $this->getTypesWithRecordField());
+        return in_array($type, $this->getTypesWithRecordField(), true);
     }
 
     public function isCustomMessageType(?string $type = null): bool
     {
-        return in_array($type, $this->getTypesWithCustomMessage());
+        return in_array($type, $this->getTypesWithCustomMessage(), true);
     }
 }

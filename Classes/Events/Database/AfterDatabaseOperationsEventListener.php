@@ -52,7 +52,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        if (!in_array($table, $this->settingsUtility->getAllowedTables())) {
+        if (!in_array($table, $this->settingsUtility->getAllowedTables(), true)) {
             return;
         }
 

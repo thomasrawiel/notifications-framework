@@ -53,7 +53,7 @@ class NotificationService
                     $site = GeneralUtility::makeInstance(SiteFinder::class)
                         ->getSiteByPageId($configuration->getPid());
                     foreach ($site->getAllLanguages() as $language) {
-                        if (in_array($language->getLanguageId(), $translationsDone)) {
+                        if (in_array($language->getLanguageId(), $translationsDone, true)) {
                             //skip, because we already have that one
                             continue;
                         }

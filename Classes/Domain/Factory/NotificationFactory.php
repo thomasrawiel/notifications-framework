@@ -47,13 +47,13 @@ class NotificationFactory
         //$notification->setLabel($type . ' Notification');
         $notification->setUrl($this->createLink($configuration));
 
-        if (in_array($type, $this->type->getTypesWithCustomMessage())) {
+        if (in_array($type, $this->type->getTypesWithCustomMessage(), true)) {
             $notification->setTitle($configuration->getLabel());
             $notification->setLabel($configuration->getLabel());
             $notification->setMessage($configuration->getMessage());
         }
 
-        if (in_array($type, $this->type->getTypesWithRecordField())) {
+        if (in_array($type, $this->type->getTypesWithRecordField(), true)) {
             $notification->setLabel('Set the label in your BeforeNotificationAddedEvent');
             $notification->setMessage('Set the message in your BeforeNotificationAddedEvent');
         }
