@@ -37,7 +37,7 @@ class LinkService
 
     public function __construct(
         private readonly \TYPO3\CMS\Core\LinkHandling\LinkService $linkService,
-        private readonly Type $type
+        private readonly Type                                     $type
     )
     {
     }
@@ -62,15 +62,19 @@ class LinkService
         //fake-frontend
         $this->createGlobals($site, $configuration, $languageUid);
         $controller = $this->bootFrontendController($site, [], $this->request);
+        $linkDetails = [];
 
-        if ($this->type->isRecordType($configuration->getType())) {
+        //for records and custom message with an attached record, try using LinkHandler to create url
+        if ($this->type->isRecordType($configuration->getType()) || !empty($configuration->getRecord())) {
             $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
             $linkDetails = [
                 'type' => 'record',
                 'identifier' => $identifier,
                 'uid' => (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1),
             ];
-        } else {
+        }
+
+        if (empty($linkDetails)) {
             $linkDetails = $this->linkService->resolve($configuration->getUrl());
         }
         //unset request, we dont need that anymore
@@ -104,6 +108,10 @@ class LinkService
 
     private function getLinkHandlerIdentifierFromTable(string $table, TypoScriptFrontendController $controller): ?string
     {
+        if ($table === '') {
+            return null;
+        }
+
         $tsConfig = $this->getPageTsConfig($controller, $this->request)['TCEMAIN.']['linkHandler.'] ?? null;
         if ($tsConfig === null) {
             return null;
