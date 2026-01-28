@@ -41,15 +41,20 @@ class LinkService
 
     public function createLink(Configuration $configuration, ?int $languageUid = null): ?string
     {
-        $site = GeneralUtility::makeInstance(SiteFinder::class)
-            ->getSiteByPageId($configuration->getPid()); // pick a site root page
+        try {
+            $site = GeneralUtility::makeInstance(SiteFinder::class)
+                ->getSiteByPageId($configuration->getPid()); // pick a site root page
+        } catch (\Exception $e) {
+            if ($e->getCode() === 1521716622) {
+                throw new \Exception('Cannot create link because the PID ' . $configuration->getPid() . ' is invalid. Couldn\'t find a valid siteconfiguration to create links', 1521716622, $e);
+            } else {
+                throw $e;
+            }
+        }
 
         if ($site === null || $site instanceof NullSite) {
             return null;
         }
-
-
-
 
         //fake-frontend
         $this->createGlobals($site, $configuration, $languageUid);
@@ -60,7 +65,7 @@ class LinkService
             $linkDetails = [
                 'type' => 'record',
                 'identifier' => $identifier,
-                'uid' => (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1)
+                'uid' => (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1),
             ];
         } else {
             $linkDetails = $this->linkService->resolve($configuration->getUrl());
@@ -94,18 +99,19 @@ class LinkService
         }
     }
 
-    private function getLinkHandlerIdentifierFromTable(string $table, TypoScriptFrontendController $controller): ?string {
+    private function getLinkHandlerIdentifierFromTable(string $table, TypoScriptFrontendController $controller): ?string
+    {
         $tsConfig = $this->getPageTsConfig($controller, $this->request)['TCEMAIN.']['linkHandler.'] ?? null;
         if ($tsConfig === null) {
             return null;
         }
-        foreach($tsConfig as $identifier => $linkhandlerConfig) {
-            if(($linkhandlerConfig['configuration.']['table']??'') === $table) {
+        foreach ($tsConfig as $identifier => $linkhandlerConfig) {
+            if (($linkhandlerConfig['configuration.']['table'] ?? '') === $table) {
                 return str_ends_with($identifier, '.') ? rtrim($identifier, '.') : $identifier;
             }
         }
 
-return null;
+        return null;
     }
 
     private function createGlobals(Site $site, Configuration $configuration, ?int $languageUid = null): void
