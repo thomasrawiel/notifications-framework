@@ -99,29 +99,22 @@ final class Type
         return implode(',', $this->getTypesWithRecordField());
     }
 
-    public static function isValidType(?string $type = null): bool
+    public function isValidType(?string $type = null): bool
     {
-        return match ($type) {
-            self::DEFAULT,
-            self::SUCCESS,
-            self::ERROR,
-            self::INFO,
-            self::WARNING,
-            self::USEREVENT,
-            self::RECORDADDED,
-            self::RECORDUPDATED => true,
-            default => false,
-        };
+        if (is_null($type)) {
+            return false;
+        }
+
+        return $this->isRecordType($type) || $this->isCustomMessageType($type);
     }
 
-    public static function isRecordType(string $type): bool
+    public function isRecordType(?string $type = null): bool
     {
-        return self::isValidType($type)
-            && match ($type) {
-                self::USEREVENT,
-                self::RECORDADDED,
-                self::RECORDUPDATED => true,
-                default => false,
-            };
+        return in_array($type, $this->getTypesWithRecordField());
+    }
+
+    public function isCustomMessageType(?string $type = null): bool
+    {
+        return in_array($type, $this->getTypesWithCustomMessage());
     }
 }

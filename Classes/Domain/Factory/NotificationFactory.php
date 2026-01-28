@@ -38,7 +38,7 @@ class NotificationFactory
     public function createNotification(Configuration $configuration, FrontendUser $frontendUser): Notification
     {
         $type = $configuration->getType();
-        if (!Type::isValidType($type)) {
+        if (!$validType = $this->type->isValidType($type)) {
             throw new \Exception('Notification type not supported');
         }
 

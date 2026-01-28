@@ -35,7 +35,10 @@ class LinkService
 {
     private ?ServerRequestInterface $request;
 
-    public function __construct(private readonly \TYPO3\CMS\Core\LinkHandling\LinkService $linkService)
+    public function __construct(
+        private readonly \TYPO3\CMS\Core\LinkHandling\LinkService $linkService,
+        private readonly Type $type
+    )
     {
     }
 
@@ -60,7 +63,7 @@ class LinkService
         $this->createGlobals($site, $configuration, $languageUid);
         $controller = $this->bootFrontendController($site, [], $this->request);
 
-        if (Type::isRecordType($configuration->getType())) {
+        if ($this->type->isRecordType($configuration->getType())) {
             $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
             $linkDetails = [
                 'type' => 'record',
