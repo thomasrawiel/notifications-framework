@@ -15,7 +15,7 @@ final class BeforeConfigurationAddedEvent
      * @param array              $data
      * @param AbstractEvent|null $event
      */
-    public function __construct(private array $data = [], private int|string|null $newId = null, private ?AbstractEvent $event = null)
+    public function __construct(private int|string $newId, private array $data = [], private ?AbstractEvent $event = null)
     {
     }
 
@@ -37,7 +37,7 @@ final class BeforeConfigurationAddedEvent
         return $this->data;
     }
 
-    public function getNewId(): int|string|null
+    public function getNewId(): int|string
     {
         return $this->newId;
     }

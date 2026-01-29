@@ -106,7 +106,7 @@ final class BackendUserInfo
         $this->httpUserAgent = $normalizedParams->getHttpUserAgent();
         $this->host = $normalizedParams->getRequestHost();
         $this->siteName = $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
-        $this->isSystemMaintainer = in_array((int)$backendUser['uid'], array_map('intval', $GLOBALS['TYPO3_CONF_VARS']['SYS']['systemMaintainers'] ?? []));
+        $this->isSystemMaintainer = in_array((int)$backendUser['uid'], array_map('intval', $GLOBALS['TYPO3_CONF_VARS']['SYS']['systemMaintainers'] ?? []), true);
     }
 
     /**

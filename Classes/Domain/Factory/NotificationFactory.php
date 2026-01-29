@@ -38,7 +38,7 @@ class NotificationFactory
     public function createNotification(Configuration $configuration, FrontendUser $frontendUser): Notification
     {
         $type = $configuration->getType();
-        if (!Type::isValidType($type)) {
+        if (!$validType = $this->type->isValidType($type)) {
             throw new \Exception('Notification type not supported');
         }
 
@@ -47,12 +47,13 @@ class NotificationFactory
         //$notification->setLabel($type . ' Notification');
         $notification->setUrl($this->createLink($configuration));
 
-        if (in_array($type, $this->type->getTypesWithCustomMessage())) {
+        if (in_array($type, $this->type->getTypesWithCustomMessage(), true)) {
+            $notification->setTitle($configuration->getLabel());
             $notification->setLabel($configuration->getLabel());
             $notification->setMessage($configuration->getMessage());
         }
 
-        if (in_array($type, $this->type->getTypesWithRecordField())) {
+        if (in_array($type, $this->type->getTypesWithRecordField(), true)) {
             $notification->setLabel('Set the label in your BeforeNotificationAddedEvent');
             $notification->setMessage('Set the message in your BeforeNotificationAddedEvent');
         }
