@@ -62,6 +62,9 @@
             <trans-unit id="configuration.type.warning">
                 <source>Warning</source>
             </trans-unit>
+			<trans-unit id="configuration.type.error">
+				<source>Error</source>
+			</trans-unit>
             <trans-unit id="configuration.type.info">
                 <source>Information</source>
             </trans-unit>
