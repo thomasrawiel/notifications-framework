@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Reelworx\TYPO3\FakeFrontend\FakeFrontendService;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Type;
+use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\TypoScriptAspect;
@@ -70,7 +71,7 @@ class LinkService
             $linkDetails = [
                 'type' => 'record',
                 'identifier' => $identifier,
-                'uid' => (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1),
+                'uid' => RecordUtility::getRecordUidAsIntegerFromConfiguration($configuration),
             ];
         }
 
