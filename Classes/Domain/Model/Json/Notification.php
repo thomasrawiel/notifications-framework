@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
 use SourceBroker\T3api\Annotation as T3api;
+use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -16,6 +17,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 /**
  * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
  */
+
 /**
  * @T3api\ApiResource(
  *     collectionOperations={
@@ -170,7 +172,7 @@ class Notification extends AbstractEntity
     public function setRead(int $read): void
     {
         $this->read = $read;
-        $this->readDate = $read === 1 ? ($this->readDate ?: time()) : 0;
+        $this->readDate = $read === 1 ? ($this->readDate ? : time()) : 0;
     }
 
     public function getImage(): ?ObjectStorage
@@ -208,7 +210,16 @@ class Notification extends AbstractEntity
             'text' => $this->message,
             'timestamp' => $tstampIso,
             'isUnread' => !$this->read,
-            'type' => $this->type,
+            'type' => match ($this->type) {
+                Type::INFO,
+                Type::SUCCESS,
+                Type::WARNING,
+                Type::ERROR => 'message',
+                Type::RECORDADDED,
+                Type::RECORDUPDATED => 'record',
+                Type::USEREVENT => 'custom',
+                default => $this->type,
+            },
             'url' => $this->url,
             'media' => null,
         ];
