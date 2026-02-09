@@ -1,16 +1,20 @@
-# cat=basic/enable; type=boolean; label=Automatically create notification for new records (in allowed tables)
+# customsubcategory=allowed=Allowed tables
+# customsubcategory=storage=Storage
+
+# cat=Features/enable; type=boolean; label=Automatically create notification for new records (in allowed tables)
 autoCreateNotifications = 0
-# cat=basic/enable; type=string; label=Commalist of allowed tables
-allowedTables = pages
-# cat=basic/enable; type=boolean; label=Send notifications to every fe_user if no audience is selected
+# cat=Features/enable; type=boolean; label=Send notifications to every fe_user if no audience is selected
 sendToEveryoneIfNoAudienceIsSelected = 0
-# cat=basic/enable; type=string; label=Look for fe_users in these folders
-feUserLookupUids = 0
-# cat=basic/enable; type=int; label=Feuser lookup recursive levels
-feUserLookupRecursive = 0
-# cat=basic/enable; type=int; label=Notification Storage
-notificationStorage = 0
-# cat=basic/enable; type=boolean; label=Store notifications on record pid
+# cat=Features/enable; type=boolean; label=Store notifications on record pid
 storeNotificationsOnRecordPid = 1
 
 
+# cat=Storage/allowed/a; type=string; label=Commalist of allowed tables, may be overwritten by events
+allowedTables = pages
+
+# cat=Storage/storage/b; type=string; label=Look for fe_users in these folders
+feUserLookupUids = 0
+# cat=Storage/storage/c; type=int; label=Feuser lookup recursive levels
+feUserLookupRecursive = 0
+# cat=Storage/storage/d; type=int; label=Notification Storage
+notificationStorage = 0
