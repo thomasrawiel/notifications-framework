@@ -72,9 +72,7 @@ return [
             'showitem' => 'rowDescription,--linebreak--,table,--linebreak--,automatic',
         ],
         'hidden' => [
-            'showitem' => '
-                hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden
-            ',
+            'showitem' => 'hidden',
         ],
     ],
     'types' => [

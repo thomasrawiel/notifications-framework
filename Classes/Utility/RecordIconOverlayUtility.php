@@ -19,18 +19,19 @@ final class RecordIconOverlayUtility
             return '';
         }
 
-        if (empty($row['target_audience'])) {
-            return self::ICON_IDENTIFIER_QUESTION;
-        }
-
         $configurationRecord = BackendUtility::getRecord(Configuration::TABLE_NAME, $row['sys_language_uid'] > 0 ? ($row['l10n_parent'][0] ?? $row['l10n_parent']) : $row['uid']);
         if ($configurationRecord['done'] ?? false) {
             return self::ICON_IDENTIFIER_CHECK;
         }
 
-        return $configurationRecord['push']
-            ? self::ICON_IDENTIFIER_QUEUE
-            : self::ICON_IDENTIFIER_PAUSE;
+        if ($configurationRecord['push'] ?? false) {
+            return self::ICON_IDENTIFIER_QUEUE;
+        }
 
+        if (empty($row['target_audience'])) {
+            return self::ICON_IDENTIFIER_QUESTION;
+        }
+
+        return self::ICON_IDENTIFIER_PAUSE;
     }
 }
