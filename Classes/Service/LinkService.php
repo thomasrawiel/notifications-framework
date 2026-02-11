@@ -68,11 +68,14 @@ class LinkService
         //for records and custom message with an attached record, try using LinkHandler to create url
         if ($this->type->isRecordType($configuration->getType()) || !empty($configuration->getRecord())) {
             $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
-            $linkDetails = [
-                'type' => 'record',
-                'identifier' => $identifier,
+            $type = $identifier === 'page' ? 'page' : 'record';
+
+            $qs = http_build_query([
+                'identifier' => $identifier !== 'page' ? $identifier : null,
                 'uid' => RecordUtility::getRecordUidAsIntegerFromConfiguration($configuration),
-            ];
+            ]);
+            $resolveString = 't3://' . $type . '?' . $qs;
+            $linkDetails = $this->linkService->resolve($resolveString);
         }
 
         if (empty($linkDetails)) {
@@ -93,12 +96,13 @@ class LinkService
             // @todo: Add a proper interface.
             throw new \RuntimeException('Single link builder must extend AbstractTypolinkBuilder', 1646504471);
         }
+
         try {
-            $configuration = [
+            $config = [
                 'forceAbsoluteUrl' => true,
                 'linkAccessRestrictedPages' => true,
             ];
-            $result = $linkBuilder->build($linkDetails, '', '', $configuration);
+            $result = $linkBuilder->build($linkDetails, '', '', $config);
             $this->cleanupTSFE();
             return (new Uri($result->getUrl()))->__toString();
         } catch (UnableToLinkException $e) {
@@ -111,6 +115,10 @@ class LinkService
     {
         if ($table === '') {
             return null;
+        }
+
+        if ($table === 'pages') {
+            return 'page';
         }
 
         $tsConfig = $this->getPageTsConfig($controller, $this->request)['TCEMAIN.']['linkHandler.'] ?? null;
