@@ -277,6 +277,7 @@ return [
             'config' => [
                 'type' => 'text',
                 'max' => 255,
+                'required' => true,
             ],
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
