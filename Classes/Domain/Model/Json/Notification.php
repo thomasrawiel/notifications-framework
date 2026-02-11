@@ -211,6 +211,7 @@ class Notification extends AbstractEntity
             'timestamp' => $tstampIso,
             'isUnread' => !$this->read,
             'type' => match ($this->type) {
+                Type::DEFAULT,
                 Type::INFO,
                 Type::SUCCESS,
                 Type::WARNING,
