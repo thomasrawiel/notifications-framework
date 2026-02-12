@@ -19,7 +19,12 @@ final class RecordIconOverlayUtility
             return '';
         }
 
-        $configurationRecord = BackendUtility::getRecord(Configuration::TABLE_NAME, $row['sys_language_uid'] > 0 ? ($row['l10n_parent'][0] ?? $row['l10n_parent']) : $row['uid']);
+        $configurationRecord = BackendUtility::getRecord(
+            Configuration::TABLE_NAME,
+            $row['sys_language_uid'] > 0 ? ($row['l10n_parent'][0] ?? $row['l10n_parent']) : $row['uid'],
+            'done,push,target_audience'
+
+        );
         if ($configurationRecord['done'] ?? false) {
             return self::ICON_IDENTIFIER_CHECK;
         }
@@ -28,7 +33,7 @@ final class RecordIconOverlayUtility
             return self::ICON_IDENTIFIER_QUEUE;
         }
 
-        if (empty($row['target_audience'])) {
+        if (empty($configurationRecord['target_audience'])) {
             return self::ICON_IDENTIFIER_QUESTION;
         }
 
