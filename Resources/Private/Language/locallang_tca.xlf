@@ -45,13 +45,13 @@
                 <source>Notification type</source>
             </trans-unit>
             <trans-unit id="configuration.type.description">
-                <source>Notification type description</source>
+                <source></source>
             </trans-unit>
             <trans-unit id="configuration.type.groups.actions">
                 <source>Actions</source>
             </trans-unit>
-            <trans-unit id="configuration.type.groups.status">
-                <source>Status</source>
+            <trans-unit id="configuration.type.groups.message">
+                <source>Message</source>
             </trans-unit>
             <trans-unit id="configuration.type.default">
                 <source>Default</source>
