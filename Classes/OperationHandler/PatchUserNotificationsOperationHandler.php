@@ -8,8 +8,8 @@ use SourceBroker\T3api\Domain\Model\OperationInterface;
 use SourceBroker\T3api\Exception\OperationNotAllowedException;
 use SourceBroker\T3api\OperationHandler\AbstractItemOperationHandler;
 use Symfony\Component\HttpFoundation\Request;
-use TRAW\NotificationsFramework\Domain\Model\Json\Notification;
-use TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository;
+use TRAW\NotificationsFramework\Domain\Model\Reference;
+use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -39,8 +39,8 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
 
         $result = null;
 
-        $repository = GeneralUtility::makeInstance(NotificationRepository::class);
-        $repository->setObjectType(Notification::class);
+        $repository = GeneralUtility::makeInstance(ReferenceRepository::class);
+        $repository->setObjectType(Reference::class);
 
         //mark all notifications as read
         if ($operation->getKey() === 'patch_user_notifications') {

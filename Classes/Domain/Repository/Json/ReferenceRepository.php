@@ -5,12 +5,13 @@ namespace TRAW\NotificationsFramework\Domain\Repository\Json;
 
 use SourceBroker\T3api\Domain\Repository\CommonRepository;
 use Symfony\Component\HttpFoundation\Request;
+use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
+use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-/**
- * Class NotificationRepository
- */
-class NotificationRepository extends CommonRepository
+class ReferenceRepository extends CommonRepository
 {
     /**
      * @param array   $apiFilters
@@ -20,17 +21,20 @@ class NotificationRepository extends CommonRepository
      */
     public function findFiltered(array $apiFilters, Request $request): QueryInterface
     {
+//       $frontendUser = (GeneralUtility::makeInstance(FrontendUserRepository::class))
+//           ->findByUid($request->attributes->get('frontend.user')->user['uid']);
+
+
         $query = parent::findFiltered($apiFilters, $request);
         $querySettings = $query->getQuerySettings()
-            ->setRespectStoragePage(false);
-        //->setRespectSysLanguage(false);
+            ->setRespectStoragePage(false)
+        ->setRespectSysLanguage(false);
         $query->setQuerySettings($querySettings);
 
         $language = $request->attributes->get('language');
 
-
         $constraints = [
-            $query->equals('feUser', $request->attributes->get('frontend.user')->user['uid']),
+           $query->equals('user', $request->attributes->get('frontend.user')->user['uid']),
         ];
 
         if ($query->getConstraint()) {
@@ -49,10 +53,6 @@ class NotificationRepository extends CommonRepository
         }
 
         $query->setOrderings(['tstamp' => 'DESC']);
-
-        $orignalQuery = $query;
-
-
         return $query;
     }
 

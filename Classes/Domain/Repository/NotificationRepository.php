@@ -13,7 +13,6 @@ class NotificationRepository extends Repository
         $query = $this->createQuery();
 
         $constraints = [
-            $query->equals('feUser', $notification->getFeUser()),
             $query->equals('configuration', $notification->getConfiguration()),
             $query->equals('sys_language_uid', $notification->getSysLanguageUid())
         ];
