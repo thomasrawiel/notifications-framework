@@ -26,8 +26,6 @@ class ReferenceRepository extends CommonRepository
             ->setRespectStoragePage(false);
         $query->setQuerySettings($querySettings);
 
-        $language = $request->attributes->get('language');
-
         $constraints = [
             $query->equals('fe_user', $request->attributes->get('frontend.user')->user['uid']),
         ];

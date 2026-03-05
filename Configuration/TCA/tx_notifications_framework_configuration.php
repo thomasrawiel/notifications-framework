@@ -161,9 +161,6 @@ return [
                         'labelUnchecked' => 'DISABLED',
                     ],
                 ],
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ],
             ],
         ],
         'done' => [

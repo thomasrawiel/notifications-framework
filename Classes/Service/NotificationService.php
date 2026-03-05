@@ -106,7 +106,7 @@ class NotificationService
                 $translatedReference->setSysLanguageUid($translation->getSysLanguageUid());
 
                 $this->referenceRepository->add($translatedReference);
-                $translationsDone[] = $translatedNotification->getSysLanguageUid();
+                $translationsDone[] = $translatedReference->getSysLanguageUid();
             }
         }
         //fill translations when autotranslate=1 with the content from the default language
