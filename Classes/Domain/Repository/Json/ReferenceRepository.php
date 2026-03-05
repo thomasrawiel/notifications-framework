@@ -21,20 +21,15 @@ class ReferenceRepository extends CommonRepository
      */
     public function findFiltered(array $apiFilters, Request $request): QueryInterface
     {
-//       $frontendUser = (GeneralUtility::makeInstance(FrontendUserRepository::class))
-//           ->findByUid($request->attributes->get('frontend.user')->user['uid']);
-
-
         $query = parent::findFiltered($apiFilters, $request);
         $querySettings = $query->getQuerySettings()
-            ->setRespectStoragePage(false)
-        ->setRespectSysLanguage(false);
+            ->setRespectStoragePage(false);
         $query->setQuerySettings($querySettings);
 
         $language = $request->attributes->get('language');
 
         $constraints = [
-           $query->equals('user', $request->attributes->get('frontend.user')->user['uid']),
+            $query->equals('fe_user', $request->attributes->get('frontend.user')->user['uid']),
         ];
 
         if ($query->getConstraint()) {
@@ -56,7 +51,8 @@ class ReferenceRepository extends CommonRepository
         return $query;
     }
 
-    public function findByFeUser(int $feuserUid) {
+    public function findByFeUser(int $feuserUid)
+    {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
 

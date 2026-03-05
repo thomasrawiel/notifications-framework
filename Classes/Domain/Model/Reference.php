@@ -5,20 +5,16 @@ namespace TRAW\NotificationsFramework\Domain\Model;
 
 use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class Reference
+class Reference extends AbstractEntity
 {
-    /**
-     * @var \TRAW\NotificationsFramework\Domain\Model\FrontendUser
-     */
-    protected FrontendUser $user;
-    /**
-     * @var \TRAW\NotificationsFramework\Domain\Model\Notification
-     */
-    protected Notification $notification;
 
     public const TABLE_NAME = 'tx_notifications_framework_domain_model_notification_reference';
-
+    /**
+     * @var int
+     */
+    protected int $l10nParent = 0;
     /**
      * @var int
      */
@@ -33,24 +29,51 @@ class Reference
      */
     protected int $tstamp = 0;
 
-    public function getUser(): FrontendUser
+    protected int $sysLanguageUid;
+
+    public function __construct(protected int $notification, protected int $feUser)
     {
-        return $this->user;
     }
 
-    public function setUser(FrontendUser $user): void
-    {
-        $this->user = $user;
-    }
-
-    public function getNotification(): Notification
+    public function getNotification(): int
     {
         return $this->notification;
     }
 
-    public function setNotification(Notification $notification): void
+    public function setNotification(int $notification): void
     {
         $this->notification = $notification;
+    }
+
+    public function getFeUser(): int
+    {
+        return $this->feUser;
+    }
+
+    public function setFeUser(int $feUser): void
+    {
+        $this->feUser = $feUser;
+    }
+
+    public function getSysLanguageUid(): int
+    {
+        return $this->sysLanguageUid;
+    }
+
+    public function setSysLanguageUid(int $sysLanguageUid): void
+    {
+        $this->sysLanguageUid = $sysLanguageUid;
+        $this->_languageUid = $sysLanguageUid;
+    }
+
+    public function getL10nParent(): int
+    {
+        return $this->l10nParent;
+    }
+
+    public function setL10nParent(int $l10nParent): void
+    {
+        $this->l10nParent = $l10nParent;
     }
 
     public function getRead(): int
@@ -82,6 +105,4 @@ class Reference
     {
         $this->tstamp = $tstamp;
     }
-
-
 }

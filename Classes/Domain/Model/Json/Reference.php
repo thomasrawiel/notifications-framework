@@ -123,7 +123,7 @@ class Reference extends AbstractEntity
     {
         return [
             'configuration' => $this->notification?->getConfiguration(),
-            'user' => $this->user,
+            'user' => $this->feUser,
             'read' => $this->read,
         ];
     }

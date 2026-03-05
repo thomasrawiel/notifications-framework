@@ -35,14 +35,14 @@ class NotificationFactory
     {
     }
 
-    public function createNotification(Configuration $configuration, FrontendUser $frontendUser): Notification
+    public function createNotification(Configuration $configuration): Notification
     {
         $type = $configuration->getType();
         if (!$validType = $this->type->isValidType($type)) {
             throw new \Exception('Notification type not supported');
         }
 
-        $notification = new Notification($frontendUser->getUid(), $configuration);
+        $notification = new Notification($configuration);
         $notification->setTitle($type . ' Notification');
         //$notification->setLabel($type . ' Notification');
         $notification->setUrl($this->createLink($configuration));
@@ -73,7 +73,7 @@ class NotificationFactory
         return $this->linkService->createLink($configuration, $languageUid) ?? '';
     }
 
-    public function createNotificationTranslation(Notification $notification, Configuration $translatedConfiguration, FrontendUser $frontendUser, ?int $languageUid = null): Notification
+    public function createNotificationTranslation(Notification $notification, Configuration $translatedConfiguration, ?int $languageUid = null): Notification
     {
         $targetLanguageUid = null;
 
@@ -84,7 +84,7 @@ class NotificationFactory
         }
 
         if ($targetLanguageUid !== null) {
-            $translation = $this->createNotification($translatedConfiguration, $frontendUser);
+            $translation = $this->createNotification($translatedConfiguration);
             $translation->setSysLanguageUid($targetLanguageUid);
             $translation->setL10nParent($notification->getUid());
             $translation->setUrl($this->createLink($translatedConfiguration, $targetLanguageUid));

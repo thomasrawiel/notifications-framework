@@ -8,18 +8,12 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class NotificationRepository extends Repository
 {
-    public function notificationExists(Notification $notification): bool
+    public function notificationExists(int $configuration): bool
     {
         $query = $this->createQuery();
 
-        $constraints = [
-            $query->equals('configuration', $notification->getConfiguration()),
-            $query->equals('sys_language_uid', $notification->getSysLanguageUid())
-        ];
-
-        $query->matching(
-            $query->logicalAnd(...$constraints),
-        );
-        return $query->count() > 0;
+        return $query->matching(
+                $query->equals('configuration', $configuration),
+            )->count() > 0;
     }
 }
