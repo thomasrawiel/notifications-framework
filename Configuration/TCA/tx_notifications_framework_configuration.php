@@ -161,9 +161,6 @@ return [
                         'labelUnchecked' => 'DISABLED',
                     ],
                 ],
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ],
             ],
         ],
         'done' => [
@@ -343,8 +340,8 @@ return [
                 'items' => [
                     ['label' => '', 'value' => ''],
                     ['label' => $LLL . 'configuration.target_audience.mixed', 'value' => 'mixed', 'group' => 'users'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'group' => 'users', 'icon' => 'status-user-frontend'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'group' => 'users', 'icon' => 'status-user-group-frontend'],
+                    ['label' => $LLL . 'configuration.target_audience.users', 'value' => 'users', 'group' => 'users', 'icon' => 'status-user-frontend'],
+                    ['label' => $LLL . 'configuration.target_audience.groups', 'value' => 'groups', 'group' => 'users', 'icon' => 'status-user-group-frontend'],
                 ],
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,

@@ -5,6 +5,7 @@ namespace TRAW\NotificationsFramework\Events\Configuration;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
+use TRAW\NotificationsFramework\Domain\Model\Reference;
 
 /**
  * Class AllowedTablesEvent
@@ -14,6 +15,7 @@ final class AllowedTablesEvent
     private array $excludedTables = [
         Configuration::TABLE_NAME,
         Notification::TABLE_NAME,
+        Reference::TABLE_NAME,
     ];
 
     /**

@@ -78,10 +78,20 @@
                 <source>Target Audience</source>
             </trans-unit>
             <trans-unit id="configuration.target_audience.description">
-                <source>Target Audience</source>
+                <source>Select the audience for these notifications.
+					If no audience is selected and "Send to everyone if no audience is selected" is enabled in settings, all users will be notified automatically.</source>
             </trans-unit>
+			<trans-unit id="configuration.target_audience.">
+				<source>unspecified</source>
+			</trans-unit>
 			<trans-unit id="configuration.target_audience.mixed">
 				<source>Mixed</source>
+			</trans-unit>
+			<trans-unit id="configuration.target_audience.users">
+				<source>Website User</source>
+			</trans-unit>
+			<trans-unit id="configuration.target_audience.groups">
+				<source>Website Usergroup</source>
 			</trans-unit>
             <trans-unit id="configuration.fe_users.description">
                 <source>Select specific website users that should be notified with this configuration.</source>
@@ -126,7 +136,9 @@
 				<source>user(s) selected</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.totalusers">
-				<source>notification(s) will be generated for this configuration.</source>
+				<source>notification(s) will be generated for this configuration.
+
+					This number is based on the selected target audience and the extension's settings.</source>
 			</trans-unit>
 			<trans-unit id="notification_create">
 				<source>Create notification for this record</source>
