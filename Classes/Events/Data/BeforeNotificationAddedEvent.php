@@ -4,19 +4,13 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Events\Data;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
 
 final class BeforeNotificationAddedEvent
 {
-    public bool $addNotification = true;
-
     public function __construct(private Notification $notification, private Configuration $configuration)
     {
-    }
-
-    public function isAddNotification(): bool
-    {
-        return $this->addNotification;
     }
 
     public function getNotification(): Notification
@@ -24,18 +18,13 @@ final class BeforeNotificationAddedEvent
         return $this->notification;
     }
 
-    public function setAddNotification(bool $addNotification): void
+    public function getConfiguration(): Configuration
     {
-        $this->addNotification = $addNotification;
+        return $this->configuration;
     }
 
     public function setNotification(Notification $notification): void
     {
         $this->notification = $notification;
-    }
-
-    public function getConfiguration(): Configuration
-    {
-        return $this->configuration;
     }
 }

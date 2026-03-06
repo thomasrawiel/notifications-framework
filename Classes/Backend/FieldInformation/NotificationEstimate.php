@@ -52,28 +52,45 @@ class NotificationEstimate extends AbstractFormElement
         if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] === 1 || $row['deleted'] === 1) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
         } else {
+            /** @var Configuration $configuration */
             $configuration = $this->configurationRepository->findByUid($row['uid']);
 
             $audience = $this->audienceUtility->getAudienceFromConfiguration($configuration);
             $totalUsers = $this->audienceUtility->getUsersCountFromConfiguration($configuration);
 
+
+            $estimateHtml[] = '<p class="text-body-secondary">';
+            $estimateHtml[] = '<ul>';
+            $targetAudience = $configuration->getTargetAudience();
+            $targetAudienceLabel = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.target_audience');
+            $targetAudienceValue = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.target_audience.' . $targetAudience);
+            if (empty($targetAudienceValue)) {
+                $targetAudienceValue = $targetAudience;
+            }
+            $estimateHtml[] = "<li>$targetAudienceLabel: $targetAudienceValue</li>";
             if (!empty($audience)) {
                 $groups = count($audience['groups'] ?? []);
                 $users = count($audience['users'] ?? []);
-                $estimateHtml[] = '<p class="text-body-secondary">';
-                $estimateHtml[] = '<ul>';
-                $groupsSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.groups');
-                $estimateHtml[] = "<li>$groups $groupsSelected</li>";
-                $usersSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.users');
-                $estimateHtml[] = "<li>$users $usersSelected</li>";
-                $estimateHtml[] = '</ul>';
-            } else {
+
+                if (in_array($targetAudience, ['users', 'mixed'], true)) {
+                    $usersSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.users');
+                    $estimateHtml[] = "<li>$users $usersSelected</li>";
+                }
+                if (in_array($targetAudience, ['groups', 'mixed'], true)) {
+                    $groupsSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.groups');
+                    $estimateHtml[] = "<li>$groups $groupsSelected</li>";
+                }
+
+            }
+            $estimateHtml[] = '</ul>';
+
+            if (empty($audience)) {
                 $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
             }
 
             if ($totalUsers > 0) {
                 $LLLtotalUsers = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.totalusers');
-                $estimateHtml[] = '<p class="text-body-secondary"><strong>' . $totalUsers . '</strong> ' . $LLLtotalUsers . '</p>';
+                $estimateHtml[] = '<p class="text-body-secondary"><strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers) . '</p>';
             }
         }
 
@@ -93,7 +110,8 @@ class NotificationEstimate extends AbstractFormElement
         return $resultArray;
     }
 
-    protected function getLanguageService(): LanguageService
+    protected
+    function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
     }

@@ -30,7 +30,7 @@ services:
     public: true
   TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler:
     public: true
-  TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository:
+  TRAW\NotificationsFramework\Domain\Repository\Json\ReferenceRepository:
     public: true
   TRAW\NotificationsFramework\Utility\AudienceUtility:
     public: true

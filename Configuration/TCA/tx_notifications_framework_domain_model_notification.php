@@ -33,6 +33,7 @@ return [
         '0' => [
             'showitem' => '--div--;' . $LLL . 'div.configuration,
                 title,
+                references,
                 fe_user,
                 configuration,
                 label,
@@ -123,37 +124,12 @@ return [
         'configuration' => [
             'label' => 'Configuration',
             'config' => [
-                'type' => 'input',
-//                'renderType' => 'selectSingle',
-//                'default' => 0,
-//                'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'default' => 0,
+                'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
             ],
 
-        ],
-        'fe_user' => [
-            'label' => 'User',
-            'config' => [
-                'type' => 'input',
-//                'renderType' => 'selectSingle',
-//                'default' => 0,
-//                'foreign_table' => 'fe_users',
-            ],
-        ],
-        'read' => [
-            'label' => 'Read',
-            'config' => [
-                'type' => 'check',
-                'readOnly' => true,
-                'default' => 0,
-            ],
-        ],
-        'read_date' => [
-            'label' => 'Read date',
-            'config' => [
-                'type' => 'datetime',
-                'readOnly' => true,
-                'default' => 0,
-            ],
         ],
         'type' => [
             'label' => $LLL . 'configuration.type',
@@ -166,7 +142,6 @@ return [
                 ],
             ],
         ],
-
         'label' => [
             'label' => $LLL . 'configuration.label',
             'config' => [
@@ -212,6 +187,19 @@ return [
                 ],
             ],
            // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+        ],
+        'references' => [
+            'label' => 'Notifications Reference',
+            'config' => [
+                'type' => 'inline',
+                'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Reference::TABLE_NAME,
+                'foreign_field' => 'notification',
+                'appearance' => [
+                    'collapseAll' => 1,
+                    'levelLinksPosition' => 'top',
+                    'useSortable' => 1,
+                ],
+            ],
         ],
     ],
 ];

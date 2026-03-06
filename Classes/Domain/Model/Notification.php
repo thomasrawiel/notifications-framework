@@ -23,11 +23,6 @@ class Notification extends AbstractEntity
     protected string $title;
 
     /**
-     * @var int
-     */
-    protected int $feUser;
-
-    /**
      * @var int|null
      */
     protected int $configuration;
@@ -79,11 +74,9 @@ class Notification extends AbstractEntity
     protected $pid = 0;
 
     /**
-     * @param int           $feUser
      * @param Configuration $configuration
      */
     public function __construct(
-        int            $feUser,
         ?Configuration $configuration,
         array          $data = []
     )
@@ -107,9 +100,7 @@ class Notification extends AbstractEntity
             $this->type = $configuration->getType();
             $this->image = $configuration->getImage();
         }
-        $this->feUser = $feUser;
         $this->tstamp = time();
-
     }
 
     /**
@@ -146,24 +137,6 @@ class Notification extends AbstractEntity
     public function setPid(?int $pid): void
     {
         $this->pid = $pid;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFeUser(): int
-    {
-        return $this->feUser;
-    }
-
-    /**
-     * @param int $feUser
-     *
-     * @return void
-     */
-    public function setFeUser(int $feUser): void
-    {
-        $this->feUser = $feUser;
     }
 
     /**

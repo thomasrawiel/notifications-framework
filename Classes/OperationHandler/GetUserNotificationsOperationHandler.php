@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\OperationHandler;
 
 use Psr\Http\Message\ResponseInterface;
+use SourceBroker\T3api\Annotation\ApiFilter;
 use SourceBroker\T3api\Configuration\Configuration;
 use SourceBroker\T3api\Domain\Model\CollectionOperation;
 use SourceBroker\T3api\Domain\Model\OperationInterface;
@@ -12,8 +13,8 @@ use SourceBroker\T3api\OperationHandler\AbstractCollectionOperationHandler;
 use SourceBroker\T3api\OperationHandler\CollectionGetOperationHandler;
 use SourceBroker\T3api\Response\AbstractCollectionResponse;
 use Symfony\Component\HttpFoundation\Request;
-use TRAW\NotificationsFramework\Domain\Model\Json\Notification;
-use TRAW\NotificationsFramework\Domain\Repository\Json\NotificationRepository;
+use TRAW\NotificationsFramework\Domain\Model\Json\Reference;
+use TRAW\NotificationsFramework\Domain\Repository\Json\ReferenceRepository;
 use TRAW\NotificationsFramework\Events\Configuration\RepositoryClassesEvent;
 use TRAW\NotificationsFramework\Events\Data\FilteredNotificationsFetchedEvent;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -44,11 +45,11 @@ class GetUserNotificationsOperationHandler extends CollectionGetOperationHandler
         $collectionResponseClass = Configuration::getCollectionResponseClass();
 
         $repositoryClassesEvent = $this->eventDispatcher->dispatch(
-            new RepositoryClassesEvent(NotificationRepository::class, Notification::class),
+            new RepositoryClassesEvent(ReferenceRepository::class, Reference::class),
         );
 
-        /** @var NotificationRepository $repository */
-        $repository = GeneralUtility::makeInstance($repositoryClassesEvent->getRepositoryClass());
+        /** @var ReferenceRepository $repository */
+        $repository = GeneralUtility::makeInstance(ReferenceRepository::class);
         $repository->setObjectType($repositoryClassesEvent->getObjectClass());
 
         if (!is_subclass_of($collectionResponseClass, AbstractCollectionResponse::class)) {
@@ -62,14 +63,14 @@ class GetUserNotificationsOperationHandler extends CollectionGetOperationHandler
         }
 
         $event = new FilteredNotificationsFetchedEvent($repository->findFiltered($operation->getFilters(), $request));
-        $userNotifications = $this->eventDispatcher->dispatch($event)->getQuery();
+        $notificationReferences = $this->eventDispatcher->dispatch($event)->getQuery();
 
         /** @var AbstractCollectionResponse $responseObject */
         $responseObject = GeneralUtility::makeInstance(
             $collectionResponseClass,
             $operation,
             $request,
-            $userNotifications
+            $notificationReferences
         );
 
         return $responseObject;

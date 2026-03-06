@@ -7,6 +7,7 @@ use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
+use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
@@ -21,7 +22,7 @@ class NotificationJsonDataEventListener
 {
     public function __construct(
         private readonly ConfigurationRepository $configurationRepository,
-        private readonly ImageUtility $imageUtility,
+        private readonly ImageUtility            $imageUtility
     )
     {
     }
@@ -40,12 +41,7 @@ class NotificationJsonDataEventListener
 
     protected function attachConfigurationImageUrl(?Configuration $configuration): ?string
     {
-        if(empty($configuration)) {
-            return null;
-        }
-
-        $image = $configuration->getImage();
-        if ($image === 0 && !in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED])) {
+        if (empty($configuration)) {
             return null;
         }
 
@@ -54,9 +50,9 @@ class NotificationJsonDataEventListener
 
         $fileRepository = GeneralUtility::makeInstance(FileRepository::class);
 
-        if (in_array($configuration->getType(), [Type::RECORDUPDATED, Type::RECORDADDED], true)) {
+        if (!empty($configuration->getRecord())) {
             //tx_news_domain_model_news_12345 => (int)12345
-            $lookupUid = (int)substr($configuration->getRecord(), strlen($configuration->getTable()) + 1);
+            $lookupUid = RecordUtility::getRecordUidAsIntegerFromConfiguration($configuration);
             foreach ($this->imageUtility->guessImageField($lookupTable) as $field) {
                 $fileObjects = $fileRepository->findByRelation($lookupTable, $field, $lookupUid);
                 if (!empty($fileObjects)) {

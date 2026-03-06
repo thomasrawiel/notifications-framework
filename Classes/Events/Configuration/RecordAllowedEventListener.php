@@ -47,7 +47,7 @@ final class RecordAllowedEventListener
             return (int)$history;
         }
 
-        if (MathUtility::canBeInterpretedAsInteger($id)) {
+        if (!MathUtility::canBeInterpretedAsInteger($id)) {
             //new_id but no doktype? must be wrong
             return -1;
         }
