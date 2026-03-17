@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Command;
 
+use Doctrine\DBAL\ParameterType;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
+use TRAW\NotificationsFramework\Domain\Model\Reference;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Command for cleaning up old and read notifications and processed configurations.
@@ -31,11 +35,6 @@ final class CleanupNotificationsCommand extends Command
     public const MAX_AGE_NOTIFICATIONS_FACTOR = 1.5;
 
     /**
-     * Number of days after which configurations marked as "done" should be soft-deleted.
-     */
-    public const MAX_AGE_CONFIGURATIONS = 30;
-
-    /**
      * Output interface used for CLI feedback.
      *
      * @var OutputInterface
@@ -47,7 +46,9 @@ final class CleanupNotificationsCommand extends Command
      */
     public function __construct(
         private readonly ConnectionPool $connectionPool,
-    ) {
+        private bool                    $verbose = false
+    )
+    {
         parent::__construct();
     }
 
@@ -62,11 +63,11 @@ final class CleanupNotificationsCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
-        $verbose = $output->isVerbose();
+        $this->verbose = $output->isVerbose();
 
-        $this->removeDeleted($verbose);
-        $this->removeNotifications($verbose);
-        $this->removeConfigurations($verbose);
+        $this->removeDeleted();
+        $this->removeReferences();
+        $this->removeNotifications();
 
         return Command::SUCCESS;
     }
@@ -78,19 +79,26 @@ final class CleanupNotificationsCommand extends Command
      *
      * @return void
      */
-    private function removeDeleted(bool $verbose = false): void
+    private function removeDeleted(): void
     {
+        $references = $this->connectionPool->getConnectionForTable(Reference::TABLE_NAME)
+            ->delete(Reference::TABLE_NAME, ['deleted' => 1]);
+
+        if ($this->verbose && $references) {
+            $this->output->writeln("<info>Permanently deleted $references references previously marked as deleted.</info>");
+        }
+
         $notifications = $this->connectionPool->getConnectionForTable(Notification::TABLE_NAME)
             ->delete(Notification::TABLE_NAME, ['deleted' => 1]);
 
-        if ($verbose && $notifications) {
+        if ($this->verbose && $notifications) {
             $this->output->writeln("<info>Permanently deleted $notifications notifications previously marked as deleted.</info>");
         }
 
         $configurations = $this->connectionPool->getConnectionForTable(Configuration::TABLE_NAME)
             ->delete(Configuration::TABLE_NAME, ['deleted' => 1]);
 
-        if ($verbose && $configurations) {
+        if ($this->verbose && $configurations) {
             $this->output->writeln("<info>Permanently deleted $configurations configurations previously marked as deleted.</info>");
         }
     }
@@ -102,64 +110,92 @@ final class CleanupNotificationsCommand extends Command
      *
      * @return void
      */
-    private function removeNotifications(bool $verbose = false): void
+    private function removeReferences(): void
     {
         $maxTstampRead = $this->daysAgo(self::MAX_AGE_NOTIFICATIONS);
         $maxTstampAgeAll = $this->daysAgo(self::MAX_AGE_NOTIFICATIONS, self::MAX_AGE_NOTIFICATIONS_FACTOR);
 
         // Remove read notifications
-        $qb = $this->connectionPool->getQueryBuilderForTable(Notification::TABLE_NAME);
-        $read = $qb->update(Notification::TABLE_NAME)
+        $qb = $this->connectionPool->getQueryBuilderForTable(Reference::TABLE_NAME);
+        $read = $qb->update(Reference::TABLE_NAME)
             ->set('deleted', 1)
             ->where($qb->expr()->and(
-                $qb->expr()->eq('deleted', $qb->createNamedParameter(0)),
-                $qb->expr()->eq('read', $qb->createNamedParameter(1)),
-                $qb->expr()->lte('read_date', $qb->createNamedParameter($maxTstampRead)),
+                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('read', $qb->createNamedParameter(1, ParameterType::INTEGER)),
+                $qb->expr()->lte('read_date', $qb->createNamedParameter($maxTstampRead, ParameterType::INTEGER)),
             ))
             ->executeStatement();
 
-        if ($verbose && $read) {
-            $this->output->writeln("<info>$read read notifications were marked as deleted.</info>");
+        if ($this->verbose && $read) {
+            $this->output->writeln("<info>$read read references were marked as deleted.</info>");
         }
 
-        // Important: Create new QueryBuilder instance, as previous one may retain internal state
-        $qb = $this->connectionPool->getQueryBuilderForTable(Notification::TABLE_NAME);
-        $all = $qb->update(Notification::TABLE_NAME)
+        $qb = $this->connectionPool->getQueryBuilderForTable(Reference::TABLE_NAME);
+        $all = $qb->update(Reference::TABLE_NAME)
             ->set('deleted', 1)
             ->where($qb->expr()->and(
-                $qb->expr()->eq('deleted', $qb->createNamedParameter(0)),
-                $qb->expr()->lte('tstamp', $qb->createNamedParameter($maxTstampAgeAll)),
+                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->lte('tstamp', $qb->createNamedParameter($maxTstampAgeAll, ParameterType::INTEGER)),
             ))
             ->executeStatement();
 
-        if ($verbose && $all) {
-            $this->output->writeln("<info>$all old notifications were marked as deleted.</info>");
+        if ($this->verbose && $all) {
+            $this->output->writeln("<info>$all old references were marked as deleted.</info>");
         }
     }
 
-    /**
-     * Marks old processed configurations as "deleted".
-     *
-     * @param bool $verbose Whether to output verbose logging.
-     *
-     * @return void
-     */
-    private function removeConfigurations(bool $verbose = false): void
+    private function removeNotifications()
     {
-        $maxTstampDone = $this->daysAgo(self::MAX_AGE_CONFIGURATIONS);
+        $maxTstampAgeAll = $this->daysAgo(self::MAX_AGE_NOTIFICATIONS, self::MAX_AGE_NOTIFICATIONS_FACTOR);
 
-        $qb = $this->connectionPool->getQueryBuilderForTable(Configuration::TABLE_NAME);
-        $configurations = $qb->update(Configuration::TABLE_NAME)
-            ->set('deleted', 1)
+        $qb = $this->connectionPool->getQueryBuilderForTable(Notification::TABLE_NAME);
+        $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $notifications = $qb->select('uid', 'tstamp', 'configuration')
+            ->from(Notification::TABLE_NAME)
             ->where($qb->expr()->and(
-                $qb->expr()->eq('deleted', $qb->createNamedParameter(0)),
-                $qb->expr()->eq('done', $qb->createNamedParameter(1)),
-                $qb->expr()->lte('tstamp', $qb->createNamedParameter($maxTstampDone)),
+                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->lte('tstamp', $qb->createNamedParameter($maxTstampAgeAll, ParameterType::INTEGER)),
             ))
-            ->executeStatement();
+            ->executeQuery()->fetchAllAssociative();
 
-        if ($verbose && $configurations) {
-            $this->output->writeln("<info>$configurations processed configurations were marked as deleted.</info>");
+        if ($this->verbose && $notifications) {
+            $all = $configurations = 0;
+            foreach ($notifications as $notification) {
+                $qb = $this->connectionPool->getQueryBuilderForTable(Reference::TABLE_NAME);
+                $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+                $hasReferences = $qb->select('uid', 'notification')
+                    ->from(Reference::TABLE_NAME)
+                    ->where(
+                        $qb->expr()->eq('notification', $qb->createNamedParameter($notification['uid'], ParameterType::INTEGER)),
+                    )
+                    ->executeQuery()->rowCount();
+
+                if (!$hasReferences) {
+                    $qb = $this->connectionPool->getQueryBuilderForTable(Notification::TABLE_NAME);
+                    $all += $qb->update(Notification::TABLE_NAME)
+                        ->set('deleted', 1)
+                        ->where($qb->expr()->or(
+                            $qb->expr()->eq('uid', $qb->createNamedParameter($notification['uid'], ParameterType::INTEGER)),
+                            $qb->expr()->eq('l10n_parent', $qb->createNamedParameter($notification['uid'], ParameterType::INTEGER)),
+                        ))
+                        ->executeStatement();
+
+                    $qb = $this->connectionPool->getQueryBuilderForTable(Configuration::TABLE_NAME);
+                    $configurations += $qb->update(Configuration::TABLE_NAME)
+                        ->set('deleted', 1)
+                        ->where(
+                            $qb->expr()->or(
+                                $qb->expr()->eq('uid', $qb->createNamedParameter($notification['configuration'], ParameterType::INTEGER)),
+                                $qb->expr()->eq('l10n_parent', $qb->createNamedParameter($notification['configuration'], ParameterType::INTEGER)),
+                            ),
+                        )->executeStatement();
+                }
+            }
+            if ($this->verbose && $all) {
+                $this->output->writeln("<info>$all old notifications were marked as deleted because they had no references.</info>");
+                $this->output->writeln("<info>$configurations attached configurations were marked as deleted.</info>");
+            }
         }
     }
 

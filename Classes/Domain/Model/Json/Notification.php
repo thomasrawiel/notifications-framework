@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Domain\Model\Json;
 
 use SourceBroker\T3api\Annotation as T3api;
+use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Events\Data\NotificationJsonDataEvent;
 use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -13,41 +14,6 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-/**
- * @var T3api\|null  <-- this line prevents PhpStorm from removing the alias
- */
-/**
- * @T3api\ApiResource(
- *     collectionOperations={
- *          "get_user_notifications"={
- *              "method"="GET",
- *              "path"="/users/notifications",
- *              "security"="frontend.user.isLoggedIn",
- *              "normalizationContext"={
- *                  "groups"={"api_get_collection_notificationsframework_json_users_notifications"}
- *              },
- *          },
- *     },
- *     itemOperations={
- *          "patch_user_notification"={
- *             "method"="PATCH",
- *             "path"="/users/notification/read/{id}",
- *             "security"="frontend.user.isLoggedIn",
- *              "normalizationContext"={
- *                 "groups"={"api_patch_item_notificationsframework_json_users_notification"}
- *              },
- *          },
- *          "patch_user_notifications"={
- *              "method"="PATCH",
- *              "path"="/users/notification/read-all",
- *              "security"="frontend.user.isLoggedIn",
- *              "normalizationContext"={
- *                 "groups"={"api_patch_item_notificationsframework_json_users_notifications"}
- *               },
- *           },
- *     }
- * )
- */
 class Notification extends AbstractEntity
 {
     /** @var ObjectStorage<\TRAW\NotificationsFramework\Domain\Model\FileReference>|null */
@@ -71,33 +37,17 @@ class Notification extends AbstractEntity
      * @var string
      */
     protected string $message = '';
-
-    /**
-     * @var int
-     */
-    protected int $tstamp = 0;
-
-    /**
-     * @var int
-     * @T3api\Serializer\Groups({
-     *      "api_patch_item_notificationsframework_json_users_notifications"
-     *  })
-     */
-    protected int $read = 0;
-
-    /**
-     * @var int
-     */
-    protected int $readDate = 0;
-
     /**
      * @var string
      */
     protected string $type = '';
-
+    /**
+     * @var string
+     */
     protected string $url = '';
-
-    protected int $feUser = 0;
+    /**
+     * @var int
+     */
     protected int $configuration = 0;
 
 
@@ -126,30 +76,6 @@ class Notification extends AbstractEntity
     }
 
     /**
-     * @return int
-     */
-    public function getTstamp(): int
-    {
-        return $this->tstamp;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRead(): int
-    {
-        return $this->read;
-    }
-
-    /**
-     * @return int
-     */
-    public function getReadDate(): int
-    {
-        return $this->readDate;
-    }
-
-    /**
      * @return string
      */
     public function getType(): string
@@ -162,64 +88,13 @@ class Notification extends AbstractEntity
         return $this->url;
     }
 
-    /**
-     * @param int $read
-     *
-     * @return void
-     */
-    public function setRead(int $read): void
-    {
-        $this->read = $read;
-        $this->readDate = $read === 1 ? ($this->readDate ?: time()) : 0;
-    }
-
     public function getImage(): ?ObjectStorage
     {
         return $this->image;
     }
 
-    /**
-     * @return array
-     */
-    private function getEventConfiguration(): array
+    public function getConfiguration(): int
     {
-        return [
-            'configuration' => $this->configuration,
-            'user' => $this->feUser,
-            'read' => $this->read,
-        ];
-    }
-
-    /**
-     * @return array
-     * @T3api\Serializer\VirtualProperty()
-     * @T3api\Serializer\Groups({
-     *     "api_get_collection_notificationsframework_json_users_notifications"
-     * })
-     */
-    public function getNotificationData(): array
-    {
-        $dispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
-        $tstampIso = new \DateTime();
-        $tstampIso->setTimestamp($this->tstamp);
-
-        $data = [
-            'title' => $this->label,
-            'text' => $this->message,
-            'timestamp' => $tstampIso,
-            'isUnread' => !$this->read,
-            'type' => $this->type,
-            'url' => $this->url,
-            'media' => null,
-        ];
-        if ($this->image instanceof ObjectStorage && $this->image->count()) {
-            $imageUtility = GeneralUtility::makeInstance(ImageUtility::class);
-            $processedImage = $imageUtility->getProcessedImage($this->image->getArray()[0] ?? []);
-            if ($processedImage instanceof ProcessedFile) {
-                $data['media'] = PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
-            }
-        }
-
-        return $dispatcher->dispatch(new NotificationJsonDataEvent($data, $this->getEventConfiguration()))->getData();
+        return $this->configuration;
     }
 }

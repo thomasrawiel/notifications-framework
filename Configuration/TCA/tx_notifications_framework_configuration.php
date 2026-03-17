@@ -20,7 +20,6 @@ return [
         'rootLevel' => -1,
         'iconfile' => 'EXT:notifications_framework/Resources/Public/Icons/notification-configure.svg',
         'searchFields' => 'title,rowDescription',
-        'type' => 'target_audience',
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
@@ -31,6 +30,8 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
+        'type' => 'type',
+        'typeicon_column' => 'type',
         'typeicon_classes' => [
             'default' => 'tx-nf-notification-configure',
         ],
@@ -41,7 +42,7 @@ return [
         ],
         'settings' => [
             'label' => $LLL . 'palette.settings',
-            'showitem' => 'type,push,autotranslate,done',
+            'showitem' => 'type,push,done',
         ],
         'message' => [
             'label' => $LLL . 'palette.message',
@@ -52,7 +53,7 @@ return [
             'showitem' => 'record',
         ],
         'language' => [
-            'showitem' => 'sys_language_uid,l10n_parent',
+            'showitem' => 'sys_language_uid,l10n_parent,--linebreak--,autotranslate',
         ],
         'audience' => [
             'label' => $LLL . 'palette.audience',
@@ -72,9 +73,7 @@ return [
             'showitem' => 'rowDescription,--linebreak--,table,--linebreak--,automatic',
         ],
         'hidden' => [
-            'showitem' => '
-                hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden
-            ',
+            'showitem' => 'hidden',
         ],
     ],
     'types' => [
@@ -159,9 +158,6 @@ return [
                         'labelUnchecked' => 'DISABLED',
                     ],
                 ],
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ],
             ],
         ],
         'done' => [
@@ -240,21 +236,19 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemGroups' => [
+                    'message' => $LLL . 'configuration.type.groups.message',
                     'actions' => $LLL . 'configuration.type.groups.actions',
-                    'status' => $LLL . 'configuration.type.groups.status',
                 ],
                 'items' => [
-                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'icon' => 'actions-circle'],
-                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'icon' => 'actions-check-circle', 'group' => 'status'],
-                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'icon' => 'actions-exclamation-circle', 'group' => 'status'],
-                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'icon' => 'actions-info-circle', 'group' => 'status'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT, 'icon' => 'actions-circle', 'group' => 'message'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::INFO, 'icon' => 'actions-info-circle', 'group' => 'message'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::SUCCESS, 'icon' => 'actions-check-circle', 'group' => 'message'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::WARNING, 'icon' => 'actions-exclamation-circle', 'group' => 'message'],
+                    ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::ERROR, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::ERROR, 'icon' => 'actions-question-circle', 'group' => 'message'],
                     ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDADDED, 'icon' => 'actions-plus-circle', 'group' => 'actions'],
                     ['label' => $LLL . 'configuration.type.' . \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'value' => \TRAW\NotificationsFramework\Domain\Model\Type::RECORDUPDATED, 'icon' => 'actions-redo', 'group' => 'actions'],
                 ],
                 'default' => \TRAW\NotificationsFramework\Domain\Model\Type::DEFAULT,
-                'sortItems' => [
-                    'label' => 'asc',
-                ],
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
                 ],
@@ -275,6 +269,7 @@ return [
             'config' => [
                 'type' => 'text',
                 'max' => 255,
+                'required' => true,
             ],
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
@@ -319,6 +314,7 @@ return [
                 'size' => 50,
                 'appearance' => [
                     'browserTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
+                    'allowedOptions' => ['params'],
                 ],
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,
@@ -341,8 +337,8 @@ return [
                 'items' => [
                     ['label' => '', 'value' => ''],
                     ['label' => $LLL . 'configuration.target_audience.mixed', 'value' => 'mixed', 'group' => 'users'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users', 'value' => 'users', 'group' => 'users', 'icon' => 'status-user-frontend'],
-                    ['label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups', 'value' => 'groups', 'group' => 'users', 'icon' => 'status-user-group-frontend'],
+                    ['label' => $LLL . 'configuration.target_audience.users', 'value' => 'users', 'group' => 'users', 'icon' => 'status-user-frontend'],
+                    ['label' => $LLL . 'configuration.target_audience.groups', 'value' => 'groups', 'group' => 'users', 'icon' => 'status-user-group-frontend'],
                 ],
                 'behaviour' => [
                     'allowLanguageSynchronization' => true,

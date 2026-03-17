@@ -28,16 +28,16 @@ class AudienceUtility
 
     public function getAudienceFromConfiguration(Configuration $configuration): array
     {
-        $validTargetAudiences = Configuration::AUDIENCE;
+        $validTargetAudiences = array_merge(Configuration::AUDIENCE, Configuration::PLACEHOLDER_AUDIENCES);
         $targetAudience = $configuration->getTargetAudience();
         $users = $groups = '';
         if (empty($targetAudience) || !in_array($targetAudience, $validTargetAudiences, true)) {
             return [];
         }
-        if ($configuration->getTargetAudience() === 'users' || $configuration->getTargetAudience() === 'mixed') {
+        if ($targetAudience === 'users' || $targetAudience === 'mixed') {
             $users = $configuration->getFeUsers();
         }
-        if ($configuration->getTargetAudience() === 'groups' || $configuration->getTargetAudience() === 'mixed') {
+        if ($targetAudience === 'groups' || $targetAudience === 'mixed') {
             $groups = $configuration->getFeGroups();
         }
 

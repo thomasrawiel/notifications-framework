@@ -29,6 +29,10 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
      */
     protected string $expectedEventClass = AfterDatabaseOperationsEvent::class;
 
+    public function __construct(private readonly Type $type)
+    {
+    }
+
     protected function invokeEventAction(AbstractEvent $event)
     {
         if (!$GLOBALS['BE_USER']->isAdmin() && !$GLOBALS['BE_USER']->check('tables_modify', Configuration::TABLE_NAME)) {
@@ -41,7 +45,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
 
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
-            if (Type::isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
+            if ($this->type->isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
                 $data[Configuration::TABLE_NAME][$recordId] = [
                     'table' => preg_replace('/_\d+$/', '', $record['record']),
                 ];
@@ -57,7 +61,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         }
 
         //we dont need translations for record configurations, we translate the notifications in the Generate command
-        if(($record['sys_language_uid'] ?? false)!== 0) {
+        if (($record['sys_language_uid'] ?? false) !== 0) {
             return;
         }
 

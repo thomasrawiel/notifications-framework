@@ -48,13 +48,13 @@
                 <source>Notification type</source>
             </trans-unit>
             <trans-unit id="configuration.type.description">
-                <source>Notification type description</source>
+                <source></source>
             </trans-unit>
             <trans-unit id="configuration.type.groups.actions">
                 <source>Actions</source>
             </trans-unit>
-            <trans-unit id="configuration.type.groups.status">
-                <source>Status</source>
+            <trans-unit id="configuration.type.groups.message">
+                <source>Message</source>
             </trans-unit>
             <trans-unit id="configuration.type.default">
                 <source>Default</source>
@@ -65,6 +65,9 @@
             <trans-unit id="configuration.type.warning">
                 <source>Warning</source>
             </trans-unit>
+			<trans-unit id="configuration.type.error">
+				<source>Error</source>
+			</trans-unit>
             <trans-unit id="configuration.type.info">
                 <source>Information</source>
             </trans-unit>
@@ -78,10 +81,20 @@
                 <source>Target Audience</source>
             </trans-unit>
             <trans-unit id="configuration.target_audience.description">
-                <source>Target Audience</source>
+                <source>Select the audience for these notifications.
+					If no audience is selected and "Send to everyone if no audience is selected" is enabled in settings, all users will be notified automatically.</source>
             </trans-unit>
+			<trans-unit id="configuration.target_audience.">
+				<source>unspecified</source>
+			</trans-unit>
 			<trans-unit id="configuration.target_audience.mixed">
 				<source>Mixed</source>
+			</trans-unit>
+			<trans-unit id="configuration.target_audience.users">
+				<source>Website User</source>
+			</trans-unit>
+			<trans-unit id="configuration.target_audience.groups">
+				<source>Website Usergroup</source>
 			</trans-unit>
             <trans-unit id="configuration.fe_users.description">
                 <source>Select specific website users that should be notified with this configuration.</source>
@@ -126,7 +139,9 @@
 				<source>user(s) selected</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.totalusers">
-				<source>notification(s) will be generated for this configuration.</source>
+				<source>notification(s) will be generated for this configuration.
+
+					This number is based on the selected target audience and the extension's settings.</source>
 			</trans-unit>
 			<trans-unit id="notification_create">
 				<source>Create notification for this record</source>

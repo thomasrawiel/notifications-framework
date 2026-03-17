@@ -51,9 +51,10 @@ final class GenerateNotificationsCommand extends Command
         $configurations = FilterUtility::filterConfigurations($this->configurationRepository->findAll()->toArray());
         foreach ($configurations as $configuration) {
             $users = $this->audienceUtility->getUsersFromConfiguration($configuration);
+            $notification = $this->notificationService->createNotification($configuration);
 
             foreach ($users as $user) {
-                $this->notificationService->createNotification($user, $configuration);
+                $this->notificationService->createReference($notification, $user, $configuration);
             }
 
             // Mark configuration as done and persist

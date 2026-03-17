@@ -84,6 +84,9 @@ class FilterUtility
         $filtered = [];
 
         foreach ($elements as $element) {
+            if (empty($element)) {
+                continue;
+            }
             if (method_exists($element, 'getUid')) {
                 $uid = $element->getUid();
             } elseif (method_exists($element, '_getProperty')) {

@@ -54,7 +54,15 @@ final class SettingsUtility
         return (bool)($this->config['storeNotificationsOnRecordPid'] ?? true);
     }
 
-    public function getNotificationStorage():int {
+    public function getNotificationStorage(): int
+    {
         return (int)$this->config['notificationStorage'];
+    }
+
+    public function checkPid(string|int|null $pid): int
+    {
+        return $this->storeNotificationsOnRecordPid()
+            ? (int)$pid
+            : $this->getNotificationStorage();
     }
 }

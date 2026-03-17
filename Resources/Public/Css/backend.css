@@ -1,12 +1,14 @@
+[data-contextmenu-table="tx_notifications_framework_configuration"] .icon-size-small,
 [data-identifier="tx-nf-notification-configure"] {
     --icon-size: var(--icon-size-medium);
     width: calc(var(--icon-size, 1em)*1.4);
 }
 
+[data-contextmenu-table="tx_notifications_framework_configuration"] .icon-size-small .icon-overlay,
 [data-identifier="tx-nf-notification-configure"] .icon-overlay {
     height: 50%;
     width: 50%;
-    right: -2px;
+    right: 0;
 }
 
 .notification-item__preview {
