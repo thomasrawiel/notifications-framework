@@ -4,7 +4,7 @@ declare(strict_types=1);
 return [
     'ctrl' => [
         'title' => 'Notification Reference',
-        'label' => 'user',
+        'label' => 'fe_user',
         'label_alt' => 'notification',
         'label_alt_force' => true,
         'tstamp' => 'tstamp',
@@ -22,6 +22,7 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
+        'hideTable' => true,
     ],
     'types' => [
         '0' => [

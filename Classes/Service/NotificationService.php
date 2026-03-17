@@ -95,13 +95,16 @@ class NotificationService
         }
 
         $reference = new Reference($notification->getUid(), $frontendUser->getUid());
+        $reference->setPid($notification->getPid());
+
         $this->persistReference($reference);
 
         $translations = $this->configurationRepository->getTranslations($configuration);
         $translationsDone = [$configuration->getSysLanguageUid()]; //
         if ($translations->count()) {
             foreach ($translations as $translation) {
-                $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid(), $translation->getUid());
+                $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid());
+                $translatedReference->setPid($notification->getPid());
                 $translatedReference->setL10nParent($reference->getUid());
                 $translatedReference->setSysLanguageUid($translation->getSysLanguageUid());
 
@@ -119,6 +122,7 @@ class NotificationService
                     continue;
                 }
                 $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid(), $language->getLanguageId());
+                $translatedReference->setPid($notification->getPid());
                 $translatedReference->setL10nParent($reference->getUid());
                 $translatedReference->setSysLanguageUid($language->getLanguageId());
 
