@@ -28,6 +28,7 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
+        'hideTable' => true,
     ],
     'types' => [
         '0' => [
@@ -156,7 +157,7 @@ return [
                 'type' => 'text',
                 'max' => 255,
             ],
-           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+            // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'image' => [
             'label' => $LLL . 'configuration.image',
@@ -172,7 +173,7 @@ return [
                     ],
                 ],
             ],
-           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+            // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'url' => [
             'label' => 'URL',
@@ -186,18 +187,31 @@ return [
                     'allowLanguageSynchronization' => true,
                 ],
             ],
-           // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
+            // 'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'references' => [
             'label' => 'Notifications Reference',
             'config' => [
                 'type' => 'inline',
                 'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Reference::TABLE_NAME,
+                'foreign_table_where' => ' AND (tx_notifications_framework_domain_model_notification_reference.sys_language_uid IN (-1,0) OR tx_notifications_framework_domain_model_notification_reference.l10n_parent = 0) ORDER BY tx_notifications_framework_domain_model_notification_reference.crdate DESC',
                 'foreign_field' => 'notification',
                 'appearance' => [
-                    'collapseAll' => 1,
-                    'levelLinksPosition' => 'top',
-                    'useSortable' => 1,
+                    'collapseAll' => true   ,
+                    'showNewRecordLink' => false,
+                    'useSortable' => false,
+                    'showPossibleLocalizationRecords' => false,
+                    'showAllLocalizationLink' => false,
+                    'showSynchronizationLink' => false,
+                    'enabledControls' => [
+                        'info' => false,
+                        'new' => false,
+                        'dragdrop' => false,
+                        'sort' => false,
+                        'hide' => false,
+                        'delete' => false,
+                        'localize' => false,
+                    ],
                 ],
             ],
         ],
