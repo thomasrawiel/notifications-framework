@@ -8,8 +8,8 @@ use SourceBroker\T3api\Domain\Model\OperationInterface;
 use SourceBroker\T3api\Exception\OperationNotAllowedException;
 use SourceBroker\T3api\OperationHandler\AbstractItemOperationHandler;
 use Symfony\Component\HttpFoundation\Request;
-use TRAW\NotificationsFramework\Domain\Model\Reference;
-use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
+use TRAW\NotificationsFramework\Domain\Model\Json\Reference;
+use TRAW\NotificationsFramework\Domain\Repository\Json\ReferenceRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -37,23 +37,20 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
         }
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
 
-        $result = null;
-
         $repository = GeneralUtility::makeInstance(ReferenceRepository::class);
         $repository->setObjectType(Reference::class);
-
+        $result = [];
+        $persist = false;
         //mark all notifications as read
         if ($operation->getKey() === 'patch_user_notifications') {
-            $userNotifications = $repository->findByFeUser($feUid);
-            foreach ($userNotifications as $userNotification) {
-                if ($userNotification->getRead() === 0) {
-                    $this->setRead($userNotification, $repository);
+            $notificationReferences = $repository->findByFeUser($feUid);
+            foreach ($notificationReferences as $reference) {
+                if ($reference->getRead() === 0) {
+                    $this->setRead($reference, $repository);
                     $persist = true;
                 }
             }
-            if($persist ?? false) {
-                $persistenceManager->persistAll();
-            }
+
             $result = ['success' => true];
         }
         //mark a specific notification as read
@@ -62,24 +59,33 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
             $this->deserializeOperation($operation, $request, $object);
             $this->validationService->validateObject($object);
 
+            if ($object->getFeUser() !== $feUid) {
+                $result = ['success' => false];
+                return $result;
+            }
+
             if ($object->getRead() === 0) {
                 $this->setRead($object, $repository);
-                $persistenceManager->persistAll();
+                $persist = true;
             }
 
             $result = $object;
         }
 
+        if ($persist ?? false) {
+            $persistenceManager->persistAll();
+        }
+
         return $result;
     }
 
-    private function setRead(Notification &$notification, NotificationRepository &$repository): void
+    private function setRead(Reference &$reference, ReferenceRepository &$repository): void
     {
-        $notification->setRead(1);
-        $repository->update($notification);
+        $reference->setRead(1);
+        $repository->update($reference);
 
-        if ($notification->_getProperty('_localizedUid') === $notification->getUid()) {
-            foreach ($repository->findByL10nParent($notification->getUid()) as $translatedNotification) {
+        if ($reference->_getProperty('_localizedUid') === $reference->getUid()) {
+            foreach ($repository->findByL10nParent($reference->getUid()) as $translatedNotification) {
                 $translatedNotification->setRead(1);
                 $repository->update($translatedNotification);
             }
