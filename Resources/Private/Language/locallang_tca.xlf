@@ -143,6 +143,12 @@
 
 					This number is based on the selected target audience and the extension's settings.</source>
 			</trans-unit>
+			<trans-unit id="configuration_pid_valid">
+				<source>Configuration validation</source>
+			</trans-unit>
+			<trans-unit id="configuration_pid_valid.description">
+				<source>Some of the configured values are not valid.</source>
+			</trans-unit>
 			<trans-unit id="notification_create">
 				<source>Create notification for this record</source>
 			</trans-unit>

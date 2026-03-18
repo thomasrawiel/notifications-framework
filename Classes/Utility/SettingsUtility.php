@@ -65,4 +65,13 @@ final class SettingsUtility
             ? (int)$pid
             : $this->getNotificationStorage();
     }
+
+    public function isPidValid(string|int|null $pid): bool
+    {
+        if ($this->storeNotificationsOnRecordPid()) {
+            return true;
+        }
+
+        return (int)$pid === $this->getNotificationStorage();
+    }
 }

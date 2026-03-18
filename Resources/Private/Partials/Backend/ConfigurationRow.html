@@ -3,8 +3,11 @@
       data-namespace-typo3-fluid="true">
 <tr>
     <td>
+        <f:link.action action="detailConfiguration"
+                       arguments="{configuration:configuration.uid}">
         <core:icon identifier="actions-search"/>
         {configuration.uid}
+        </f:link.action>
     </td>
     <f:if condition="{showPidColumn}">
         <td>
@@ -22,6 +25,7 @@
     <td>
         <f:link.action action="detailConfiguration"
                        arguments="{configuration:configuration.uid}">
+            <core:icon identifier="actions-search" size="small"></core:icon>
             <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
         </f:link.action>
     </td>

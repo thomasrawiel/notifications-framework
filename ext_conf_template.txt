@@ -16,5 +16,5 @@ allowedTables = pages
 feUserLookupUids = 0
 # cat=Storage/storage/c; type=int; label=Feuser lookup recursive levels
 feUserLookupRecursive = 0
-# cat=Storage/storage/d; type=int; label=Notification Storage
+# cat=Storage/storage/d; type=int; label=Notification Storage, if storeNotificationsOnRecordPid = 0
 notificationStorage = 0

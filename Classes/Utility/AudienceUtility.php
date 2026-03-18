@@ -28,10 +28,9 @@ class AudienceUtility
 
     public function getAudienceFromConfiguration(Configuration $configuration): array
     {
-        $validTargetAudiences = array_merge(Configuration::AUDIENCE, Configuration::PLACEHOLDER_AUDIENCES);
         $targetAudience = $configuration->getTargetAudience();
         $users = $groups = '';
-        if (empty($targetAudience) || !in_array($targetAudience, $validTargetAudiences, true)) {
+        if (empty($targetAudience) || !in_array($targetAudience, self::getValidTargetAudiences(), true)) {
             return [];
         }
         if ($targetAudience === 'users' || $targetAudience === 'mixed') {
@@ -138,5 +137,10 @@ class AudienceUtility
     public function getUsersCountFromConfiguration(Configuration $configuration): int
     {
         return count($this->getUsersFromConfiguration($configuration));
+    }
+
+    public static function getValidTargetAudiences(): array
+    {
+        return array_merge(Configuration::AUDIENCE, Configuration::PLACEHOLDER_AUDIENCES);
     }
 }

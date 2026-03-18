@@ -80,6 +80,7 @@ return [
         '0' => [
             'showitem' => '--div--;' . $LLL . 'div.configuration,
                 --palette--;;core,
+                configuration_valid,
                 --palette--;;settings,
                 notification_estimate,
                 --palette--;;message,
@@ -422,19 +423,7 @@ return [
                 'default' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
             ],
         ],
-        'notification_estimate' => [
-            'exclude' => true,
-            'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate',
-            'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.description',
-            'config' => [
-                'type' => 'none',
-                'renderType' => 'notificationEstimate',
-                'fieldInformation' => [
-                    'tcaDescription' => [
-                        'renderType' => 'tcaDescription',
-                    ],
-                ],
-            ],
-        ],
+        'notification_estimate' => \TRAW\NotificationsFramework\Backend\FieldInformation\NotificationEstimate::$requiredTca,
+        'configuration_valid' => \TRAW\NotificationsFramework\Backend\FieldInformation\ConfigurationValid::$requiredTca,
     ],
 ];

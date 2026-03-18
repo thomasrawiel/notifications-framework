@@ -28,13 +28,17 @@ class FilterUtility
     public static function filterConfigurations(array $configurations): array
     {
         $settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
-        $allowEveryone = $settingsUtility->sendToEveryoneIfNoAudienceIsSelected();
-
-        return array_values(array_filter($configurations, function (Configuration $configuration) use ($allowEveryone) {
+        return array_values(array_filter($configurations, function (Configuration $configuration) use ($settingsUtility) {
             if (!$configuration->isPush()) {
                 return false;
             }
-            return self::isValidForAudience($configuration, $allowEveryone);
+            
+            if($settingsUtility->storeNotificationsOnRecordPid() === false 
+                    && $settingsUtility->isPidValid($configuration->getPid()) === false) {
+                return false;
+            }
+            
+            return self::isValidForAudience($configuration, $settingsUtility->sendToEveryoneIfNoAudienceIsSelected());
         }));
     }
 

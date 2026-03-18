@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Backend\FieldInformation;
 
@@ -16,6 +17,21 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 class NotificationEstimate extends AbstractFormElement
 {
     public const string LOOKUPFIELD = 'notification_estimate';
+
+    public static array $requiredTca = [
+        'exclude' => true,
+        'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate',
+        'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.description',
+        'config' => [
+            'type' => 'none',
+            'renderType' => 'notificationEstimate',
+            'fieldInformation' => [
+                'tcaDescription' => [
+                    'renderType' => 'tcaDescription',
+                ],
+            ],
+        ],
+    ];
 
     private Configuration $configuration;
 
@@ -40,7 +56,6 @@ class NotificationEstimate extends AbstractFormElement
         }
 
         $row = $this->data['databaseRow'];
-        $parameterArray = $this->data['parameterArray'];
 
         $fieldInformationResult = $this->renderFieldInformation();
         $fieldInformationHtml = $fieldInformationResult['html'];
@@ -110,8 +125,7 @@ class NotificationEstimate extends AbstractFormElement
         return $resultArray;
     }
 
-    protected
-    function getLanguageService(): LanguageService
+    protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
     }
