@@ -8,6 +8,7 @@ use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ConfigurationValid extends AbstractFormElement
@@ -46,21 +47,25 @@ class ConfigurationValid extends AbstractFormElement
 
         $fieldInformationResult = $this->renderFieldInformation();
         $fieldInformationHtml = $fieldInformationResult['html'];
-        $resultArray = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
+        $result = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
 
         if(str_starts_with((string)$this->data['databaseRow']['uid'], 'NEW')) {
-            $resultArray['html'] = $this->callout('Validation pending', 'Please save the record first.');
-            return $resultArray;
+            $result['html'] = $this->callout('Validation pending', 'Please save the record first.');
+            return $result;
         }
 
-        $resultArray['html'] = implode(LF, array_filter(
+        $result['html'] = implode(LF, array_filter(
             [
                 $this->validatePid(),
                 $this->validateAudience(),
             ]
         ));
 
-        return $resultArray;
+        $result['javaScriptModules'][] = JavaScriptModuleInstruction::create(
+            '@traw/notifications-framework/Configuration.js',
+        );
+
+        return $result;
     }
 
     private function validateAudience(): string
@@ -79,6 +84,7 @@ class ConfigurationValid extends AbstractFormElement
 
             $feUsers = $this->data['databaseRow']['fe_users'];
             $feGroups = $this->data['databaseRow']['fe_groups'];
+
             switch ($audience) {
                 case 'users':
                     if (empty($feUsers)) {
@@ -95,10 +101,10 @@ class ConfigurationValid extends AbstractFormElement
                         return $this->error('Mixed audience', 'No groups selected, but the configuration allows it.');
                     }
                     if (empty($feUsers) && !empty($feGroups)) {
-                        return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected. Switch to groups?');
+                        return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected. Select users instead? <a href="#" class="js-notification-configuration-ajax" data-field="target_audience" data-value="groups">Yes, set value</a>');
                     }
                     if (!empty($feUsers) && empty($feGroups)) {
-                        return $this->warning('Mixed audience', 'Mixed audience is selected, but no groups are selected. Select users instead? <a href="">Yes, set value</a>');
+                        return $this->warning('Mixed audience', 'Mixed audience is selected, but no groups are selected. Select users instead? <a href="#" class="js-notification-configuration-ajax" data-field="target_audience" data-value="users">Yes, set value</a>');
                     }
                     break;
             }

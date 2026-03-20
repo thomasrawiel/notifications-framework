@@ -7,9 +7,6 @@ services:
     resource: '../Classes/*'
     exclude: '../Classes/Domain/Model/*'
 
-  TRAW\NotificationsFramework\Domain\Model\Type:
-    public: true
-
   TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEventListener:
     tags:
       - name: event.listener
@@ -30,7 +27,11 @@ services:
     public: true
   TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler:
     public: true
+  TRAW\NotificationsFramework\Domain\Model\Type:
+    public: true
   TRAW\NotificationsFramework\Domain\Repository\Json\ReferenceRepository:
     public: true
   TRAW\NotificationsFramework\Utility\AudienceUtility:
+    public: true
+  TRAW\NotificationsFramework\Controller\Backend\AjaxRoutesController:
     public: true

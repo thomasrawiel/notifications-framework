@@ -59,7 +59,7 @@ class NotificationEstimate extends AbstractFormElement
 
         $fieldInformationResult = $this->renderFieldInformation();
         $fieldInformationHtml = $fieldInformationResult['html'];
-        $resultArray = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
+        $result = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
 
 
         $estimateHtml = [];
@@ -120,9 +120,9 @@ class NotificationEstimate extends AbstractFormElement
         $html[] = '</div>';
         $html[] = '</div>';
         $html[] = '</div>';
-        $resultArray['html'] = implode(LF, $html);
+        $result['html'] = implode(LF, $html);
 
-        return $resultArray;
+        return $result;
     }
 
     protected function getLanguageService(): LanguageService
