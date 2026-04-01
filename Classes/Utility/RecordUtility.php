@@ -12,11 +12,6 @@ class RecordUtility
 
     /**
      * returns the uid of a record string, e.g. tx_news_domain_model_news_123 => (int)123
-     *
-     *
-     * @param int|string $record
-     *
-     * @return int
      */
     public static function getRecordUidAsIntegerFromConfiguration(Configuration $configuration): int
     {

@@ -56,10 +56,6 @@ class LinkService
             }
         }
 
-        if ($site === null || $site instanceof NullSite) {
-            return null;
-        }
-
         //fake-frontend
         $this->createGlobals($site, $configuration, $languageUid);
         $controller = $this->bootFrontendController($site, [], $this->request);

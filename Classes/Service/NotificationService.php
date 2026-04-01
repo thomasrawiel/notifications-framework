@@ -121,7 +121,7 @@ class NotificationService
                     //skip, because we already have that one
                     continue;
                 }
-                $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid(), $language->getLanguageId());
+                $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid());
                 $translatedReference->setPid($notification->getPid());
                 $translatedReference->setL10nParent($reference->getUid());
                 $translatedReference->setSysLanguageUid($language->getLanguageId());

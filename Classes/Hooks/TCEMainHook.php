@@ -17,7 +17,7 @@ class TCEMainHook extends AbstractHook
      * @param string      $table
      * @param int         $id
      * @param array       $fieldArray
-     * @param DataHandler $pObj
+     * @param DataHandler $dataHandler
      */
     public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, DataHandler $dataHandler): void
     {

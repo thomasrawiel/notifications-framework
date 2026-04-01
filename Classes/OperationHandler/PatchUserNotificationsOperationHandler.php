@@ -72,7 +72,7 @@ class PatchUserNotificationsOperationHandler extends AbstractItemOperationHandle
             $result = $object;
         }
 
-        if ($persist ?? false) {
+        if ($persist) {
             $persistenceManager->persistAll();
         }
 

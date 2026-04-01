@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class AudienceUtility
 {
     public function __construct(
-        private readonly ConfigurationRepository $configurationRepository,
         private readonly FrontendUserRepository  $frontendUserRepository,
         private readonly SettingsUtility         $settingsUtility,
         private readonly EventDispatcher         $eventDispatcher

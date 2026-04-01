@@ -74,7 +74,7 @@ class BitmaskUtility
             if ($val === null) continue;
             if ($useValues) {
                 if (!self::isPowerOfTwo($val)) {
-                    throw new InvalidArgumentException("Value $val is not a power of 2.");
+                    throw new \InvalidArgumentException("Value $val is not a power of 2.");
                 }
                 $bitmask |= (int)$val;
             } else {
