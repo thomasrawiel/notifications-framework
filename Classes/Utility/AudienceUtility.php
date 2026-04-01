@@ -18,9 +18,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class AudienceUtility
 {
     public function __construct(
-        private readonly FrontendUserRepository  $frontendUserRepository,
-        private readonly SettingsUtility         $settingsUtility,
-        private readonly EventDispatcher         $eventDispatcher
+        private readonly FrontendUserRepository $frontendUserRepository,
+        private readonly SettingsUtility        $settingsUtility,
+        private readonly EventDispatcher        $eventDispatcher
     )
     {
     }
@@ -81,14 +81,9 @@ class AudienceUtility
 
     public function getUsersFromConfiguration(Configuration $configuration): array
     {
-        $audience = $this->getAudienceFromConfiguration($configuration);
-
-        $users = $this->getUsersFromAudience($audience);
         $additionalUsers = [];
 
-        $target = $configuration->getTargetAudience();
-
-        switch ($target) {
+        switch ($configuration->getTargetAudience()) {
             case 'subscribers':
                 //You need to implement your own logic how to determine if a user is subscribed by creating an event listener for GetSubscribedUsersEvent
                 $additionalUsers = $this->eventDispatcher
@@ -122,15 +117,17 @@ class AudienceUtility
                     ->getAdditionalUsers();
                 break;
             default:
-                throw new \InvalidArgumentException('Invalid audience: ' . $target);
+                return [];
+            //throw new \InvalidArgumentException('Invalid audience: ' . $target);
         }
 
-        $users = FilterUtility::filterUniqueByUid([
-            ...$users,
+        $audience = $this->getAudienceFromConfiguration($configuration);
+        $usersFromAudience = $this->getUsersFromAudience($audience);
+
+        return FilterUtility::filterUniqueByUid([
+            ...$usersFromAudience,
             ...$additionalUsers,
         ]);
-
-        return $users;
     }
 
     public function getUsersCountFromConfiguration(Configuration $configuration): int
