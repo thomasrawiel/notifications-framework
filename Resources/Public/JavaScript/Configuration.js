@@ -11,24 +11,16 @@ class Configuration {
             if (!el) {
                 return;
             }
-
             event.preventDefault();
 
-            const field = el.dataset.field;
-            const value = el.dataset.value;
 
-            const url = TYPO3.settings.ajaxUrls.notifications_framework_update_configuration;
+            const {field, value, uid, table} = el.dataset;
 
-            const payload = {
-                field: field,
-                value: value
-            };
-            console.log(payload);
-            new AjaxRequest(url)
-                .post(payload)
+            new AjaxRequest(TYPO3.settings.ajaxUrls.notifications_framework_update_configuration)
+                .post({field, value, uid, table})
                 .then(async (response) => {
                     const data = await response.resolve();
-                    console.log(data);
+                    console.log('data-success', data);
                     if (data && data.success === true) {
                         // Reload current backend module (iframe)
                         if (top && top.location) {
