@@ -46,9 +46,9 @@ class ConfigurationRepository extends Repository
      */
     public function listConfigurations(array $demand): array
     {
-        $widgets = $this->getConfigurations($demand);
+        $configurations = $this->getConfigurations($demand);
 
-        return $this->sortList($widgets, $demand);
+        return $this->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
     }
 
     private function getConfigurations(array $demand): array
@@ -63,13 +63,18 @@ class ConfigurationRepository extends Repository
 
         $sortDirection = $demand['sortDirection'] ?? 'ASC';
 
+        $constraints = [
+            $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0)),
+            $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'])),
+        ];
+        if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
+            $constraints[] = $qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid']));
+        }
+
+
         $qb->select('*')
             ->from('tx_notifications_framework_configuration')
-            ->where($qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0)));
-
-        if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
-            $qb->andWhere($qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid'])));
-        }
+            ->where(...$constraints);
 
         $qb->orderBy($sortField, $sortDirection);
 
@@ -82,16 +87,16 @@ class ConfigurationRepository extends Repository
      *
      * @return array
      */
-    private function sortList(array $configurations, array $demand): array
+    private function sortList(array $configurations, string $sortField, string $sortDirection = 'asc'): array
     {
         $sortableFields = ['uid'];
-        $field = $demand['sortField'];
+        $sortDirection = strtolower($sortDirection);
 
-        if (in_array($field, $sortableFields, true)) {
-            $modifier = $demand['sortDirection'] === 'asc' ? 1 : -1;
-            usort($configurations, function ($a, $b) use ($field, $modifier) {
-                $aValue = $a['computed_stats'][$field] ?? null;
-                $bValue = $b['computed_stats'][$field] ?? null;
+        if (in_array($sortField, $sortableFields, true)) {
+            $modifier = $sortDirection === 'asc' ? 1 : -1;
+            usort($configurations, function ($a, $b) use ($sortField, $modifier) {
+                $aValue = $a['computed_stats'][$sortField] ?? null;
+                $bValue = $b['computed_stats'][$sortField] ?? null;
 
                 if ($aValue === $bValue) {
                     return 0;

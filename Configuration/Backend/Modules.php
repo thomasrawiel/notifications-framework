@@ -1,28 +1,23 @@
 <?php
 
 return [
-    'notifications' => [
-        'labels' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf',
-        'iconIdentifier' => 'tx-nf-notification-filled',
-        'position' => [
-            'after' =>'site',
-            'before' => 'tools'
-        ]
-    ],
     'notification_configurations' => [
-        'parent' => 'notifications',
+        'parent' => 'web',
         'access' => 'user',
         'workspaces' => 'live',
-        'path' => '/notifications/configurations',
-        'labels' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_configurations_mod.xlf',
-        'extensionName' => 'NotificationFramework',
+        'path' => '/notifications',
+        'labels' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf',
+        'extensionName' => 'NotificationsFramework',
         'iconIdentifier' => 'tx-nf-notification-configure',
         'controllerActions' => [
-            \TRAW\NotificationsFramework\Controller\Backend\ConfigurationsController::class => [
+            \TRAW\NotificationsFramework\Controller\Backend\NotificationsController::class => [
+                'index',
                 'listConfigurations',
                 'detailConfiguration',
+                'listNotifications'
             ],
         ],
-        'navigationComponent' => '',
+        'navigationComponent' => '@typo3/backend/page-tree/page-tree-element',
+        'inheritNavigationComponentFromMainModule' => true,
     ],
 ];

@@ -1,8 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en"
       xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
+<f:render section="Before" arguments="{_all}" optional="true" />
 
-<div class="module notifications" data-module-id="{moduleId}" data-module-name="{moduleName}">
+<div class="module {moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
     <f:if condition="{docHeader.enabled}">
         <f:render partial="DocHeader" arguments="{docHeader:docHeader}"/>
     </f:if>
@@ -23,4 +24,6 @@
 
     </div>
 </div>
+
+<f:render section="After" arguments="{_all}" optional="true" />
 </html>
