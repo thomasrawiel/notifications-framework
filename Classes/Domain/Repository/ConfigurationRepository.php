@@ -5,6 +5,7 @@ namespace TRAW\NotificationsFramework\Domain\Repository;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Persistence\Repository;
@@ -55,6 +56,7 @@ class ConfigurationRepository extends Repository
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_notifications_framework_configuration');
+        $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
         $sortField = $demand['sortField'] ?? 'uid';
         if (!isset($GLOBALS['TCA']['tx_notifications_framework_configuration']['columns'][$sortField])) {

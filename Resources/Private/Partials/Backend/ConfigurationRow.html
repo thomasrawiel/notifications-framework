@@ -2,12 +2,14 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 <tr>
-    <td>
-        <f:link.action action="detailConfiguration"
-                       arguments="{configuration:configuration.uid}">
+    <td><f:debug inline="true">{module}</f:debug>
+        <a href="{f:be.uri(route: module.identifier, parameters:'{configuration:configuration.uid}')}">
+
+
+
         <core:icon identifier="actions-search"/>
         {configuration.uid}
-        </f:link.action>
+        </a>
     </td>
     <f:if condition="{showPidColumn}">
         <td>
@@ -23,11 +25,10 @@
     </td>
 
     <td>
-        <f:link.action action="detailConfiguration"
-                       arguments="{configuration:configuration.uid}">
+
             <core:icon identifier="actions-search" size="small"></core:icon>
             <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
-        </f:link.action>
+
     </td>
     <td>
 

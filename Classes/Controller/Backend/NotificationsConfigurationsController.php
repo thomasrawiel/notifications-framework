@@ -1,0 +1,62 @@
+<?php
+declare(strict_types=1);
+
+namespace TRAW\NotificationsFramework\Controller\Backend;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+
+#[AsController]
+class NotificationsConfigurationsController extends AbstractController
+{
+    public function __construct(
+        protected readonly ModuleTemplateFactory   $moduleTemplateFactory,
+        protected readonly UriBuilder              $uriBuilder,
+        protected readonly ConfigurationRepository $configurationRepository,
+        protected readonly SettingsUtility         $settingsUtility,
+    )
+    {
+    }
+
+    public function handleRequest(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->initializeModuleTemplate($request);
+
+        $moduleData = $request->getAttribute('moduleData');
+        $demand = [
+            'sortField' => $moduleData->get('sortField'),
+            'sortDirection' => $moduleData->get('sortDirection'),
+            'uid' => null,
+            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->pageUid : $this->settingsUtility->getNotificationStorage(),
+        ];
+
+//        $demand = $this->request->hasArgument('demand')
+//            ? $this->request->getArgument('demand') : $defaultDemand;
+//
+        $this->moduleTemplate->assignMultiple([
+            'demand' => $demand,
+            'action' => 'listConfigurations',
+            'module' => $request->getAttribute('module'),
+            'showPidColumn' => $this->settingsUtility->storeNotificationsOnRecordPid(),
+            'configurations' => $this->configurationRepository->listConfigurations($demand),
+        ]);
+
+        return $this->moduleTemplate->renderResponse('Backend/Configuration/List');
+    }
+
+    public function detail(ServerRequestInterface $request): ResponseInterface {
+        $this->initializeModuleTemplate($request);
+
+        $moduleData = $request->getAttribute('moduleData');
+        $configurationUid = $request->getQueryParams()['configuration'] ?? null;
+
+
+
+        return $this->moduleTemplate->renderResponse('Backend/Configuration/Detail');
+    }
+}

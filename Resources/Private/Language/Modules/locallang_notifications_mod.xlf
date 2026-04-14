@@ -3,14 +3,14 @@
     <file source-language="en" datatype="plaintext" original="EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf" product-name="notifications_framework">
         <header/>
         <body>
-            <trans-unit id="mlang_tabs_tab">
+            <trans-unit id="module.notifications.title">
                 <source>Notifications</source>
             </trans-unit>
-            <trans-unit id="mlang_labels_tabdescr">
+            <trans-unit id="module.notifications.description">
                 <source>Something something</source>
             </trans-unit>
-            <trans-unit id="mlang_labels_tablabel">
-                <source>Notification things</source>
+            <trans-unit id="module.notifications.shortDescription">
+                <source>Something shorter</source>
             </trans-unit>
         </body>
     </file>

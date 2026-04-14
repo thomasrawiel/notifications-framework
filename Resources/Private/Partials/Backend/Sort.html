@@ -5,15 +5,16 @@
     <f:if condition="{disableSort}">
         <f:then>{label}</f:then>
         <f:else>
-            <span class="{f:if(condition: '{demand.sortField} == {field}', else:'hidden')}">
-                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+            <f:comment>
+                <span class="{f:if(condition: '{demand.sortField} == {field}', else:'hidden')}">
+                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
                                class="{f:if(condition:'{demand.sortDirection} == \'asc\'', then:'hidden')}"
                                action="{action}"
                                arguments="{demand:{sortField:demand.sortField,sortDirection:'asc'}}">
                      {label}
                     <core:icon identifier="actions-sort-amount-down"/>
                 </f:link.action>
-                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
                                class="{f:if(condition:'{demand.sortDirection} == \'desc\'', then:'hidden')}"
                                action="{action}"
                                arguments="{demand:{sortField:demand.sortField,sortDirection:'desc'}}">
@@ -21,14 +22,15 @@
                     <core:icon identifier="actions-sort-amount-up"/>
                 </f:link.action>
             </span>
-            <span class="{f:if(condition: '{demand.sortField} == {field}', then:'hidden')}">
-                <f:link.action title="{f:translate(key: 'sortField')} {label}"
+                <span class="{f:if(condition: '{demand.sortField} == {field}', then:'hidden')}">
+                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
                                action="{action}"
                                arguments="{demand:{sortField:field,sortDirection:'{f:if(condition: \'{defaultSort}\',then:defaultSort,else:\'asc\')}'}}">
                      {label}
                     <core:icon identifier="actions-sort-amount"/>
                 </f:link.action>
             </span>
+            </f:comment>
         </f:else>
     </f:if>
 </f:section>
