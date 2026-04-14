@@ -52,11 +52,24 @@ class ConfigurationRepository extends Repository
         return $this->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
     }
 
+    public function getConfiguration(int $configurationUid): array
+    {
+        return $this->getConfigurations(['uid' => $configurationUid]);
+    }
+
     private function getConfigurations(array $demand): array
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_notifications_framework_configuration');
         $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+
+
+        $qb->select('*')
+            ->from('tx_notifications_framework_configuration');
+        if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
+            $qb->where($qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid'])));
+            return $qb->execute()->fetchAssociative();
+        }
 
         $sortField = $demand['sortField'] ?? 'uid';
         if (!isset($GLOBALS['TCA']['tx_notifications_framework_configuration']['columns'][$sortField])) {
@@ -65,19 +78,10 @@ class ConfigurationRepository extends Repository
 
         $sortDirection = $demand['sortDirection'] ?? 'ASC';
 
-        $constraints = [
+        $qb->where(
             $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0)),
             $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'])),
-        ];
-        if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
-            $constraints[] = $qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid']));
-        }
-
-
-        $qb->select('*')
-            ->from('tx_notifications_framework_configuration')
-            ->where(...$constraints);
-
+        );
         $qb->orderBy($sortField, $sortDirection);
 
         return $qb->executeQuery()->fetchAllAssociative();

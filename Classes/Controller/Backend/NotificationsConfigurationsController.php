@@ -32,7 +32,7 @@ class NotificationsConfigurationsController extends AbstractController
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => $moduleData->get('sortDirection'),
             'uid' => null,
-            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->pageUid : $this->settingsUtility->getNotificationStorage(),
+            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->settingsUtility->getNotificationStorage(),
         ];
 
 //        $demand = $this->request->hasArgument('demand')
@@ -41,21 +41,22 @@ class NotificationsConfigurationsController extends AbstractController
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listConfigurations',
-            'module' => $request->getAttribute('module'),
-            'showPidColumn' => $this->settingsUtility->storeNotificationsOnRecordPid(),
             'configurations' => $this->configurationRepository->listConfigurations($demand),
         ]);
 
         return $this->moduleTemplate->renderResponse('Backend/Configuration/List');
     }
 
-    public function detail(ServerRequestInterface $request): ResponseInterface {
+    public function detail(ServerRequestInterface $request): ResponseInterface
+    {
         $this->initializeModuleTemplate($request);
+        $configurationUid = (int)($request->getQueryParams()['configuration'] ?? null);
 
-        $moduleData = $request->getAttribute('moduleData');
-        $configurationUid = $request->getQueryParams()['configuration'] ?? null;
-
-
+        if ($configurationUid > 0) {
+            $this->moduleTemplate->assignMultiple([
+                'configuration' => $this->configurationRepository->getConfiguration($configurationUid),
+            ]);
+        }
 
         return $this->moduleTemplate->renderResponse('Backend/Configuration/Detail');
     }

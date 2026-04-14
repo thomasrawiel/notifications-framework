@@ -11,7 +11,6 @@ return [
             'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.notifications.description',
             'shortDescription' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.notifications.shortDescription',
         ],
-        'labels' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf',
         'extensionName' => 'NotificationsFramework',
         'iconIdentifier' => 'tx-nf-notification-configure',
         'navigationComponent' => '@typo3/backend/page-tree/page-tree-element',

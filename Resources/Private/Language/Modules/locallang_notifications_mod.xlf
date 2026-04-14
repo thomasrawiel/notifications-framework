@@ -12,6 +12,9 @@
             <trans-unit id="module.notifications.shortDescription">
                 <source>Something shorter</source>
             </trans-unit>
+			<trans-unit id="module.configurations.title">
+				<source>Configurations</source>
+			</trans-unit>
         </body>
     </file>
 </xliff>

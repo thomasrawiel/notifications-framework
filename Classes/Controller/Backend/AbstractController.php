@@ -22,7 +22,7 @@ abstract class AbstractController
 
     private array $pageRecord = [];
 
-    protected int $pageUid = 0;
+    protected int $selectedPageUID = 0;
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): void
     {
@@ -37,7 +37,20 @@ abstract class AbstractController
             $view->getDocHeaderComponent()->setMetaInformation($this->pageRecord);
         }
         $view->makeDocHeaderModuleMenu(['id' => $this->pageUid]);
+
+        if ($request->getQueryParams()['id'] ?? false) {
+            $this->selectedPageUID = (int)$request->getQueryParams()['id'];
+        }
+
+        $view->assignMultiple([
+            'selectedPageUID' => $this->selectedPageUID,
+            'module' => $request->getAttribute('module'),
+            'showPidColumn' => $this->settingsUtility->storeNotificationsOnRecordPid(),
+        ]);
+
         $this->moduleTemplate = $view;
+
+
     }
 
     protected function getBackendUser(): BackendUserAuthentication

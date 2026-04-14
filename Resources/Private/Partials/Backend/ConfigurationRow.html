@@ -2,8 +2,8 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 <tr>
-    <td><f:debug inline="true">{module}</f:debug>
-        <a href="{f:be.uri(route: module.identifier, parameters:'{configuration:configuration.uid}')}">
+    <td>
+        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}">
 
 
 
@@ -25,9 +25,10 @@
     </td>
 
     <td>
-
+        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}">
             <core:icon identifier="actions-search" size="small"></core:icon>
             <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
+        </a>
 
     </td>
     <td>

@@ -36,10 +36,6 @@ final class NotificationsIndexController extends AbstractController
 //            $backendUser->pushModuleData($currentModuleIdentifier, $moduleData->toArray());
 //        }
 
-        if ($request->getQueryParams()['id']) {
-            $this->selectedPageUID = (int)$request->getQueryParams()['id'];
-        }
-
         return $this->moduleTemplate->renderResponse('Backend/Index');
     }
 
