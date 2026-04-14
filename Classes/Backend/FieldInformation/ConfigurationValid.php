@@ -8,6 +8,7 @@ use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Validation\Configuration as Validation;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -17,6 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ConfigurationValid extends AbstractFormElement
 {
     private SettingsUtility $settingsUtility;
+    private Validation $configurationValidation;
 
     public static array $requiredTca = [
         'exclude' => true,
@@ -37,6 +39,7 @@ class ConfigurationValid extends AbstractFormElement
     {
         parent::__construct($nodeFactory, $data);
         $this->settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
+        $this->configurationValidation = GeneralUtility::makeInstance(Validation::class);
     }
 
     public function render(): array
@@ -57,11 +60,13 @@ class ConfigurationValid extends AbstractFormElement
             return $result;
         }
 
+        $valid = $this->configurationValidation->validate($this->data['databaseRow']);
+
         $result['html'] = implode(LF, array_filter(
             [
-                $this->validatePid(),
-                $this->validateAudience(),
-                $this->validateRecord(),
+                $this->validatePid($valid),
+                $this->validateAudience($valid),
+                $this->validateRecord($valid),
             ]
         ));
 
@@ -72,87 +77,80 @@ class ConfigurationValid extends AbstractFormElement
         return $result;
     }
 
-    private function validateAudience(): string
+    private function validateAudience(int $valid): string
     {
         if ($this->data['vanillaUid'] <= 0) {
             return '';
         }
 
-        $audience = $this->data['databaseRow']['target_audience'][0] ?? null;
-        $emptyAudienceAllowed = $this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected();
+        if ($valid === 0) {
+            return '';
+        }
+        $selection = $valid & Validation::SEL_MASK;
+
+        if ($valid & Validation::EMPTY_AUDIENCE_WARNING) {
+            return $this->warning('Empty audience', 'No audience is selected, but the configuration allows it, so that is okay, if you know what you\'re doing.');
+        }
+
+        if ($valid & Validation::EMPTY_AUDIENCE_ERROR) {
+            return $this->error('empty audience is not allowed');
+        }
+
+        if ($selection === Validation::SEL_INVALID) {
+            return $this->error('Invalid audience', 'The selected audience is not valid.');
+        }
+
+        if ($selection === Validation::SEL_USERS && ($valid & Validation::NO_USERS)) {
+            return $this->error('User audience', 'No users selected');
+        }
+
+        if ($selection === Validation::SEL_GROUPS && ($valid & Validation::NO_GROUPS)) {
+            return $this->error('Group audience', 'No groups selected');
+        }
+
+        if (
+            $selection === Validation::SEL_MIXED
+            && ($valid & Validation::NO_USERS)
+            && ($valid & Validation::NO_GROUPS)
+        ) {
+            return $this->error('Mixed audience', 'Mixed audience is selected, but no users or groups selected');
+        }
 
         $configurationUid = (int)($this->data['databaseRow']['l10n_parent'][0] ?? $this->data['databaseRow']['l10n_parent'] ?? 0);
         if ($configurationUid === 0) {
             $configurationUid = (int)$this->data['databaseRow']['uid'];
         }
+        if ($selection === Validation::SEL_MIXED && ($valid & Validation::NO_USERS)) {
+            return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="groups" data-uid="' . $configurationUid . '">Change audience to groups</a>');
+        }
 
-        if (in_array($audience, AudienceUtility::getValidTargetAudiences())) {
-            if ($audience === '') {
-                if ($emptyAudienceAllowed) {
-                    return $this->warning('Empty audience', 'No audience is selected, but the configuration allows it, so that is okay, if you know what you\'re doing.');
-                } else {
-                    return $this->error('empty not allowed');
-                }
-            }
-
-            $feUsers = $this->data['databaseRow']['fe_users'];
-            $feGroups = $this->data['databaseRow']['fe_groups'];
-
-            switch ($audience) {
-                case 'users':
-                    if (empty($feUsers)) {
-                        return $this->error('User audience', 'No users selected, but the configuration allows it.');
-                    }
-                    break;
-                case 'groups':
-                    if (empty($feGroups)) {
-                        return $this->error('Group audience', 'No groups selected, but the configuration allows it.');
-                    }
-                    break;
-                case 'mixed':
-                    if (empty($feUsers) && empty($feGroups)) {
-                        return $this->error('Mixed audience', 'Mixed audience is selected, but no users or groups selected');
-                    }
-                    if (empty($feUsers) && !empty($feGroups)) {
-                        return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="groups" data-uid="' . $configurationUid . '">Change audience to groups</a>');
-                    }
-                    if (!empty($feUsers) && empty($feGroups)) {
-                        return $this->warning('Mixed groups', 'Mixed audience is selected, but no groups are selected. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="users"  data-uid="' . $configurationUid . '">Change audience to users</a>');
-                    }
-                    break;
-            }
-        } else {
-            return $this->error('Invalid audience', 'The audience "' . $audience . '" is not valid.');
+        if ($selection === Validation::SEL_MIXED && ($valid & Validation::NO_GROUPS)) {
+            return $this->warning('Missing groups', 'Mixed audience is selected, but no groups are selected. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="users"  data-uid="' . $configurationUid . '">Change audience to users</a>');
         }
 
         return '';
     }
 
-    private function validatePid(): string
+    private function validatePid(int $valid): string
     {
-        if (!$this->settingsUtility->storeNotificationsOnRecordPid()) {
-            $pid = $this->data['databaseRow']['pid'];
-            if ($this->settingsUtility->getNotificationStorage() !== $pid) {
-                return $this->error('Wrong storage', 'You have configued a specific notification storage. Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage() . '</strong>');
-            }
+        $configurationUid = (int)($this->data['databaseRow']['l10n_parent'][0] ?? $this->data['databaseRow']['l10n_parent'] ?? 0);
+        if ($configurationUid === 0) {
+            $configurationUid = (int)$this->data['databaseRow']['uid'];
         }
 
-        return '';
+        return ($valid & Validation::WRONG_PID)
+            ? $this->error('Wrong storage', 'You have configued a specific notification storage. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="'.$this->settingsUtility->getNotificationStorage().'"  data-uid="' . $configurationUid . '">Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage() . '</strong></a>')
+            : '';
     }
 
-    private function validateRecord(): string
+    private function validateRecord(int $valid): string
     {
-        $type = $this->data['databaseRow']['type'][0] ?? null;
-        $record = $this->data['databaseRow']['record'][0] ?? null;
-        $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
-
-        if($isRecordType && $record === null) {
+        if ($valid & Validation::NO_RECORD_SELECTED) {
             return $this->error('No record', 'No record selected');
         }
-
-        $disabledField = $GLOBALS['TCA'][$record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
-        if($disabledField && (bool)$record['row'][$disabledField]) {
-            return $this->warning('Record disabled', 'There is a record selected, but it is disabled. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="'.$disabledField.'" data-value="0" data-uid="' . $record['uid'] . '" data-table="'.$record['table'].'">Enable record</a>');
+        $disabledField = $GLOBALS['TCA'][$this->data['databaseRow']['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
+        if ($valid & Validation::RECORD_DISABLED) {
+            return $this->warning('Record disabled', 'There is a record selected, but it is disabled. <a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="' . $disabledField . '" data-value="0" data-uid="' . $this->data['databaseRow']['record'][0]['uid'] . '" data-table="' . $this->data['databaseRow']['record'][0]['table'] . '">Enable record</a>');
         }
 
         return '';
