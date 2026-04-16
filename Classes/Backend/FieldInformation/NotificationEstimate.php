@@ -14,7 +14,7 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
-class NotificationEstimate extends AbstractFormElement
+class NotificationEstimate extends AbstractCustomNode
 {
     public const string LOOKUPFIELD = 'notification_estimate';
 
@@ -58,7 +58,6 @@ class NotificationEstimate extends AbstractFormElement
         $row = $this->data['databaseRow'];
 
         $fieldInformationResult = $this->renderFieldInformation();
-        $fieldInformationHtml = $fieldInformationResult['html'];
         $result = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
 
 
@@ -105,22 +104,11 @@ class NotificationEstimate extends AbstractFormElement
 
             if ($totalUsers > 0) {
                 $LLLtotalUsers = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.totalusers');
-                $estimateHtml[] = '<p class="text-body-secondary"><strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers) . '</p>';
+                $estimateHtml[] = $this->info('Notifcation estimate', '<strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers));
             }
         }
 
-        $html = [];
-        $html[] = '<div class="formengine-field-item t3js-formengine-field-item">';
-        $html[] = $fieldInformationHtml;
-        $html[] = '<div class="form-wizards-wrap">';
-        $html[] = '<div class="form-wizards-element">';
-        $html[] = '<div class="form-control-wrap">';
-        $html[] = implode(LF, $estimateHtml);
-        $html[] = '</div>';
-        $html[] = '</div>';
-        $html[] = '</div>';
-        $html[] = '</div>';
-        $result['html'] = implode(LF, $html);
+        $result['html'] = $this->renderHtml($fieldInformationResult['html'], $estimateHtml);
 
         return $result;
     }

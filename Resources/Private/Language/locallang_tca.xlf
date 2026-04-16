@@ -147,7 +147,7 @@
 				<source>Configuration validation</source>
 			</trans-unit>
 			<trans-unit id="configuration_pid_valid.description">
-				<source>Some of the configured values are not valid.</source>
+				<source></source>
 			</trans-unit>
 			<trans-unit id="notification_create">
 				<source>Create notification for this record</source>
