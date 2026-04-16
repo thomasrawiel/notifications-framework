@@ -35,5 +35,5 @@ services:
     public: true
   TRAW\NotificationsFramework\Controller\Backend\AjaxRoutesController:
     public: true
-  TRAW\NotificationsFramework\Validation\Configuration:
+  TRAW\NotificationsFramework\Validation\ConfigurationValidation:
     public: true

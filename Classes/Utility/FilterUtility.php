@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FilterUtility
@@ -28,16 +29,21 @@ class FilterUtility
     public static function filterConfigurations(array $configurations): array
     {
         $settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
-        return array_values(array_filter($configurations, function (Configuration $configuration) use ($settingsUtility) {
+        $validation = GeneralUtility::makeInstance(ConfigurationValidation::class);
+        return array_values(array_filter($configurations, function (Configuration $configuration) use ($settingsUtility, $validation) {
             if (!$configuration->isPush()) {
                 return false;
             }
-            
-            if($settingsUtility->storeNotificationsOnRecordPid() === false 
+
+            if($settingsUtility->storeNotificationsOnRecordPid() === false
                     && $settingsUtility->isPidValid($configuration->getPid()) === false) {
                 return false;
             }
-            
+
+            if(!$validation->validateConfiguration($configuration)) {
+                return false;
+            }
+
             return self::isValidForAudience($configuration, $settingsUtility->sendToEveryoneIfNoAudienceIsSelected());
         }));
     }

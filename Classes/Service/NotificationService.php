@@ -13,6 +13,7 @@ use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
 use TRAW\NotificationsFramework\Events\Data\BeforeNotificationAddedEvent;
 use TRAW\NotificationsFramework\Events\Data\NotificationAllowedForUserEvent;
+use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,12 +28,15 @@ class NotificationService
         private readonly NotificationFactory     $notificationFactory,
         private readonly PersistenceManager      $persistenceManager,
         private readonly EventDispatcher         $eventDispatcher,
+        private readonly ConfigurationValidation $validation,
     )
     {
     }
 
-    public function createNotification(?Configuration $configuration = null): Notification
+    public function createNotification(?Configuration $configuration = null): ?Notification
     {
+        if($this->validation->validate())
+
         if ($this->notificationRepository->notificationExists($configuration?->getUid() ?? 0)) {
             return $this->notificationRepository->findByConfiguration($configuration->getUid())->getFirst();
         }

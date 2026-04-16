@@ -28,7 +28,7 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
-        'hideTable' => true,
+        'hideTable' => false,
     ],
     'types' => [
         '0' => [

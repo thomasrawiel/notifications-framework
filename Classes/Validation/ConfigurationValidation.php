@@ -5,10 +5,13 @@ namespace TRAW\NotificationsFramework\Validation;
 
 use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
+use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Configuration
+class ConfigurationValidation
 {
     public const int SEL_USERS = 1 << 8;
     public const int SEL_GROUPS = 2 << 8;
@@ -33,7 +36,61 @@ class Configuration
 
     public function validate(array $record): int
     {
-        $this->record = $record;
+        $this->record = $this->convertRecordToValidatableArray($record);
+        return $this->executeValidation();
+    }
+
+    public function validateConfiguration(Configuration $configuration): bool
+    {
+        $this->record = $this->convertRecordToValidatableArray($configuration);
+        $valid = $this->executeValidation();
+
+        return $valid === 0;
+    }
+
+    private function convertRecordToValidatableArray(array|Configuration $record): array
+    {
+        if (is_array($record)) {
+            return [
+                'uid' => (int)$record['uid'],
+                'l10n_parent' => (int)($record['l10n_parent'][0] ?? $record['l10n_parent'] ?? 0),
+                'pid' => (int)$record['pid'],
+                'record' => $record['record'][0] ?? null,
+                'table' => $record['table'],
+                'target_audience' => $record['target_audience'][0] ?? '',
+                'fe_users' => $record['fe_users'] ?? '',
+                'fe_groups' => $record['fe_groups'] ?? '',
+            ];
+        }
+
+        if ($record instanceof Configuration) {
+            $table = RecordUtility::getTableFromRecordString($record->getRecord());
+            $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($record->getRecord());
+            $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+
+            return [
+                'uid' => $record->getUid(),
+                'l10n_parent' => $record->getL10nParent(),
+                'pid' => $record->getPid(),
+                'record' => [
+                    'uid' => $attachedRecord['uid'],
+                    'pid' => $attachedRecord['pid'],
+                    'table' => $table,
+                    'row' => $attachedRecord,
+                ],
+                'table' => $table,
+                'target_audience' => $record->getTargetAudience(),
+                'fe_users' => $record->getFeUsers(),
+                'fe_groups' => $record->getFeGroups(),
+            ];
+        }
+
+        return [];
+    }
+
+
+    private function executeValidation(): int
+    {
         return $this->validatePid() | $this->validateRecord() | $this->validateAudience();
     }
 
@@ -41,10 +98,9 @@ class Configuration
     {
         $pid = (int)$this->record['pid'];
 
-        if (!$this->settingsUtility->storeNotificationsOnRecordPid() && $this->settingsUtility->getNotificationStorage() !== $pid) {
-            return self::WRONG_PID;
-        }
-        return (int)($pid === 0);
+        return $this->settingsUtility->isPidValid($pid) === false
+            ? self::WRONG_PID
+            : 0;
     }
 
     private function validateRecord(): int
@@ -52,7 +108,7 @@ class Configuration
         $type = $this->record['type'][0] ?? 0;
 
         $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
-        $record = $this->record['record'][0] ?? null;
+        $record = $this->record['record'] ?? null;
 
         if ($isRecordType && $record === null) {
             return self::NO_RECORD_SELECTED;
@@ -70,12 +126,12 @@ class Configuration
     {
         $emptyAudienceAllowed = $this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected();
 
-        $configurationUid = (int)($this->record['l10n_parent'][0] ?? $this->record['l10n_parent'] ?? 0);
+        $configurationUid = (int)($this->record['l10n_parent']);
         if ($configurationUid === 0) {
-            $configurationUid = (int)$this->record['uid'];
+            $configurationUid = $this->record['uid'];
         }
 
-        $audience = $this->record['target_audience'][0] ?? '';
+        $audience = $this->record['target_audience'];
 
         if (in_array($audience, AudienceUtility::getValidTargetAudiences(), true)) {
             if ($audience === '') {

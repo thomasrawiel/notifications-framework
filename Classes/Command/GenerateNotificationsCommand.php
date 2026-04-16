@@ -53,6 +53,8 @@ final class GenerateNotificationsCommand extends Command
             $users = $this->audienceUtility->getUsersFromConfiguration($configuration);
             $notification = $this->notificationService->createNotification($configuration);
 
+            if ($notification === null) continue;
+
             foreach ($users as $user) {
                 $this->notificationService->createReference($notification, $user, $configuration);
             }
