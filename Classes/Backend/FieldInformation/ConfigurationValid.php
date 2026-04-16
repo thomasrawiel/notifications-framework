@@ -22,6 +22,7 @@ class ConfigurationValid extends AbstractFormElement
 {
     private SettingsUtility $settingsUtility;
     private ConfigurationValidation $configurationValidation;
+    protected $iconFactory;
 
     public static array $requiredTca = [
         'exclude' => true,
@@ -43,6 +44,9 @@ class ConfigurationValid extends AbstractFormElement
         parent::__construct($nodeFactory, $data);
         $this->settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
         $this->configurationValidation = GeneralUtility::makeInstance(ConfigurationValidation::class);
+        if(empty($this->iconFactory)) {
+            $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        }
     }
 
     public function render(): array
@@ -64,10 +68,15 @@ class ConfigurationValid extends AbstractFormElement
         }
 
         $valid = $this->configurationValidation->validate($this->data['databaseRow']);
-
+        $configurationUid = (int)($this->data['databaseRow']['l10n_parent'][0] ?? $this->data['databaseRow']['l10n_parent'] ?? 0);
+        if ($configurationUid === 0) {
+            $configurationUid = (int)$this->data['databaseRow']['uid'];
+        }
         $result['html'] = implode(LF, array_filter(
             [
-                $valid > 0 ? $this->info('Configuration incomplete', 'Some options are not valid or will lead to the configuration being skipped') : $this->success('Configuration complete', 'This configuration can be processed.', $this->data['databaseRow']['push'] ? '' : '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="push" data-value="1" data-uid="' . $configurationUid . '">Queue for processing</a>'),
+                $valid > 0 ?
+                    $this->info('Configuration incomplete', 'Some options are not valid or ambigious and will lead to the configuration being skipped.')
+                    : $this->success('Configuration complete', 'This configuration can be processed.', $this->data['databaseRow']['push'] ? '' : '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="push" data-value="1" data-uid="' . $configurationUid . '">'.$this->iconFactory->getIcon('actions-cloud-upload', Icon::SIZE_MEDIUM).'Queue for processing</a>'),
                 $this->validatePid($valid),
                 $this->validateAudience($valid),
                 $this->validateRecord($valid),
@@ -125,11 +134,11 @@ class ConfigurationValid extends AbstractFormElement
             $configurationUid = (int)$this->data['databaseRow']['uid'];
         }
         if ($selection === ConfigurationValidation::SEL_MIXED && ($valid & ConfigurationValidation::NO_USERS)) {
-            return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="groups" data-uid="' . $configurationUid . '">Change audience to groups</a>');
+            return $this->warning('Missing users', 'Mixed audience is selected, but no users are selected.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="groups" data-uid="' . $configurationUid . '">'.$this->iconFactory->getIcon('apps-pagetree-folder-contains-fe_users', Icon::SIZE_MEDIUM)->render().'Change audience to groups</a>');
         }
 
         if ($selection === ConfigurationValidation::SEL_MIXED && ($valid & ConfigurationValidation::NO_GROUPS)) {
-            return $this->warning('Missing groups', 'Mixed audience is selected, but no groups are selected.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="users"  data-uid="' . $configurationUid . '">Change audience to users</a>');
+            return $this->warning('Missing groups', 'Mixed audience is selected, but no groups are selected.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="target_audience" data-value="users"  data-uid="' . $configurationUid . '">'.$this->iconFactory->getIcon('apps-pagetree-page-frontend-users', Icon::SIZE_MEDIUM)->render().'Change audience to users</a>');
         }
 
         return '';
@@ -143,7 +152,7 @@ class ConfigurationValid extends AbstractFormElement
         }
 
         return ($valid & ConfigurationValidation::WRONG_PID)
-            ? $this->error('Wrong storage', 'You have configued a specific notification storage.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage() . '"  data-uid="' . $configurationUid . '">Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage() . '</strong></a>')
+            ? $this->error('Wrong storage', 'You have configued a specific notification storage.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage() . '"  data-uid="' . $configurationUid . '">'.$this->iconFactory->getIcon('apps-pagetree-drag-move-into', Icon::SIZE_MEDIUM)->render().' Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage() . '</strong></a>')
             : '';
     }
 
@@ -154,7 +163,7 @@ class ConfigurationValid extends AbstractFormElement
         }
         $disabledField = $GLOBALS['TCA'][$this->data['databaseRow']['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
         if ($valid & ConfigurationValidation::RECORD_DISABLED) {
-            return $this->warning('Record disabled', 'There is a record selected, but it is disabled.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="' . $disabledField . '" data-value="0" data-uid="' . $this->data['databaseRow']['record'][0]['uid'] . '" data-table="' . $this->data['databaseRow']['record'][0]['table'] . '">Enable record</a>');
+            return $this->warning('Record disabled', 'There is a record selected, but it is disabled.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="' . $disabledField . '" data-value="0" data-uid="' . $this->data['databaseRow']['record'][0]['uid'] . '" data-table="' . $this->data['databaseRow']['record'][0]['table'] . '">'.$this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render().'Enable record</a>');
         }
 
         return '';
@@ -162,29 +171,28 @@ class ConfigurationValid extends AbstractFormElement
 
     private function callout(string $title = '', string $body = '', string $action = '', string $type = ''): string
     {
-        $pattern = '<div class="t3js-infobox callout callout-sm callout-%s"><div class="media"><div class="media-left"><span class="icon-emphasized">%s</span></div><div class="media-body"><div class="callout-title"><strong>%s</strong></div><div class="callout-body"><p class="mt-4">%s</p>%s</div></div></div></div>';
+        $pattern = '<div class="t3js-infobox callout callout-sm callout-%s"><div class="media"><div class="media-left"><span class="icon-emphasized">%s</span></div><div class="media-body"><div class="callout-title"><strong>%s</strong></div><div class="callout-body"><p class="mt-2">%s</p>%s</div></div></div></div>';
         $icon = $this->getCalloutIcon($type, $action);
         return sprintf($pattern, $type, $icon, $title, $body, $action);
     }
 
     private function getCalloutIcon(string $type = '', string $action = ''): string
     {
-        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $icon = $iconFactory->getIcon('actions-info', Icon::SIZE_SMALL);
+        $icon = $this->iconFactory->getIcon('actions-info', Icon::SIZE_SMALL);
 
-        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $icon = $iconFactory->getIcon('actions-info', Icon::SIZE_SMALL);
+        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $icon = $this->iconFactory->getIcon('actions-info', Icon::SIZE_SMALL);
 
         if ($type === 'danger') {
-            $icon = $iconFactory->getIcon('actions-exclamation', Icon::SIZE_SMALL);
+            $icon = $this->iconFactory->getIcon('actions-exclamation', Icon::SIZE_SMALL);
         }
 
         if ($type === 'success') {
-            $icon = $iconFactory->getIcon('actions-check', Icon::SIZE_SMALL);
+            $icon = $this->iconFactory->getIcon('actions-check', Icon::SIZE_SMALL);
         }
 
         if ($action !== '') {
-            $icon = $iconFactory->getIcon('actions-question', Icon::SIZE_SMALL);
+            $icon = $this->iconFactory->getIcon('actions-question', Icon::SIZE_SMALL);
         }
 
         return $icon->render();
