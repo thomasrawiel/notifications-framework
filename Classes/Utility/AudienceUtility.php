@@ -12,6 +12,7 @@ use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersCsvEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetGenericUsersEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetSubscribedUsersEvent;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,9 +21,28 @@ class AudienceUtility
     public function __construct(
         private readonly FrontendUserRepository $frontendUserRepository,
         private readonly SettingsUtility        $settingsUtility,
-        private readonly EventDispatcher        $eventDispatcher
+        private readonly EventDispatcher        $eventDispatcher,
+        private readonly FrontendInterface      $cache
     )
     {
+    }
+
+    private function getCachedValue(Configuration $configuration): int
+    {
+        $cacheIdentifier = 'tx_notifications_framework_configuration_audience_' . $configuration->getUid();
+        $tags = [
+            'tx_notifications_framework_audience',
+            'tx_notifications_framework_audience_record_' . $configuration->getUid(),
+        ];
+        // If value is false, it has not been cached
+        $value = $this->cache->get($cacheIdentifier);
+        if ($value === false) {
+            // Store the data in cache
+            $value = count($this->getUsersFromConfiguration($configuration));
+            $this->cache->set($cacheIdentifier, $value, $tags);
+        }
+
+        return $value;
     }
 
     public function getAudienceFromConfiguration(Configuration $configuration): array
@@ -132,7 +152,7 @@ class AudienceUtility
 
     public function getUsersCountFromConfiguration(Configuration $configuration): int
     {
-        return count($this->getUsersFromConfiguration($configuration));
+        return $this->getCachedValue($configuration);
     }
 
     public static function getValidTargetAudiences(): array

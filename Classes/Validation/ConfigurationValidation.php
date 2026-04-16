@@ -9,6 +9,8 @@ use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ConfigurationValidation
@@ -30,14 +32,34 @@ class ConfigurationValidation
 
     private array $record = [];
 
-    public function __construct(protected SettingsUtility $settingsUtility)
+    public function __construct(protected SettingsUtility $settingsUtility, protected FrontendInterface $cache)
     {
+    }
+
+    private function getCachedValue(int $uid): int
+    {
+        $cacheIdentifier = 'tx_notifications_framework_configuration_' . $uid;
+        $tags = [
+            'tx_notifications_framework_validation',
+            'tx_notifications_framework_validation_record_' . $uid,
+        ];
+        // If value is false, it has not been cached
+        $value = $this->cache->get($cacheIdentifier);
+        if ($value === false) {
+            // Store the data in cache
+            $value = $this->executeValidation();
+            $this->cache->set($cacheIdentifier, $value, $tags);
+        }
+
+        return $value;
     }
 
     public function validate(array $record): int
     {
         $this->record = $this->convertRecordToValidatableArray($record);
-        return $this->executeValidation();
+        $valid = $this->getCachedValue((int)$record['uid']);
+
+        return $valid;
     }
 
     public function validateConfiguration(Configuration $configuration): bool

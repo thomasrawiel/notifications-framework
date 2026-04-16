@@ -7,6 +7,7 @@ use Doctrine\DBAL\ParameterType;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
@@ -20,6 +21,7 @@ final class AjaxRoutesController
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly ConnectionPool           $connectionPool,
+        private readonly CacheManager             $cacheManager,
     )
     {
     }
@@ -66,6 +68,9 @@ final class AjaxRoutesController
                     true
                 ));
         }
+
+        $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_'.$uid);
+        $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_'.$uid);
 
         return $response;
     }

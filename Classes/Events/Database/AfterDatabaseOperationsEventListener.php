@@ -10,6 +10,7 @@ use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
 use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,7 +30,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
      */
     protected string $expectedEventClass = AfterDatabaseOperationsEvent::class;
 
-    public function __construct(private readonly Type $type)
+    public function __construct(private readonly Type $type, private readonly CacheManager $cacheManager)
     {
     }
 
@@ -42,7 +43,8 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $recordId = $event->getId();
         $table = $event->getTable();
         $record = BackendUtility::getRecord($table, $recordId);
-
+        $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_'.$recordId);
+        $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_'.$recordId);
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
             if ($this->type->isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {

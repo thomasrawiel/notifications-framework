@@ -37,4 +37,6 @@ call_user_func(function ($_EXTKEY = 'notifications_framework') {
         \TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler::class => 510,
     ];
 
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['notifications_framework_configuration']
+        ??= [];
 });

@@ -33,7 +33,15 @@ services:
     public: true
   TRAW\NotificationsFramework\Utility\AudienceUtility:
     public: true
+    arguments:
+      $cache: '@cache.notifications_framework_configuration'
   TRAW\NotificationsFramework\Controller\Backend\AjaxRoutesController:
     public: true
   TRAW\NotificationsFramework\Validation\ConfigurationValidation:
     public: true
+    arguments:
+      $cache: '@cache.notifications_framework_configuration'
+  cache.notifications_framework_configuration:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['notifications_framework_configuration']
