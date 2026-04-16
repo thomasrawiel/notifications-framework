@@ -10,6 +10,7 @@ use TRAW\NotificationsFramework\Utility\FilterUtility;
 use TYPO3\CMS\Backend\Form\AbstractNode;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -63,8 +64,11 @@ class NotificationEstimate extends AbstractCustomNode
 
         $estimateHtml = [];
         $noSelection = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.noselection');
-        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] === 1 || $row['deleted'] === 1) {
+        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] || $row['deleted'] === 1) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
+            if($row['hidden']) {
+                $estimateHtml[] = $this->info('Record hidden', 'No audience was calculated because the record is hidden', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="hidden" data-value="0" data-uid="' . $row['uid'] . '" data-table="tx_notifications_framework_domain_model_configuration">' . $this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render() . 'Enable record</a>');
+            }
         } else {
             /** @var Configuration $configuration */
             $configuration = $this->configurationRepository->findByUid($row['uid']);

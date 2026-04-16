@@ -24,8 +24,8 @@ class RecordUtility
      * returns the uid of a record string, e.g. tx_news_domain_model_news_123 => (int)123
      */
     public static function getRecordUidAsIntegerFromRecordString(string $recordString): int {
-        if (MathUtility::canBeInterpretedAsInteger($record)) {
-            return (int)$record;
+        if (MathUtility::canBeInterpretedAsInteger($recordString)) {
+            return (int)$recordString;
         }
 
         return (int)array_pop(GeneralUtility::trimExplode('_', $recordString));

@@ -73,13 +73,24 @@ class ConfigurationValidation
     private function convertRecordToValidatableArray(array|Configuration $record): array
     {
         if (is_array($record)) {
+            if (is_array($record['record'])) {
+                $attachedRecord = $record['record'][0] ?? null;
+            } elseif (is_string($record['record'])) {
+                $table = RecordUtility::getTableFromRecordString($record['record']);
+                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($record['record']);
+                $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+            } else {
+                $attachedRecord = null;
+            }
+
             return [
                 'uid' => (int)$record['uid'],
                 'l10n_parent' => (int)($record['l10n_parent'][0] ?? $record['l10n_parent'] ?? 0),
                 'pid' => (int)$record['pid'],
-                'record' => $record['record'][0] ?? null,
+                'record' => $attachedRecord,
                 'table' => $record['table'],
-                'target_audience' => $record['target_audience'][0] ?? '',
+                'type' => is_array($record['type']) ? ($record['type'][0] ?? '') : $record['type'],
+                'target_audience' => is_array($record['target_audience']) ? ($record['target_audience'][0] ?? '') : $record['target_audience'],
                 'fe_users' => $record['fe_users'] ?? '',
                 'fe_groups' => $record['fe_groups'] ?? '',
             ];
@@ -127,12 +138,12 @@ class ConfigurationValidation
 
     private function validateRecord(): int
     {
-        $type = $this->record['type'][0] ?? 0;
+        $type = $this->record['type'];
 
         $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
         $record = $this->record['record'] ?? null;
 
-        if(!$isRecordType) {
+        if (!$isRecordType) {
             return 0;
         }
 
@@ -140,8 +151,8 @@ class ConfigurationValidation
             return self::NO_RECORD_SELECTED;
         }
 
-        $disabledField = $GLOBALS['TCA'][$record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
-        if ($disabledField && (bool)$record['row'][$disabledField]) {
+        $disabledField = $GLOBALS['TCA'][$this->record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
+        if ($disabledField && (bool)($record['row'][$disabledField] ?? $record[$disabledField] ?? 1)) {
             return self::RECORD_DISABLED;
         }
 

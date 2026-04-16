@@ -6,10 +6,13 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Cache\CacheManager;
 
 #[AsController]
 class NotificationsConfigurationsController extends AbstractController
@@ -19,6 +22,8 @@ class NotificationsConfigurationsController extends AbstractController
         protected readonly UriBuilder              $uriBuilder,
         protected readonly ConfigurationRepository $configurationRepository,
         protected readonly SettingsUtility         $settingsUtility,
+        private readonly AudienceUtility           $audienceUtility,
+        private readonly ConfigurationValidation   $configurationValidation,
     )
     {
     }
@@ -38,10 +43,20 @@ class NotificationsConfigurationsController extends AbstractController
 //        $demand = $this->request->hasArgument('demand')
 //            ? $this->request->getArgument('demand') : $defaultDemand;
 //
+        $configurations = $this->configurationRepository->listConfigurations($demand);
+        foreach ($configurations as $k => $config) {
+            $configurations[$k]['valid'] = $this->configurationValidation->validate($config);
+            if(!$config['hidden']) {
+                $configurations[$k]['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($config['uid']));
+            }else {
+                $configurations[$k]['audience'] = 0;
+            }
+        }
+
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listConfigurations',
-            'configurations' => $this->configurationRepository->listConfigurations($demand),
+            'configurations' => $configurations,
         ]);
 
         return $this->moduleTemplate->renderResponse('Backend/Configuration/List');

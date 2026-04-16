@@ -32,6 +32,7 @@ class ConfigurationRepository extends Repository
         $query = $this->createQuery();
         $query->setQuerySettings(
             $query->getQuerySettings()->setRespectSysLanguage(false),
+
         );
         $query->matching(
             $query->logicalAnd(
