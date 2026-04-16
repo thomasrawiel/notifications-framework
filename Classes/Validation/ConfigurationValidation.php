@@ -45,7 +45,7 @@ class ConfigurationValidation
         $this->record = $this->convertRecordToValidatableArray($configuration);
         $valid = $this->executeValidation();
 
-        return $valid === 0;
+        return $valid === 0 || ($valid === self::EMPTY_AUDIENCE_WARNING);
     }
 
     private function convertRecordToValidatableArray(array|Configuration $record): array
@@ -110,7 +110,11 @@ class ConfigurationValidation
         $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
         $record = $this->record['record'] ?? null;
 
-        if ($isRecordType && $record === null) {
+        if(!$isRecordType) {
+            return 0;
+        }
+
+        if ($record === null) {
             return self::NO_RECORD_SELECTED;
         }
 
@@ -124,8 +128,6 @@ class ConfigurationValidation
 
     private function validateAudience(): int
     {
-        $emptyAudienceAllowed = $this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected();
-
         $configurationUid = (int)($this->record['l10n_parent']);
         if ($configurationUid === 0) {
             $configurationUid = $this->record['uid'];
@@ -135,7 +137,7 @@ class ConfigurationValidation
 
         if (in_array($audience, AudienceUtility::getValidTargetAudiences(), true)) {
             if ($audience === '') {
-                if ($emptyAudienceAllowed) {
+                if ($this->settingsUtility->sendToEveryoneIfNoAudienceIsSelected()) {
                     return self::EMPTY_AUDIENCE_WARNING;
                 } else {
                     return self::EMPTY_AUDIENCE_ERROR;

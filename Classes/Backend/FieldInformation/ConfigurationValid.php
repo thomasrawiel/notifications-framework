@@ -63,7 +63,7 @@ class ConfigurationValid extends AbstractFormElement
         $result = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
 
         if (str_starts_with((string)$this->data['databaseRow']['uid'], 'NEW')) {
-            $result['html'] = $this->callout('Validation pending', 'Please save the record first.');
+            $result['html'] = $this->info('Validation pending', 'Please save the record first.');
             return $result;
         }
 
@@ -74,7 +74,7 @@ class ConfigurationValid extends AbstractFormElement
         }
         $result['html'] = implode(LF, array_filter(
             [
-                $valid > 0 ?
+                $valid !== 0 && $valid !== ConfigurationValidation::EMPTY_AUDIENCE_WARNING ?
                     $this->info('Configuration incomplete', 'Some options are not valid or ambigious and will lead to the configuration being skipped.')
                     : $this->success('Configuration complete', 'This configuration can be processed.', $this->data['databaseRow']['push'] ? '' : '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="push" data-value="1" data-uid="' . $configurationUid . '">'.$this->iconFactory->getIcon('actions-cloud-upload', Icon::SIZE_MEDIUM).'Queue for processing</a>'),
                 $this->validatePid($valid),
