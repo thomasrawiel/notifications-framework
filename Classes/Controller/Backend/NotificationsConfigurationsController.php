@@ -7,11 +7,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
+use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 
 #[AsController]
@@ -51,6 +53,15 @@ class NotificationsConfigurationsController extends AbstractController
             }else {
                 $configurations[$k]['audience'] = 0;
             }
+            $table = RecordUtility::getTableFromRecordString($config['record']);
+            $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($config['record']);
+            $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+            $configurations[$k]['record'] =  [
+                'uid' => $attachedRecord['uid'],
+                'pid' => $attachedRecord['pid'],
+                'table' => $table,
+                'row' => $attachedRecord,
+            ];
         }
 
         $this->moduleTemplate->assignMultiple([

@@ -1,15 +1,20 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
-<tr>
+<tr class="">
     <td>
         <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}">
-
+            {nf:statusIcon(configuration:configuration) -> f:format.raw()}
 
 
         <core:icon identifier="actions-search"/>
         {configuration.uid}
         </a>
+
+
+
+
     </td>
     <f:if condition="{showPidColumn}">
         <td>
@@ -32,9 +37,10 @@
 
     </td>
     <td></td>
-    <td>
-        {configuration.valid}
+    <td class="{nf:validClass(value:configuration.valid,configuration:configuration)}">
+        {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()}
     </td>
+
     <td>
 {configuration.audience}
     </td>

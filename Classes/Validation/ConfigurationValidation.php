@@ -20,8 +20,6 @@ class ConfigurationValidation
     public const int SEL_MIXED = 3 << 8;
     public const int SEL_INVALID = 4 << 8;
 
-    public const int SEL_MASK = self::SEL_USERS | self::SEL_GROUPS | self::SEL_MIXED | self::SEL_INVALID;
-
     public const int NO_USERS = 1 << 0;
     public const int NO_GROUPS = 1 << 1;
     public const int WRONG_PID = 1 << 2;
@@ -29,6 +27,10 @@ class ConfigurationValidation
     public const int RECORD_DISABLED = 1 << 4;
     public const int EMPTY_AUDIENCE_WARNING = 1 << 5;
     public const int EMPTY_AUDIENCE_ERROR = 1 << 6;
+
+    public const int RECORD_MASK = self::NO_RECORD_SELECTED | self::RECORD_DISABLED | self::WRONG_PID;
+    public const int SEL_MASK = self::SEL_USERS | self::SEL_GROUPS | self::SEL_MIXED | self::SEL_INVALID;
+    public const int AUDIENCE_MASK = self::NO_USERS | self::NO_GROUPS | self::EMPTY_AUDIENCE_WARNING | self::EMPTY_AUDIENCE_ERROR;
 
     private array $record = [];
 
@@ -70,6 +72,63 @@ class ConfigurationValidation
         return $valid === 0 || ($valid === self::EMPTY_AUDIENCE_WARNING);
     }
 
+    public static function getInterpretation(int $valid, string|bool $priority = false): int
+    {
+        $selection = $valid & ConfigurationValidation::SEL_MASK;
+        $record = $valid & ConfigurationValidation::RECORD_MASK;
+        $audience = $valid & ConfigurationValidation::AUDIENCE_MASK;
+
+        if ($priority === false) {
+            if ($selection || $audience) {
+                return self::getAudienceInterpretation($valid);
+            } elseif ($record) {
+                return self::getRecordInterpretation($valid);
+            } else {
+                return $valid;
+            }
+        } else {
+            if ($priority === 'audience') {
+                return self::getAudienceInterpretation($valid);
+            }
+            if ($priority === 'record') {
+                return self::getRecordInterpretation($valid);
+            }
+
+            throw new \Exception('unknown priority');
+        }
+    }
+
+    private static function getRecordInterpretation(int $valid): int
+    {
+        if ($valid & ConfigurationValidation::WRONG_PID) {
+            return ConfigurationValidation::WRONG_PID;
+        }
+        if ($valid & ConfigurationValidation::NO_RECORD_SELECTED) {
+            return ConfigurationValidation::NO_RECORD_SELECTED;
+        }
+        if ($valid & ConfigurationValidation::RECORD_DISABLED) {
+            return ConfigurationValidation::RECORD_DISABLED;
+        }
+        return 0;
+    }
+
+    private static function getAudienceInterpretation(int $valid): int
+    {
+        if ($valid & ConfigurationValidation::NO_GROUPS) {
+            return ConfigurationValidation::NO_GROUPS;
+        }
+        if ($valid & ConfigurationValidation::NO_USERS) {
+            return ConfigurationValidation::NO_USERS;
+        }
+        if ($valid & ConfigurationValidation::EMPTY_AUDIENCE_ERROR) {
+            return ConfigurationValidation::EMPTY_AUDIENCE_ERROR;
+        }
+        if ($valid & ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
+            return ConfigurationValidation::EMPTY_AUDIENCE_WARNING;
+        }
+        return 0;
+    }
+
     private function convertRecordToValidatableArray(array|Configuration $record): array
     {
         if (is_array($record)) {
@@ -87,6 +146,7 @@ class ConfigurationValidation
                 'uid' => (int)$record['uid'],
                 'l10n_parent' => (int)($record['l10n_parent'][0] ?? $record['l10n_parent'] ?? 0),
                 'pid' => (int)$record['pid'],
+                'hidden' => $record['hidden'],
                 'record' => $attachedRecord,
                 'table' => $record['table'],
                 'type' => is_array($record['type']) ? ($record['type'][0] ?? '') : $record['type'],
@@ -105,6 +165,7 @@ class ConfigurationValidation
                 'uid' => $record->getUid(),
                 'l10n_parent' => $record->getL10nParent(),
                 'pid' => $record->getPid(),
+                'hidden' => $record->getHidden(),
                 'record' => [
                     'uid' => $attachedRecord['uid'],
                     'pid' => $attachedRecord['pid'],
@@ -140,6 +201,10 @@ class ConfigurationValidation
     {
         $type = $this->record['type'];
 
+        if($this->record['hidden']) {
+            return self::RECORD_DISABLED;
+        }
+
         $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
         $record = $this->record['record'] ?? null;
 
@@ -155,6 +220,8 @@ class ConfigurationValidation
         if ($disabledField && (bool)($record['row'][$disabledField] ?? $record[$disabledField] ?? 1)) {
             return self::RECORD_DISABLED;
         }
+
+
 
         return 0;
     }

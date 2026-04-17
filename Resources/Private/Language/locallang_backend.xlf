@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext"
+          original="EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf"
+          date="2025-04-02T112:00:00Z" product-name="notifications_framework">
+        <header/>
+        <body>
+			<trans-unit id="action.enable_record">
+				<source>Enable record</source>
+			</trans-unit>
+			<trans-unit id="action.change_audience_users">
+				<source>Change audience to users</source>
+			</trans-unit>
+			<trans-unit id="action.change_audience_groups">
+				<source>Change audience to groups</source>
+			</trans-unit>
+			<trans-unit id="action.enable_configuration">
+				<source>Enable configuration</source>
+			</trans-unit>
+			<trans-unit id="action.queue">
+				<source>Queue for processing</source>
+			</trans-unit>
+
+        </body>
+    </file>
+</xliff>

@@ -45,6 +45,8 @@ final class Configuration extends AbstractEntity
 
     protected int $l10nParent = 0;
 
+    protected int $hidden = 0;
+
 
     public function isDone(): bool
     {
@@ -204,5 +206,15 @@ final class Configuration extends AbstractEntity
     public function setL10nParent(int $l10nParent): void
     {
         $this->l10nParent = $l10nParent;
+    }
+
+    public function getHidden(): int
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(int $hidden): void
+    {
+        $this->hidden = $hidden;
     }
 }

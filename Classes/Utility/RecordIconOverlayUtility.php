@@ -25,16 +25,15 @@ final class RecordIconOverlayUtility
             'done,push,target_audience'
 
         );
+        if (empty($configurationRecord['target_audience'])) {
+            return self::ICON_IDENTIFIER_QUESTION;
+        }
         if ($configurationRecord['done'] ?? false) {
             return self::ICON_IDENTIFIER_CHECK;
         }
 
         if ($configurationRecord['push'] ?? false) {
             return self::ICON_IDENTIFIER_QUEUE;
-        }
-
-        if (empty($configurationRecord['target_audience'])) {
-            return self::ICON_IDENTIFIER_QUESTION;
         }
 
         return self::ICON_IDENTIFIER_PAUSE;
