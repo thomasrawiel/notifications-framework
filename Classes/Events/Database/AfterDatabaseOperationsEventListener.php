@@ -11,6 +11,7 @@ use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEve
 use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -40,11 +41,31 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             // not allowed to create notifications
             return;
         }
+
         $recordId = $event->getId();
         $table = $event->getTable();
         $record = BackendUtility::getRecord($table, $recordId);
-        $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_'.$recordId);
-        $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_'.$recordId);
+
+        if ($event->getStatus() === 'update') {
+            if ($table === Configuration::TABLE_NAME) {
+                $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $recordId);
+                $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $recordId);
+            } else {
+                $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(Configuration::TABLE_NAME);
+                $qb->getRestrictions()->removeAll();
+                $linkedConfigurations = $qb->select('uid')
+                    ->from(Configuration::TABLE_NAME)
+                    ->where(
+                        $qb->expr()->eq('record', $qb->createNamedParameter($table.'_'.$recordId))
+                    )->execute()->fetchAllAssociative();
+
+                foreach ($linkedConfigurations as $c) {
+                    $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $c['uid']);
+                    $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $c['uid']);
+                }
+            }
+
+        }
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
             if ($this->type->isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
