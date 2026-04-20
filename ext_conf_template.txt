@@ -12,9 +12,11 @@ storeNotificationsOnRecordPid = 1
 # cat=Storage/allowed/a; type=string; label=Commalist of allowed tables, may be overwritten by events
 allowedTables = pages
 
-# cat=Storage/storage/b; type=string; label=Look for fe_users in these folders
+# cat=Storage/storage/c; type=string; label=Look for fe_users in these folders
 feUserLookupUids = 0
-# cat=Storage/storage/c; type=int; label=Feuser lookup recursive levels
+# cat=Storage/storage/d; type=int; label=Feuser lookup recursive levels
 feUserLookupRecursive = 0
-# cat=Storage/storage/d; type=int; label=Notification Storage, if storeNotificationsOnRecordPid = 0
+# cat=Storage/storage/a; type=string; label=Notification Storage, if storeNotificationsOnRecordPid = 0
 notificationStorage = 0
+# cat=Storage/storage/b; type=int; label=Notification Storage recursive levels
+notificationStorageRecursive = 0

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -79,10 +81,16 @@ class ConfigurationRepository extends Repository
 
         $sortDirection = $demand['sortDirection'] ?? 'ASC';
 
-        $qb->where(
-            $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0)),
-            $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'])),
-        );
+        $constraints = [
+            $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+        ];
+        if(is_array($demand['uid'])) {
+            $constraints[] =  $qb->expr()->in('pid', $qb->createNamedParameter($demand['pid'], ArrayParameterType::INTEGER));
+        }else {
+            $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
+        }
+
+        $qb->where(...$constraints);
         $qb->orderBy($sortField, $sortDirection);
 
         return $qb->executeQuery()->fetchAllAssociative();

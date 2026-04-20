@@ -29,6 +29,10 @@ final class SettingsUtility
         return implode(',', $this->getAllowedTables());
     }
 
+    public function getSettings(): array {
+        return $this->config;
+    }
+
     public function automaticallyCreateNotifications(): bool
     {
         return (bool)$this->config['autoCreateNotifications'];
@@ -54,16 +58,21 @@ final class SettingsUtility
         return (bool)($this->config['storeNotificationsOnRecordPid'] ?? true);
     }
 
-    public function getNotificationStorage(): int
+    public function getNotificationStorage(): array
     {
-        return (int)$this->config['notificationStorage'];
+        return array_map('intval', GeneralUtility::trimExplode(',', $this->config['notificationStorage'], true));
+    }
+
+    public function getNotificationStorageRecursive(): int
+    {
+        return (int)$this->config['notificationStorageRecursive'];
     }
 
     public function checkPid(string|int|null $pid): int
     {
         return $this->storeNotificationsOnRecordPid()
             ? (int)$pid
-            : $this->getNotificationStorage();
+            : $this->getNotificationStorage()[0];
     }
 
     public function isPidValid(string|int|null $pid): bool
@@ -71,7 +80,9 @@ final class SettingsUtility
         if ($this->storeNotificationsOnRecordPid()) {
             return true;
         }
+        $treeListUtility = GeneralUtility::makeInstance(TreeListUtility::class);
 
-        return (int)$pid === $this->getNotificationStorage();
+        $treeList = $treeListUtility->getTreeListArrayFromArray($this->getNotificationStorage(), $this->getNotificationStorageRecursive());
+        return in_array($pid, $treeList);
     }
 }

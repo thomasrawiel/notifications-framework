@@ -157,7 +157,7 @@ final class ConfigurationValid extends AbstractCustomNode
         $validation = ConfigurationValidation::getInterpretation($valid, 'record');
 
         return ($validation === ConfigurationValidation::WRONG_PID)
-            ? $this->error('Wrong storage', 'You have configued a specific notification storage.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage() . '"  data-uid="' . $configurationUid . '">' . $this->iconFactory->getIcon('apps-pagetree-drag-move-into', Icon::SIZE_MEDIUM)->render() . ' Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage() . '</strong></a>')
+            ? $this->error('Wrong storage', 'You have configued a specific notification storage.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage()[0] . '"  data-uid="' . $configurationUid . '">' . $this->iconFactory->getIcon('apps-pagetree-drag-move-into', Icon::SIZE_MEDIUM)->render() . ' Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage()[0] . '</strong></a>')
             : '';
     }
 

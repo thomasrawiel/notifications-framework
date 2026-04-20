@@ -9,6 +9,7 @@ use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -24,6 +25,7 @@ class NotificationsConfigurationsController extends AbstractController
         protected readonly UriBuilder              $uriBuilder,
         protected readonly ConfigurationRepository $configurationRepository,
         protected readonly SettingsUtility         $settingsUtility,
+        protected readonly TreeListUtility         $treeListUtility,
         private readonly AudienceUtility           $audienceUtility,
         private readonly ConfigurationValidation   $configurationValidation,
     )
@@ -39,7 +41,7 @@ class NotificationsConfigurationsController extends AbstractController
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => $moduleData->get('sortDirection'),
             'uid' => null,
-            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->settingsUtility->getNotificationStorage(),
+            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
         ];
 
 //        $demand = $this->request->hasArgument('demand')
@@ -48,25 +50,29 @@ class NotificationsConfigurationsController extends AbstractController
         $configurations = $this->configurationRepository->listConfigurations($demand);
         foreach ($configurations as $k => $config) {
             $configurations[$k]['valid'] = $this->configurationValidation->validate($config);
-            if(!$config['hidden']) {
+            if (!$config['hidden']) {
                 $configurations[$k]['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($config['uid']));
-            }else {
+            } else {
                 $configurations[$k]['audience'] = 0;
             }
-            $table = RecordUtility::getTableFromRecordString($config['record']);
-            $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($config['record']);
-            $attachedRecord = BackendUtility::getRecord($table, $recordUid);
-            $configurations[$k]['record'] =  [
-                'uid' => $attachedRecord['uid'],
-                'pid' => $attachedRecord['pid'],
-                'table' => $table,
-                'row' => $attachedRecord,
-            ];
+            if($config['record']) {
+                $table = RecordUtility::getTableFromRecordString($config['record']);
+                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($config['record']);
+                $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+                $configurations[$k]['record'] = [
+                    'uid' => $attachedRecord['uid'],
+                    'pid' => $attachedRecord['pid'],
+                    'table' => $table,
+                    'row' => $attachedRecord,
+                ];
+            }
+
         }
 
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listConfigurations',
+            'disableSort' => 1,
             'configurations' => $configurations,
         ]);
 
