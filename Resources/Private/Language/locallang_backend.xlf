@@ -23,6 +23,54 @@
 			<trans-unit id="action.queue">
 				<source>Queue for processing</source>
 			</trans-unit>
+			<trans-unit id="settings.autoCreateNotifications">
+				<source>Automatically create notification for new records (in allowed tables)</source>
+			</trans-unit>
+			<trans-unit id="settings.sendToEveryoneIfNoAudienceIsSelected">
+				<source>Send notifications to every Frontend user if no specific audience is selected</source>
+			</trans-unit>
+			<trans-unit id="settings.storeNotificationsOnRecordPid">
+				<source>Store notifications on record pid</source>
+			</trans-unit>
+			<trans-unit id="settings.allowedTables">
+				<source>Commalist of allowed tables</source>
+			</trans-unit>
+			<trans-unit id="settings.feUserLookupUids">
+				<source>Frontend user storage</source>
+			</trans-unit>
+			<trans-unit id="settings.feUserLookupRecursive">
+				<source>Frontend user storage recursive levels</source>
+			</trans-unit>
+			<trans-unit id="settings.notificationStorage">
+				<source>Notification storage</source>
+			</trans-unit>
+			<trans-unit id="settings.notificationStorageRecursive">
+				<source>Notification storage recursive levels</source>
+			</trans-unit>
+			<trans-unit id="hint.lookup">
+				<source>Visual representation of all pages that are included in the lookup</source>
+			</trans-unit>
+			<trans-unit id="th.settings">
+				<source>Configured</source>
+			</trans-unit>
+			<trans-unit id="th.settings.desc">
+				<source>Values defined in settings.php</source>
+			</trans-unit>
+			<trans-unit id="th.computed">
+				<source>Applied</source>
+			</trans-unit>
+			<trans-unit id="th.computed.desc">
+				<source>Final values after all processing and events</source>
+			</trans-unit>
+
+			<trans-unit id="hint.storeNotificationOnRecordsPid.enabled">
+				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is enabled, the extension will look
+					for configurations without a pid constraint</source>
+			</trans-unit>
+			<trans-unit id="hint.storeNotificationOnRecordsPid.disabled">
+				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is disabled, the extension will use
+					the &lt;code&gt;notificationStorage&lt;/code&gt; setting as a pid constraint</source>
+			</trans-unit>
 
         </body>
     </file>
