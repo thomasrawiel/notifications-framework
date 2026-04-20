@@ -5,32 +5,32 @@
     <f:if condition="{disableSort}">
         <f:then>{label}</f:then>
         <f:else>
-            <f:comment>
+
                 <span class="{f:if(condition: '{demand.sortField} == {field}', else:'hidden')}">
-                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
+                <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}" title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
                                class="{f:if(condition:'{demand.sortDirection} == \'asc\'', then:'hidden')}"
-                               action="{action}"
-                               arguments="{demand:{sortField:demand.sortField,sortDirection:'asc'}}">
+
+                               arguments="{demand:{sortField:demand.sortField,sortDirection:'asc', page:demand.page}}">
                      {label}
                     <core:icon identifier="actions-sort-amount-down"/>
-                </f:link.action>
-                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
+                </a>
+                <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}" title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
                                class="{f:if(condition:'{demand.sortDirection} == \'desc\'', then:'hidden')}"
-                               action="{action}"
-                               arguments="{demand:{sortField:demand.sortField,sortDirection:'desc'}}">
+
+                               arguments="{demand:{sortField:demand.sortField,sortDirection:'desc', page:demand.page}}">
                      {label}
                     <core:icon identifier="actions-sort-amount-up"/>
-                </f:link.action>
+                </a>
             </span>
                 <span class="{f:if(condition: '{demand.sortField} == {field}', then:'hidden')}">
-                <f:link.action title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
-                               action="{action}"
-                               arguments="{demand:{sortField:field,sortDirection:'{f:if(condition: \'{defaultSort}\',then:defaultSort,else:\'asc\')}'}}">
+                <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}" title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
+
+                               arguments="{demand:{sortField:field,sortDirection:'{f:if(condition: \'{defaultSort}\',then:defaultSort,else:\'asc\')}', page:demand.page}}">
                      {label}
                     <core:icon identifier="actions-sort-amount"/>
-                </f:link.action>
+                </a>
             </span>
-            </f:comment>
+
         </f:else>
     </f:if>
 </f:section>

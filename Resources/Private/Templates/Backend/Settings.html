@@ -1,0 +1,123 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Backend/Default"/>
+<f:section name="headline">
+    <h1>
+        <f:translate
+            key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.settings.title"/>
+    </h1>
+</f:section>
+<f:section name="content">
+    <div class="infolist-container">
+        <div class="infolist">
+            <div class="infolist-content">
+                <div class="table-fit mb-0">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Settings value</th>
+                            <th>Setting after events</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+                            <th>autoCreateNotifications</th>
+                            <td><code>{settings.autoCreateNotifications}</code></td>
+                            <td>
+                                <core:icon identifier="{f:if(condition:settings.sendToEveryoneIfNoAudienceIsSelected,then:'actions-check-square',else:'actions-square')}"></core:icon>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>sendToEveryoneIfNoAudienceIsSelected</th>
+                            <td><code>{settings.sendToEveryoneIfNoAudienceIsSelected}</code></td>
+                            <td>
+                                <core:icon identifier="{f:if(condition:settings.sendToEveryoneIfNoAudienceIsSelected,then:'actions-check-square',else:'actions-square')}"></core:icon>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>feUserLookupUids</th>
+                            <td><code>{settings.feUserLookupUids}</code></td>
+                            <td rowspan="2">
+                                <f:render section="PageTree" arguments="{pages:feUserLookupUids}"/>
+                                <strong><i>Visual representation of all pages that are included in the lookup</i></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>feUserLookupRecursive</th>
+                            <td><code>{settings.feUserLookupRecursive}</code></td>
+                        </tr>
+                        <tr>
+                            <th>notificationStorage</th>
+                            <td><code>{settings.notificationStorage}</code></td>
+                            <td rowspan="2">
+                                <f:render section="PageTree" arguments="{pages:notificationStorage}"/>
+                                <strong><i>Visual representation of all pages that are included in the lookup</i></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>notificationStorageRecursive</th>
+                            <td><code>{settings.notificationStorageRecursive}</code></td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">allowedTables</th>
+                            <td><code><f:if condition="{settings.allowedTables}">
+                                <f:then>{settings.allowedTables}</f:then>
+                                <f:else><i>(empty)</i></f:else>
+                            </f:if></code></td>
+                            <td>
+                                <ul>
+                                    <f:for as="table" each="{allowedTables}" key="key">
+                                        <li data-type="{key}">
+                                            <f:if condition="{table.icon}">
+                                                <f:then>
+                                                    <core:icon identifier="{table.icon}" size="small"/>
+                                                </f:then>
+                                                <f:else if="{table.iconfile}">
+                                                    <f:image src="{table.iconfile}" width="16"/>
+                                                </f:else>
+                                            </f:if>
+                                            {table.title}
+                                        </li>
+                                    </f:for>
+                                </ul>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</f:section>
+<f:section name="PageTree">
+    <ul>
+        <f:for each="{pages}" as="page">
+            <li>
+                <core:icon identifier="{page.icon}" overlay="{page.iconOverlay}" />
+
+                <f:if condition="{page.inSettings}">
+                    <strong>
+                </f:if>
+
+                [{page.uid}] {page.title}
+
+                <f:if condition="{page.inSettings}">
+                    <f:then></strong> <i>(from settings)</i></f:then>
+                    <f:else> <i>(from recursive lookup)</i></f:else>
+                </f:if>
+
+                <f:if condition="{page.children}">
+                    <f:render section="PageTree" arguments="{pages: page.children}" />
+                </f:if>
+            </li>
+        </f:for>
+    </ul>
+</f:section>
+</html>

@@ -44,6 +44,7 @@ return [
         'moduleData' => [
             'sortField' => 'uid',
             'sortDirection' => 'desc',
+            'page' => 1,
         ],
         'routes' => [
             '_default' => [
@@ -52,7 +53,23 @@ return [
             'detail' => [
                 'path' => '/detail',
                 'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsConfigurationsController::class . '::detail',
-            ]
+            ],
+        ],
+    ],
+    'notifications_settings' => [
+        'parent' => 'notifications',
+        'access' => 'user',
+        'workspaces' => 'live',
+        'path' => '/module/notifications/settings',
+        'labels' => [
+            'title' => 'Settings',
+        ],
+        'extensionName' => 'NotificationsFramework',
+        'iconIdentifier' => 'tx-nf-notification-configure',
+        'routes' => [
+            '_default' => [
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\SettingsController::class . '::handleRequest',
+            ],
         ],
     ],
 ];

@@ -65,13 +65,36 @@ class TreeListUtility
         return $list;
     }
 
+    public function buildTree(array $pages): array
+    {
+        $tree = [];
+        $indexed = [];
+
+        foreach ($pages as $page) {
+            $page['children'] = [];
+            $indexed[$page['uid']] = $page;
+        }
+
+        foreach ($indexed as $uid => &$page) {
+            if (!empty($page['pid']) && isset($indexed[$page['pid']])) {
+                $indexed[$page['pid']]['children'][] = &$page;
+            } else {
+                $tree[] = &$page; // root node
+            }
+        }
+
+        unset($page);
+
+        return $tree;
+    }
+
     public function getTreeListArrayFromArray(array $pids, int $depth, int $begin = 0): array
     {
-        return GeneralUtility::trimExplode(',', $this->getTreeListFromArray($pids, $depth, $begin), true);
+        return GeneralUtility::intExplode(',', $this->getTreeListFromArray($pids, $depth, $begin), true);
     }
 
     public function getTreeListArray($id, $depth, $begin = 0): array
     {
-        return GeneralUtility::trimExplode(',', $this->getTreeList($id, $depth, $begin), true);
+        return GeneralUtility::intExplode(',', $this->getTreeList($id, $depth, $begin), true);
     }
 }
