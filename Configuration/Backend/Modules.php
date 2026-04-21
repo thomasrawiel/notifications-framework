@@ -7,9 +7,9 @@ return [
         'workspaces' => 'live',
         'path' => '/module/notifications',
         'labels' => [
-            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.notifications.title',
-            'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.notifications.description',
-            'shortDescription' => 'LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.notifications.shortDescription',
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.notifications.title',
+            'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.notifications.description',
+            'shortDescription' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.notifications.shortDescription',
         ],
         'extensionName' => 'NotificationsFramework',
         'iconIdentifier' => 'tx-nf-notification-configure',
@@ -21,7 +21,7 @@ return [
         'workspaces' => 'live',
         'path' => '/module/notifications/index',
         'labels' => [
-            'title' => 'Overview',
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.index.title',
         ],
         'extensionName' => 'NotificationsFramework',
         'iconIdentifier' => 'tx-nf-notification-configure',
@@ -31,20 +31,38 @@ return [
             ],
         ],
     ],
+    'notifications_settings' => [
+        'parent' => 'notifications',
+        'access' => 'user',
+        'workspaces' => 'live',
+        'path' => '/module/notifications/settings',
+        'labels' => [
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.settings.title',
+        ],
+        'extensionName' => 'NotificationsFramework',
+        'iconIdentifier' => 'tx-nf-notification-configure',
+        'routes' => [
+            '_default' => [
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\SettingsController::class . '::handleRequest',
+            ],
+        ],
+    ],
     'notifications_configurations' => [
         'parent' => 'notifications',
         'access' => 'user',
         'workspaces' => 'live',
         'path' => '/module/notifications/configurations',
         'labels' => [
-            'title' => 'Configurations',
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.configurations.title',
         ],
         'extensionName' => 'NotificationsFramework',
         'iconIdentifier' => 'tx-nf-notification-configure',
         'moduleData' => [
             'sortField' => 'uid',
             'sortDirection' => 'desc',
-            'page' => 1,
+            'filter' => [],
+            'currentPage' => 1,
+            'perPage' => 30,
         ],
         'routes' => [
             '_default' => [
@@ -56,20 +74,5 @@ return [
             ],
         ],
     ],
-    'notifications_settings' => [
-        'parent' => 'notifications',
-        'access' => 'user',
-        'workspaces' => 'live',
-        'path' => '/module/notifications/settings',
-        'labels' => [
-            'title' => 'Settings',
-        ],
-        'extensionName' => 'NotificationsFramework',
-        'iconIdentifier' => 'tx-nf-notification-configure',
-        'routes' => [
-            '_default' => [
-                'target' => \TRAW\NotificationsFramework\Controller\Backend\SettingsController::class . '::handleRequest',
-            ],
-        ],
-    ],
+
 ];

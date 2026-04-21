@@ -2,19 +2,13 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
-<tr class="">
+<tr>
     <td>
-        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}">
+        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:selectedPageUID}')}">
             {nf:statusIcon(configuration:configuration) -> f:format.raw()}
-
-
         <core:icon identifier="actions-search"/>
         {configuration.uid}
         </a>
-
-
-
-
     </td>
     <f:if condition="{showPidColumn}">
         <td>
@@ -28,21 +22,18 @@
         <f:translate
             key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}"/>
     </td>
-
     <td>
-        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:demand.pid}')}">
+        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:selectedPageUID}')}">
             <core:icon identifier="actions-search" size="small"></core:icon>
             <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
         </a>
 
     </td>
-    <td></td>
     <td class="{nf:validClass(value:configuration.valid,configuration:configuration)}">
-        {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()}
+        {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()} ({configuration.valid})
     </td>
-
-    <td>
-{configuration.audience}
-    </td>
+    <td>{configuration.audience}</td>
+    <td>{configuration.push}</td>
+    <td>{configuration.done}</td>
 </tr>
 </html>

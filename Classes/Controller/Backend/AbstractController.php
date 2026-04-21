@@ -24,23 +24,26 @@ abstract class AbstractController
 
     protected int $selectedPageUID = 0;
 
+    public function __construct(
+        protected readonly ModuleTemplateFactory $moduleTemplateFactory,
+        protected readonly SettingsUtility       $settingsUtility,
+    )
+    {
+    }
+
     protected function initializeModuleTemplate(ServerRequestInterface $request): void
     {
         $view = $this->moduleTemplateFactory->create($request);
 
-        $queryParams = $request->getQueryParams();
-        $parsedBody = $request->getParsedBody();
-        $this->pageUid = (int)($parsedBody['id'] ?? $queryParams['id'] ?? 0);
-
-        $this->pageRecord = BackendUtility::readPageAccess($this->pageUid, $this->getBackendUser()->getPagePermsClause(Permission::PAGE_SHOW)) ? : [];
-        if ($this->pageRecord !== []) {
-            $view->getDocHeaderComponent()->setMetaInformation($this->pageRecord);
-        }
-        $view->makeDocHeaderModuleMenu(['id' => $this->pageUid]);
-
         if ($request->getQueryParams()['id'] ?? false) {
             $this->selectedPageUID = (int)$request->getQueryParams()['id'];
         }
+
+        $this->pageRecord = BackendUtility::readPageAccess($this->selectedPageUID, $this->getBackendUser()->getPagePermsClause(Permission::PAGE_SHOW)) ? : [];
+        if ($this->pageRecord !== []) {
+            $view->getDocHeaderComponent()->setMetaInformation($this->pageRecord);
+        }
+        $view->makeDocHeaderModuleMenu(['id' => $this->selectedPageUID]);
 
         $view->assignMultiple([
             'selectedPageUID' => $this->selectedPageUID,
@@ -49,8 +52,6 @@ abstract class AbstractController
         ]);
 
         $this->moduleTemplate = $view;
-
-
     }
 
     protected function getBackendUser(): BackendUserAuthentication

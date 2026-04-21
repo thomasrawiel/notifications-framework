@@ -2,20 +2,19 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:layout name="Backend/Default"/>
-<f:section name="headline">
+<f:layout name="Module"/>
+<f:section name="Headline">
     <f:if condition="{selectedPageUID}">
         <a class="btn btn-default" style="margin-top: calc(var(--typo3-spacing) * 2);margin-right: var(--typo3-spacing); max-height: fit-content;" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID}')}">
             <core:icon identifier="actions-arrow-down-left" size="small" />
             Back
         </a>
     </f:if>
-    <h1>
-        {configuration.title}
-    </h1>
+    <h1>{configuration.title}</h1>
 </f:section>
-<f:section name="content">
-    <f:debug inline="true">{_all}</f:debug>
-    <f:debug inline="true">{configuration}</f:debug>
+<f:section name="Content">
+    <f:render section="Headline" arguments="{_all}"/>
+
+
 </f:section>
 </html>

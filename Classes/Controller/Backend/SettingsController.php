@@ -12,6 +12,8 @@ use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -78,44 +80,56 @@ final class SettingsController extends AbstractController
             $treeList = $treeListUtility->getTreeListArrayFromArray($treeList, $recursive);
         }
 
+        $data = $this->getTreeListData($treeList);
+
         $pages = [];
-        foreach ($treeList as $pid) {
-            if ($pid > 0) {
-                $page = BackendUtility::getRecord('pages', $pid, 'uid,pid,title,doktype,hidden,is_siteroot,nav_hide,module');
+        if(empty($data)) {
+            $pages[0] = [
+                'uid' => 0,
+                'pid' => 0,
+                'title' => 'Rootpage',
+                'inSettings' => in_array(0, $pidList),
+                'icon' => 'actions-brand-typo3',
+            ];
+        }else {
+            foreach ($data as $page) {
+                if ($page['uid'] > 0) {
+                    $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype']];
 
-                $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype']];
-
-                if ($page['nav_hide']) {
-                    $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype'] . '-hideinmenu'] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
+                    if ($page['nav_hide']) {
+                        $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype'] . '-hideinmenu'] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
+                    }
+                    if ($page['is_siteroot']) {
+                        $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype'] . '-root'] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
+                    }
+                    if ($page['module']) {
+                        $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['contains-' . $page['module']] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
+                    }
+                    $pages[$page['uid']] = [
+                        'uid' => $page['uid'],
+                        'pid' => $page['pid'],
+                        'title' => $page['title'],
+                        'icon' => $icon,
+                        'inSettings' => in_array($page['uid'], $pidList),
+                        'iconOverlay' => !$page['hidden'] ? false : 'overlay-hidden',
+                    ];
                 }
-                if ($page['is_siteroot']) {
-                    $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes'][$page['doktype'] . '-root'] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
-                }
-                if ($page['module']) {
-                    $icon = $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['contains-' . $page['module']] ?? $GLOBALS['TCA']['pages']['ctrl']['typeicon_classes']['default'];
-                }
-                $pages[$pid] = [
-                    'uid' => $page['uid'],
-                    'pid' => $page['pid'],
-                    'title' => $page['title'],
-                    'icon' => $icon,
-                    'inSettings' => in_array($pid, $pidList),
-                    'iconOverlay' => !$page['hidden'] ? false : 'overlay-hidden',
-                ];
-            } else {
-                $pages[$pid] = [
-                    'uid' => $pid,
-                    'pid' => $pid,
-                    'title' => 'Rootpage',
-                    'inSettings' => in_array($pid, $pidList),
-                    'icon' => 'actions-brand-typo3',
-                ];
             }
-
-
         }
 
         return $treeListUtility->buildTree($pages);
+    }
+
+    private function getTreeListData(array $treeList) {
+        $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
+        $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+
+        return $qb->select('uid','pid','title','doktype','hidden','is_siteroot','nav_hide','module')
+            ->from('pages')
+            ->where(
+                $qb->expr()->in('uid', $treeList)
+            )->execute()
+            ->fetchAllAssociative();
     }
 
 

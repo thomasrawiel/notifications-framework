@@ -12,10 +12,13 @@ use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Module\ModuleData;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Pagination\ArrayPaginator;
+use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 
 #[AsController]
 class NotificationsConfigurationsController extends AbstractController
@@ -37,16 +40,26 @@ class NotificationsConfigurationsController extends AbstractController
         $this->initializeModuleTemplate($request);
 
         $moduleData = $request->getAttribute('moduleData');
+        if (
+            (isset($request->getQueryParams()['sortField']) && $request->getQueryParams()['sortField'] !== $moduleData->get('sortField'))
+            ||
+            (isset($request->getQueryParams()['sortDirection']) && $request->getQueryParams()['sortDirection'] !== $moduleData->get('sortDirection'))
+            ||
+            (isset($request->getQueryParams()['perPage']) && (int)$request->getQueryParams()['perPage'] !== $moduleData->get('perPage'))
+
+        ) {
+            $moduleData->set('currentPage', 1);
+        }
+
+
         $demand = [
             'sortField' => $moduleData->get('sortField'),
-            'sortDirection' => $moduleData->get('sortDirection'),
+            'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
+            'perPage' => $moduleData->get('perPage'),
         ];
 
-//        $demand = $this->request->hasArgument('demand')
-//            ? $this->request->getArgument('demand') : $defaultDemand;
-//
         $configurations = $this->configurationRepository->listConfigurations($demand);
         foreach ($configurations as $k => $config) {
             $configurations[$k]['valid'] = $this->configurationValidation->validate($config);
@@ -55,7 +68,7 @@ class NotificationsConfigurationsController extends AbstractController
             } else {
                 $configurations[$k]['audience'] = 0;
             }
-            if($config['record']) {
+            if ($config['record']) {
                 $table = RecordUtility::getTableFromRecordString($config['record']);
                 $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($config['record']);
                 $attachedRecord = BackendUtility::getRecord($table, $recordUid);
@@ -66,14 +79,18 @@ class NotificationsConfigurationsController extends AbstractController
                     'row' => $attachedRecord,
                 ];
             }
-
         }
+        $configurations = $this->configurationRepository->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
+
+        $paginator = new ArrayPaginator($configurations, (int)$moduleData->get('currentPage'), (int)$moduleData->get('perPage'));
+        $pagination = new SlidingWindowPagination($paginator, 20);
 
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listConfigurations',
-            'disableSort' => 1,
-            'configurations' => $configurations,
+            'pagination' => $pagination,
+            'paginator' => $paginator,
+            'currentPage' => (int)$moduleData->get('currentPage'),
         ]);
 
         return $this->moduleTemplate->renderResponse('Backend/Configuration/List');

@@ -2,56 +2,61 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:layout name="Backend/Default"/>
-<f:section name="headline">
+<f:layout name="Module"/>
+<f:section name="Headline">
     <h1>
-        <f:translate
-            key="LLL:EXT:notifications_framework/Resources/Private/Language/Modules/locallang_notifications_mod.xlf:module.configurations.title"/>
+        <f:translate key="{module.title}">{module.title}</f:translate>
     </h1>
 </f:section>
-<f:section name="content">
+<f:section name="Content">
+    <f:render section="Headline" arguments="{_all}"/>
     <div style="margin-bottom:24px" class="infolist-container">
         <div class="infolist">
             <div class="infolist-content">
+
                 <div class="table-fit mb-0">
+
                     <table class="table table-striped table-hover">
                         <tr>
                             <th>
-                                <f:render partial="Backend/Sort" section="FieldNameSort"
-                                          arguments="{action:action,demand:demand, field:'uid', label:'UID', disableSort:1}"/>
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'uid', label:'UID'}"/>
                             </th>
                             <f:if condition="{showPidColumn}">
                                 <th>
-                                    <f:render partial="Backend/Sort" section="FieldNameSort"
-                                              arguments="{action:action,demand:demand, field:'pid', label:'PID'}"/>
+                                    <f:render partial="Sort" section="FieldNameSort"
+                                              arguments="{demand:demand, field:'pid', label:'PID'}"/>
                                 </th>
                             </f:if>
                             <th>
-                                <f:render partial="Backend/Sort" section="FieldNameSort"
-                                          arguments="{action:action,demand:demand, field:'crdate', label:'Created', disableSort:1}"/>
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'crdate', label:'Created'}"/>
                             </th>
                             <th>
-                                <f:render partial="Backend/Sort" section="FieldNameSort"
-                                          arguments="{action:action,demand:demand, field:'type', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'type', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
                             </th>
                             <th>
-                                <f:render partial="Backend/Sort" section="FieldNameSort"
-                                          arguments="{action:action,demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}', disableSort:1}"/>
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}'}"/>
                             </th>
                             <th>
-
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'valid', label:'Valid'}"/>
                             </th>
                             <th>
-valid
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{demand:demand, field:'audience', label:'Audience estimate'}"/>
                             </th>
-                            <th>
-audience estimate
-                            </th>
+                            <th></th>
+                            <th></th>
                         </tr>
-                        <f:for as="configuration" each="{configurations}">
-                            <f:render partial="Backend/ConfigurationRow" arguments="{_all}"/>
+
+                        <f:for as="configuration" each="{paginator.paginatedItems}">
+                            <f:render partial="Configuration/Row" arguments="{_all}"/>
                         </f:for>
                     </table>
+                    <f:render partial="Pagination" arguments="{_all}"/>
                 </div>
             </div>
         </div>

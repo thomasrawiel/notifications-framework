@@ -2,14 +2,12 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:layout name="Backend/Default"/>
-<f:section name="headline">
-    <h1>
-        <f:translate
-            key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.settings.title"/>
-    </h1>
+<f:layout name="Module"/>
+<f:section name="Headline">
+    <h1><f:translate key="{module.title}">{module.title}</f:translate></h1>
 </f:section>
-<f:section name="content">
+<f:section name="Content">
+    <f:render section="Headline" arguments="{_all}" />
     <div class="infolist-container">
         <div class="infolist">
             <div class="infolist-content">
