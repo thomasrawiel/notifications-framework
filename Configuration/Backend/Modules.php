@@ -27,7 +27,7 @@ return [
         'iconIdentifier' => 'tx-nf-notification-configure',
         'routes' => [
             '_default' => [
-                'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsIndexController::class . '::handleRequest',
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\IndexController::class . '::handleRequest',
             ],
         ],
     ],
@@ -62,17 +62,44 @@ return [
             'sortDirection' => 'desc',
             'filter' => [
                 'type' => '',
+                'valid' => '',
             ],
             'currentPage' => 1,
             'perPage' => 30,
         ],
         'routes' => [
             '_default' => [
-                'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsConfigurationsController::class . '::handleRequest',
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\ConfigurationsController::class . '::handleRequest',
             ],
             'detail' => [
                 'path' => '/detail',
                 'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsConfigurationsController::class . '::detail',
+            ],
+        ],
+    ],
+    'notifications_notifications' => [
+        'parent' => 'notifications',
+        'access' => 'user',
+        'workspaces' => 'live',
+        'path' => '/module/notifications/notifications',
+        'labels' => [
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.notifications.title',
+        ],
+        'extensionName' => 'NotificationsFramework',
+        'iconIdentifier' => 'tx-nf-notification-configure',
+        'moduleData' => [
+            'sortField' => 'uid',
+            'sortDirection' => 'desc',
+//            'filter' => [
+//                'type' => '',
+//                'valid' => '',
+//            ],
+            'currentPage' => 1,
+            'perPage' => 30,
+        ],
+        'routes' => [
+            '_default' => [
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsController::class . '::handleRequest',
             ],
         ],
     ],

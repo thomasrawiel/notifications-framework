@@ -6,25 +6,29 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 
 #[AsController]
-final class NotificationsIndexController extends AbstractController
+final class IndexController extends AbstractController
 {
     public function __construct(
         protected readonly ModuleTemplateFactory   $moduleTemplateFactory,
         protected readonly UriBuilder              $uriBuilder,
         protected readonly ConfigurationRepository $configurationRepository,
+        protected readonly NotificationRepository  $notificationRepository,
         protected readonly SettingsUtility         $settingsUtility,
     )
     {
     }
+
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         $this->initializeModuleTemplate($request);
+
 //        $backendUser = $this->getBackendUser();
 //        $currentModule = $request->getAttribute('module');
 //        $currentModuleIdentifier = $currentModule->getIdentifier();
@@ -36,21 +40,6 @@ final class NotificationsIndexController extends AbstractController
 //            $backendUser->pushModuleData($currentModuleIdentifier, $moduleData->toArray());
 //        }
 
-        return $this->moduleTemplate->renderResponse('Backend/Index');
-    }
-
-    public function listInvalidConfigurationsAction(): ResponseInterface
-    {
-        return $this->moduleTemplate->renderResponse('Backend/ListInvalidConfigurations');
-    }
-
-    public function detailConfigurationAction(): ResponseInterface
-    {
-        return $this->moduleTemplate->renderResponse('Backend/DetailConfiguration');
-    }
-
-    public function notificationtsAction(): ResponseInterface
-    {
-        return $this->moduleTemplate->renderResponse('Backend/Notificatios');
+        return $this->moduleTemplate->renderResponse('Index');
     }
 }

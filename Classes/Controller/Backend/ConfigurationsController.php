@@ -22,7 +22,7 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 
 #[AsController]
-class NotificationsConfigurationsController extends AbstractController
+class ConfigurationsController extends AbstractController
 {
     public function __construct(
         protected readonly ModuleTemplateFactory   $moduleTemplateFactory,
@@ -40,6 +40,7 @@ class NotificationsConfigurationsController extends AbstractController
     {
         $this->initializeModuleTemplate($request);
 
+        /** @var ModuleData $moduleData */
         $moduleData = $request->getAttribute('moduleData');
 
         if (
@@ -54,7 +55,7 @@ class NotificationsConfigurationsController extends AbstractController
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter'))?$moduleData->get('filter'):[],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type'=>'','valid'=>''],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
@@ -81,10 +82,10 @@ class NotificationsConfigurationsController extends AbstractController
                 ];
             }
             return $configuration;
-        }, $this->configurationRepository->listConfigurations($demand));
+        }, $this->configurationRepository->getConfigurationsByDemand($demand));
         $applyFilters = array_filter($demand['filter'], static fn($value): bool => $value !== null && $value !== '');
 
-        if($applyFilters !== []) {
+        if ($applyFilters !== []) {
             $configurations = array_values(array_filter(
                 $configurations,
                 static function (array $configuration) use ($applyFilters): bool {
@@ -122,10 +123,11 @@ class NotificationsConfigurationsController extends AbstractController
             'currentPage' => (int)$moduleData->get('currentPage'),
         ]);
 
-        return $this->moduleTemplate->renderResponse('Backend/Configuration/List');
+        return $this->moduleTemplate->renderResponse('Configurations');
     }
 
-    private function matchesFilter(array $configuration, string $filter, mixed $filterValue): bool {
+    private function matchesFilter(array $configuration, string $filter, mixed $filterValue): bool
+    {
 
     }
 
@@ -140,6 +142,6 @@ class NotificationsConfigurationsController extends AbstractController
             ]);
         }
 
-        return $this->moduleTemplate->renderResponse('Backend/Configuration/Detail');
+        return $this->moduleTemplate->renderResponse('ConfigurationsDetail');
     }
 }

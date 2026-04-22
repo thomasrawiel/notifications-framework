@@ -45,20 +45,14 @@ class ConfigurationRepository extends Repository
         return $query->execute();
     }
 
-    /**
-     * BACKEND MODULES
-     */
-    public function listConfigurations(array $demand): array
-    {
-        return $this->getConfigurations($demand);
-    }
+
 
     public function getConfiguration(int $configurationUid): array
     {
-        return $this->getConfigurations(['uid' => $configurationUid]);
+        return $this->getConfigurationsByDemand(['uid' => $configurationUid]);
     }
 
-    private function getConfigurations(array $demand): array
+    public function getConfigurationsByDemand(array $demand): array
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_notifications_framework_configuration');
@@ -87,26 +81,12 @@ class ConfigurationRepository extends Repository
             $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
         }
 
-//        if (isset($demand['filter'])) {
-//            foreach ($demand['filter'] as $filter => $filterValue) {
-//                if (isset($GLOBALS['TCA']['tx_notifications_framework_configuration']['columns'][$filter]) && !empty($filterValue)) {
-//                    $constraints[] = $qb->expr()->eq($filter, $qb->createNamedParameter($filterValue, ParameterType::STRING));
-//                }
-//            }
-//        }
-
         $qb->where(...$constraints);
         $qb->orderBy($sortField, $sortDirection);
 
         return $qb->executeQuery()->fetchAllAssociative();
     }
 
-    /**
-     * @param array $configurations
-     * @param array $demand
-     *
-     * @return array
-     */
     public function sortList(array $configurations, string $sortField, string $sortDirection = 'asc'): array
     {
         $sortDirection = strtolower($sortDirection);

@@ -39,7 +39,7 @@ final class SettingsController extends AbstractController
             'notificationStorage' => !$this->settingsUtility->storeNotificationsOnRecordPid() ? $this->getNotificationStorage() : [],
         ]);
 
-        return $this->moduleTemplate->renderResponse('Backend/Settings');
+        return $this->moduleTemplate->renderResponse('Settings');
     }
 
     private function getAllowedTables(): array

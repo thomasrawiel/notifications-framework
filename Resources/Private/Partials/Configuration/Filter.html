@@ -3,7 +3,7 @@
       data-namespace-typo3-fluid="true">
 
 <form method="post">
-    <div class="row row-cols-auto align-items-start">
+    <div class="row row-cols-auto align-items-start align-items-center" >
         <div class="col">
             <core:icon identifier="actions-filter" size="medium"/>
             Filters:
@@ -35,7 +35,9 @@
             </div>
         </div>
         <div class="col">
-            <a href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">Reset</a>
+            <a class="btn btn-default" href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">
+                <core:icon identifier="actions-undo" size="small"/> Reset filters
+            </a>
         </div>
     </div>
 </form>
