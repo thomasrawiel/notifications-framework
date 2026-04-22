@@ -74,7 +74,7 @@ abstract class AbstractController
 
     protected function applyFilters(array $objects, array $filterDemand): array
     {
-        $applyFilters = array_filter($filterDemand, static fn($value): bool => $value !== null && $value !== '');
+        $applyFilters = array_filter($filterDemand, static fn($value): bool => $value !== null && $value !== '' && $value !== 'all');
 
         if ($applyFilters === []) {
             return $objects;

@@ -63,6 +63,7 @@ return [
             'filter' => [
                 'type' => '',
                 'valid' => '',
+                'status' => '',
             ],
             'currentPage' => 1,
             'perPage' => 30,

@@ -3,7 +3,7 @@
       data-namespace-typo3-fluid="true">
 
 <form method="post">
-    <div class="row row-cols-auto align-items-start align-items-center" >
+    <div class="row row-cols-auto align-items-start align-items-center">
         <div class="col">
             <core:icon identifier="actions-filter" size="medium"/>
             Filters:
@@ -14,7 +14,8 @@
                 <select name="filter[type]" class="form-select" onchange="javascript:this.form.submit()">
                     <option value="">Show all</option>
                     <f:for as="item" each="{filters.type}">
-                        <option value="{item.value}" {f:if(condition:'{demand.filter.type}=={item.value}',then:'selected')}>
+                        <option value="{item.value}" {f:if(condition:
+                        '{demand.filter.type}=={item.value}',then:'selected')}>
                         <f:translate key="{item.label}">{item.label}</f:translate>
                         </option>
                     </f:for>
@@ -35,8 +36,24 @@
             </div>
         </div>
         <div class="col">
-            <a class="btn btn-default" href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">
-                <core:icon identifier="actions-undo" size="small"/> Reset filters
+            <div class="form-group">
+                <label class="form-label">Push</label>
+                <div>
+                    <f:for as="item" each="{filters.status}">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="filter[status]" value="{item}" onchange="javascript:this.form.submit();    "
+                                   {f:if(condition:'{demand.filter.status}=={item}',then:'checked')}/>{item}
+                        </label>
+                    </f:for>
+                </div>
+
+            </div>
+        </div>
+        <div class="col">
+            <a class="btn btn-default"
+               href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">
+                <core:icon identifier="actions-undo" size="small"/>
+                Reset filters
             </a>
         </div>
     </div>

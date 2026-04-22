@@ -46,7 +46,7 @@ class ConfigurationsController extends AbstractController
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => ''],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => '', 'status' => ''],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
@@ -72,6 +72,15 @@ class ConfigurationsController extends AbstractController
                     'row' => $attachedRecord,
                 ];
             }
+
+            $configuration['status'] = 'ready';
+            if ($configuration['push']) {
+                $configuration['status'] = 'queue';
+            }
+            if ($configuration['done']) {
+                $configuration['status'] = 'done';
+            }
+
             return $configuration;
         }, $this->configurationRepository->getConfigurationsByDemand($demand));
 
@@ -87,17 +96,13 @@ class ConfigurationsController extends AbstractController
                 'valid' => array_values(array_unique(
                     array_column($configurations, 'valid')
                 )),
+                'status' => ['all', 'ready', 'queue', 'done'],
 
             ],
             'currentPage' => (int)$moduleData->get('currentPage'),
         ]);
 
         return $this->moduleTemplate->renderResponse('Configurations');
-    }
-
-    private function matchesFilter(array $configuration, string $filter, mixed $filterValue): bool
-    {
-
     }
 
     public function detail(ServerRequestInterface $request): ResponseInterface
