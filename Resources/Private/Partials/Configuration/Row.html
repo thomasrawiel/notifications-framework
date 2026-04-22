@@ -16,11 +16,10 @@
         </td>
     </f:if>
     <td>
-        <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+       <core:icon identifier="{nf:typeIcon(type: configuration.type)}" size="small" title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}')}"/>
     </td>
     <td>
-        <f:translate
-            key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}"/>
+        <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
     </td>
     <td>
         <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:selectedPageUID}')}">

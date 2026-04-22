@@ -81,11 +81,19 @@ class ConfigurationRepository extends Repository
         $constraints = [
             $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER)),
         ];
-        if (is_array($demand['uid'])) {
+        if (is_array($demand['pid'])) {
             $constraints[] = $qb->expr()->in('pid', $qb->createNamedParameter($demand['pid'], ArrayParameterType::INTEGER));
         } else {
             $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
         }
+
+//        if (isset($demand['filter'])) {
+//            foreach ($demand['filter'] as $filter => $filterValue) {
+//                if (isset($GLOBALS['TCA']['tx_notifications_framework_configuration']['columns'][$filter]) && !empty($filterValue)) {
+//                    $constraints[] = $qb->expr()->eq($filter, $qb->createNamedParameter($filterValue, ParameterType::STRING));
+//                }
+//            }
+//        }
 
         $qb->where(...$constraints);
         $qb->orderBy($sortField, $sortDirection);
@@ -103,7 +111,7 @@ class ConfigurationRepository extends Repository
     {
         $sortDirection = strtolower($sortDirection);
 
-        if(!isset($configurations[0][$sortField])) {
+        if (!isset($configurations[0][$sortField])) {
             $sortField = 'uid';
         }
 

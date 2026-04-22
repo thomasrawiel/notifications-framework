@@ -58,9 +58,7 @@ class NotificationFactory
             $notification->setMessage('Set the message in your BeforeNotificationAddedEvent');
         }
 
-        if (!$this->settingsUtility->storeNotificationsOnRecordPid()) {
-            $notification->setPid($this->settingsUtility->getNotificationStorage());
-        }
+        $notification->setPid($configuration->getPid());
 
         return $notification;
     }

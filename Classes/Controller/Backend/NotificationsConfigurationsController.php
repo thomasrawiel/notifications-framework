@@ -5,6 +5,7 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
@@ -40,49 +41,70 @@ class NotificationsConfigurationsController extends AbstractController
         $this->initializeModuleTemplate($request);
 
         $moduleData = $request->getAttribute('moduleData');
-        if (
-            (isset($request->getQueryParams()['sortField']) && $request->getQueryParams()['sortField'] !== $moduleData->get('sortField'))
-            ||
-            (isset($request->getQueryParams()['sortDirection']) && $request->getQueryParams()['sortDirection'] !== $moduleData->get('sortDirection'))
-            ||
-            (isset($request->getQueryParams()['perPage']) && (int)$request->getQueryParams()['perPage'] !== $moduleData->get('perPage'))
 
+        if (
+            isset($request->getQueryParams()['sortField']) || isset($request->getParsedBody()['sortField'])
+            || isset($request->getQueryParams()['sortDirection']) || isset($request->getParsedBody()['sortDirection'])
+            || isset($request->getQueryParams()['filter']) || isset($request->getParsedBody()['filter'])
+            || isset($request->getQueryParams()['perPage']) || isset($request->getParsedBody()['perPage'])
         ) {
             $moduleData->set('currentPage', 1);
         }
 
-
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
+            'filter' => is_array($moduleData->get('filter'))?$moduleData->get('filter'):[],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
-            'perPage' => $moduleData->get('perPage'),
+            'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
+            'perPage' => (int)($moduleData->get('perPage') > 0 ? $moduleData->get('perPage') : 10),
         ];
 
-        $configurations = $this->configurationRepository->listConfigurations($demand);
-        foreach ($configurations as $k => $config) {
-            $configurations[$k]['valid'] = $this->configurationValidation->validate($config);
-            if (!$config['hidden']) {
-                $configurations[$k]['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($config['uid']));
+        $configurations = array_map(function ($configuration) {
+            $configuration['valid'] = $this->configurationValidation->validate($configuration);
+            if (!$configuration['hidden']) {
+                $configuration['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($configuration['uid']));
             } else {
-                $configurations[$k]['audience'] = 0;
+                $configuration['audience'] = 0;
             }
-            if ($config['record']) {
-                $table = RecordUtility::getTableFromRecordString($config['record']);
-                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($config['record']);
+            $recordString = $configuration['record'];
+            if (!empty($recordString)) {
+                $table = RecordUtility::getTableFromRecordString($recordString);
+                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($recordString);
                 $attachedRecord = BackendUtility::getRecord($table, $recordUid);
-                $configurations[$k]['record'] = [
+                $configuration['record'] = [
                     'uid' => $attachedRecord['uid'],
                     'pid' => $attachedRecord['pid'],
                     'table' => $table,
                     'row' => $attachedRecord,
                 ];
             }
+            return $configuration;
+        }, $this->configurationRepository->listConfigurations($demand));
+        $applyFilters = array_filter($demand['filter'], static fn($value): bool => $value !== null && $value !== '');
+
+        if($applyFilters !== []) {
+            $configurations = array_values(array_filter(
+                $configurations,
+                static function (array $configuration) use ($applyFilters): bool {
+                    foreach ($applyFilters as $filter => $filterValue) {
+                        if (!array_key_exists($filter, $configuration)) {
+                            return false;
+                        }
+
+                        if ($configuration[$filter] != $filterValue) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            ));
         }
         $configurations = $this->configurationRepository->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
 
-        $paginator = new ArrayPaginator($configurations, (int)$moduleData->get('currentPage'), (int)$moduleData->get('perPage'));
+        $paginator = new ArrayPaginator($configurations, $demand['currentPage'], $demand['perPage']);
         $pagination = new SlidingWindowPagination($paginator, 20);
 
         $this->moduleTemplate->assignMultiple([
@@ -90,10 +112,21 @@ class NotificationsConfigurationsController extends AbstractController
             'action' => 'listConfigurations',
             'pagination' => $pagination,
             'paginator' => $paginator,
+            'filters' => [
+                'type' => $GLOBALS['TCA']['tx_notifications_framework_configuration']['columns']['type']['config']['items'],
+                'valid' => array_values(array_unique(
+                    array_column($configurations, 'valid')
+                )),
+
+            ],
             'currentPage' => (int)$moduleData->get('currentPage'),
         ]);
 
         return $this->moduleTemplate->renderResponse('Backend/Configuration/List');
+    }
+
+    private function matchesFilter(array $configuration, string $filter, mixed $filterValue): bool {
+
     }
 
     public function detail(ServerRequestInterface $request): ResponseInterface

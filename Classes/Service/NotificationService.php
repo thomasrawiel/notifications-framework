@@ -35,7 +35,7 @@ class NotificationService
 
     public function createNotification(?Configuration $configuration = null): ?Notification
     {
-        if($this->validation->validate())
+        //if($this->validation->validate())
 
         if ($this->notificationRepository->notificationExists($configuration?->getUid() ?? 0)) {
             return $this->notificationRepository->findByConfiguration($configuration->getUid())->getFirst();

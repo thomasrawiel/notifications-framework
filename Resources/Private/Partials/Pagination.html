@@ -1,22 +1,22 @@
 <ul class="pagination mb-2 mt-2 ml-2 ms-2">
     <li><a class="page-link" onclick="return false;" title="Rows per page"><core:icon identifier="actions-pagetree" size="small" /></a></li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==10',then:' active')}" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,perPage:10}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==10',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:10}')}">
             10
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==20',then:' active')}" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,perPage:20}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==20',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:20}')}">
             20
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==50',then:' active')}" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,perPage:50}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==50',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:50}')}">
             50
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==100',then:' active')}" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,perPage:100}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==100',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:100}')}">
             100
         </a>
     </li>
@@ -25,13 +25,13 @@
 <ul class="pagination mb-2 ms-2" >
     <li>
         <a class="page-link{f:if(condition: pagination.previousPageNumber,else: ' disabled')}"
-           href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,currentPage:pagination.firstPageNumber}')}">
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:pagination.firstPageNumber}')}">
             &#124;&#x276E;
         </a>
     </li>
     <li>
         <a class="page-link{f:if(condition: pagination.previousPageNumber,else: ' disabled')}"
-           href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,currentPage:pagination.previousPageNumber}')}">
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:pagination.previousPageNumber}')}">
             &#x276E;
         </a>
     </li>
@@ -40,7 +40,7 @@
     </f:if>
     <f:for each="{pagination.allPageNumbers}" as="page">
         <li class="page-item">
-            <a href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,currentPage:page}')}"
+            <a href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:page}')}"
                class="page-link {f:if(condition:'{currentPage}=={page}',then:'active')}"
             >
                 {page}
@@ -52,13 +52,13 @@
     </f:if>
     <li>
         <a class="page-link{f:if(condition: pagination.nextPageNumber,else: ' disabled')}"
-           href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,currentPage:pagination.nextPageNumber}')}">
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:pagination.nextPageNumber}')}">
             &#x276F;
         </a>
     </li>
     <li>
         <a class="page-link{f:if(condition: pagination.nextPageNumber,else: ' disabled')}"
-           href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID,currentPage:pagination.lastPageNumber}')}">
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:pagination.lastPageNumber}')}">
             &#x276F;&#124;
         </a>
     </li>

@@ -60,7 +60,9 @@ return [
         'moduleData' => [
             'sortField' => 'uid',
             'sortDirection' => 'desc',
-            'filter' => [],
+            'filter' => [
+                'type' => '',
+            ],
             'currentPage' => 1,
             'perPage' => 30,
         ],

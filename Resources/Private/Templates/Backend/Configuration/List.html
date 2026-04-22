@@ -13,40 +13,40 @@
     <div style="margin-bottom:24px" class="infolist-container">
         <div class="infolist">
             <div class="infolist-content">
-
                 <div class="table-fit mb-0">
-
+                    <f:render partial="Configuration/Filter" arguments="{_all}" />
                     <table class="table table-striped table-hover">
                         <tr>
                             <th>
                                 <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'uid', label:'UID'}"/>
+                                          arguments="{module:module,demand:demand, field:'uid', label:'UID'}"/>
                             </th>
                             <f:if condition="{showPidColumn}">
                                 <th>
                                     <f:render partial="Sort" section="FieldNameSort"
-                                              arguments="{demand:demand, field:'pid', label:'PID'}"/>
+                                              arguments="{module:module,demand:demand, field:'pid', label:'PID'}"/>
                                 </th>
                             </f:if>
                             <th>
                                 <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'crdate', label:'Created'}"/>
+                                          arguments="{module:module,demand:demand, field:'type', icon:'actions-tag', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
                             </th>
                             <th>
                                 <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'type', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
+                                          arguments="{module:module,demand:demand, field:'crdate', icon:'actions-calendar', label:'Created'}"/>
+                            </th>
+
+                            <th>
+                                <f:render partial="Sort" section="FieldNameSort"
+                                          arguments="{module:module,demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}'}"/>
                             </th>
                             <th>
                                 <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}'}"/>
+                                          arguments="{module:module,demand:demand, field:'valid', label:'Valid'}"/>
                             </th>
                             <th>
                                 <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'valid', label:'Valid'}"/>
-                            </th>
-                            <th>
-                                <f:render partial="Sort" section="FieldNameSort"
-                                          arguments="{demand:demand, field:'audience', label:'Audience estimate'}"/>
+                                          arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'Audience estimate'}"/>
                             </th>
                             <th></th>
                             <th></th>

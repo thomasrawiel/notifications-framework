@@ -2,28 +2,35 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 <f:section name="FieldNameSort">
+    <f:variable name="iconMSize" value="{f:if(condition: iconSize,then:iconSize,else:'small')}"/>
+    <f:variable name="iconM" value="{f:if(condition: '{icon}',then:'{core:icon(identifier: icon,size: iconMSize)}')}"/>
     <f:if condition="{disableSort}">
-        <f:then>{label}</f:then>
+        <f:then>{iconM}{label}</f:then>
         <f:else>
-            <f:variable name="icon" value="actions-sort-amount" />
+            <f:variable name="sortIcon" value="actions-sort-amount"/>
             <f:variable name="sortDirection" value="asc"/>
-            <f:variable name="sortField" value="{field}" />
+            <f:variable name="sortField" value="{field}"/>
             <f:if condition="{demand.sortField} === {field}">
-                    <f:if condition="{demand.sortDirection} == 'asc'">
-                        <f:then>
-                            <f:variable name="sortDirection" value="desc" />
-                            <f:variable name="icon" value="actions-sort-amount-up" />
-                        </f:then>
-                        <f:else>
-                            <f:variable name="icon" value="actions-sort-amount-down" />
-                            <f:variable name="sortDirection" value="asc"/>
-                        </f:else>
-                    </f:if>
+                <f:if condition="{demand.sortDirection} == 'asc'">
+                    <f:then>
+                        <f:variable name="sortDirection" value="desc"/>
+                        <f:variable name="sortIcon" value="actions-sort-amount-up"/>
+                    </f:then>
+                    <f:else>
+                        <f:variable name="sortIcon" value="actions-sort-amount-down"/>
+                        <f:variable name="sortDirection" value="asc"/>
+                    </f:else>
+                </f:if>
             </f:if>
-            <a href="{f:be.uri(route: 'notifications_configurations',  parameters:'{id:selectedPageUID,sortField:sortField,sortDirection:sortDirection}')}"
-               title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}">
-                {label}
-                <core:icon identifier="{icon}" size="small"/>
+            <a href="{f:be.uri(route: module.identifier,  parameters:'{id:selectedPageUID,sortField:sortField,sortDirection:sortDirection}')}"
+               title="{f:translate(key: 'sortField',extensionName: 'NotificationsFramework')} {label}"
+               style=" display: inline-flex;align-items: center;gap: 4px;">
+                <f:if condition="{iconM}">
+                    <f:then>{iconM -> f:format.raw()}</f:then>
+                    <f:else>{label}</f:else>
+                </f:if>
+
+                <core:icon identifier="{sortIcon}" size="small"/>
             </a>
         </f:else>
     </f:if>
