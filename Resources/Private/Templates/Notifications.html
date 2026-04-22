@@ -8,6 +8,22 @@
 </f:section>
 <f:section name="Content">
     <f:render section="Headline" arguments="{_all}"/>
-    <f:debug inline="true">{_all}</f:debug>
+    <div style="margin-bottom:24px" class="infolist-container">
+        <div class="infolist">
+            <div class="infolist-content">
+                <div class="table-fit mb-0">
+                    <f:render partial="Notification/Filter" arguments="{_all}" />
+                    <table class="table table-striped table-hover">
+                        <tbody>
+                        <f:for as="notification" each="{paginator.paginatedItems}">
+                            <f:render partial="Notification/Row" arguments="{_all}"/>
+                        </f:for>
+                        </tbody>
+                    </table>
+                    <f:render partial="Pagination" arguments="{_all}"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </f:section>
 </html>

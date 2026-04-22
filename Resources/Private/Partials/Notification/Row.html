@@ -1,0 +1,31 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<tr>
+    <td>
+        <a href="{f:be.uri(route: 'notifications_notifications.detail', parameters:'{notification:notification.uid,id:selectedPageUID}')}">
+        <core:icon identifier="actions-search"/>
+        {notification.uid}
+        </a>
+    </td>
+    <f:if condition="{showPidColumn}">
+        <td>
+            {notification.pid}
+        </td>
+    </f:if>
+    <td>
+       <core:icon identifier="{nf:typeIcon(type: notification.type)}" size="small" title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification.type.{notification.type}')}"/>
+    </td>
+    <td>
+        <f:format.date date="{notification.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+    </td>
+    <td>
+        <a href="{f:be.uri(route: 'notifications_notifications.detail', parameters:'{notification:notification.uid,id:selectedPageUID}')}">
+            <core:icon identifier="actions-search" size="small"></core:icon>
+            <f:format.crop maxCharacters="30">{notification.title}</f:format.crop>
+        </a>
+
+    </td>
+</tr>
+</html>

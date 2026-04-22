@@ -1,28 +1,45 @@
 <ul class="pagination mb-2 mt-2 ml-2 ms-2">
-    <li><a class="page-link" onclick="return false;" title="Rows per page"><core:icon identifier="actions-pagetree" size="small" /></a></li>
+    <li><a class="page-link" onclick="return false;" title="Rows per page">
+        <core:icon identifier="actions-pagetree" size="small"/>
+    </a></li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==10',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:10}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==10',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:10}')}">
             10
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==20',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:20}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==20',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:20}')}">
             20
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==50',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:50}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==50',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:50}')}">
             50
         </a>
     </li>
     <li>
-        <a class="page-link{f:if(condition:'{demand.perPage}==100',then:' active')}" href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:100}')}">
+        <a class="page-link{f:if(condition:'{demand.perPage}==100',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:100}')}">
             100
+        </a>
+    </li>
+    <li>
+        <a class="page-link{f:if(condition:'{demand.perPage}==200',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:200}')}">
+            200 </a>
+    </li>
+    <li>
+        <a class="page-link{f:if(condition:'{demand.perPage}==500',then:' active')}"
+           href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,perPage:500}')}">
+            500
         </a>
     </li>
 </ul>
 
-<ul class="pagination mb-2 ms-2" >
+<ul class="pagination mb-2 ms-2">
     <li>
         <a class="page-link{f:if(condition: pagination.previousPageNumber,else: ' disabled')}"
            href="{f:be.uri(route: module.identifier, parameters:'{id:selectedPageUID,currentPage:pagination.firstPageNumber}')}">

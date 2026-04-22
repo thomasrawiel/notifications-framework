@@ -43,19 +43,10 @@ class ConfigurationsController extends AbstractController
         /** @var ModuleData $moduleData */
         $moduleData = $request->getAttribute('moduleData');
 
-        if (
-            isset($request->getQueryParams()['sortField']) || isset($request->getParsedBody()['sortField'])
-            || isset($request->getQueryParams()['sortDirection']) || isset($request->getParsedBody()['sortDirection'])
-            || isset($request->getQueryParams()['filter']) || isset($request->getParsedBody()['filter'])
-            || isset($request->getQueryParams()['perPage']) || isset($request->getParsedBody()['perPage'])
-        ) {
-            $moduleData->set('currentPage', 1);
-        }
-
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type'=>'','valid'=>''],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => ''],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
@@ -83,36 +74,14 @@ class ConfigurationsController extends AbstractController
             }
             return $configuration;
         }, $this->configurationRepository->getConfigurationsByDemand($demand));
-        $applyFilters = array_filter($demand['filter'], static fn($value): bool => $value !== null && $value !== '');
 
-        if ($applyFilters !== []) {
-            $configurations = array_values(array_filter(
-                $configurations,
-                static function (array $configuration) use ($applyFilters): bool {
-                    foreach ($applyFilters as $filter => $filterValue) {
-                        if (!array_key_exists($filter, $configuration)) {
-                            return false;
-                        }
+        $configurations = $this->applyFilters($configurations, $demand['filter'] ?? []);
+        $configurations = $this->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
 
-                        if ($configuration[$filter] != $filterValue) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-            ));
-        }
-        $configurations = $this->configurationRepository->sortList($configurations, $demand['sortField'], $demand['sortDirection']);
-
-        $paginator = new ArrayPaginator($configurations, $demand['currentPage'], $demand['perPage']);
-        $pagination = new SlidingWindowPagination($paginator, 20);
-
+        $this->moduleTemplate->assignMultiple($this->buildPagination($configurations, $demand['currentPage'], $demand['perPage']));
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listConfigurations',
-            'pagination' => $pagination,
-            'paginator' => $paginator,
             'filters' => [
                 'type' => $GLOBALS['TCA']['tx_notifications_framework_configuration']['columns']['type']['config']['items'],
                 'valid' => array_values(array_unique(
@@ -142,6 +111,6 @@ class ConfigurationsController extends AbstractController
             ]);
         }
 
-        return $this->moduleTemplate->renderResponse('ConfigurationsDetail');
+        return $this->moduleTemplate->renderResponse('ConfigurationDetail');
     }
 }

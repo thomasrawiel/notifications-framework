@@ -86,29 +86,4 @@ class ConfigurationRepository extends Repository
 
         return $qb->executeQuery()->fetchAllAssociative();
     }
-
-    public function sortList(array $configurations, string $sortField, string $sortDirection = 'asc'): array
-    {
-        $sortDirection = strtolower($sortDirection);
-
-        if (!isset($configurations[0][$sortField])) {
-            $sortField = 'uid';
-        }
-
-        $modifier = $sortDirection === 'asc' ? 1 : -1;
-        usort($configurations, function ($a, $b) use ($sortField, $modifier) {
-            $aValue = $a[$sortField] ?? null;
-            $bValue = $b[$sortField] ?? null;
-
-            if ($aValue === $bValue) {
-                return 0;
-            }
-            if ($aValue === null) return 1;
-            if ($bValue === null) return -1;
-            return ($aValue < $bValue ? -1 : 1) * $modifier;
-        });
-
-
-        return $configurations;
-    }
 }

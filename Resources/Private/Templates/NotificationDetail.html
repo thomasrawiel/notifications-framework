@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module"/>
+<f:section name="Headline">
+    <f:if condition="{selectedPageUID}">
+        <a class="btn btn-default" style="margin-top: calc(var(--typo3-spacing) * 2);margin-right: var(--typo3-spacing); max-height: fit-content;" href="{f:be.uri(route: 'notifications_notifications', parameters:'{id:selectedPageUID}')}">
+            <core:icon identifier="actions-arrow-down-left" size="small" />
+            Back
+        </a>
+    </f:if>
+    <h1>{notification.title}</h1>
+</f:section>
+<f:section name="Content">
+    <f:render section="Headline" arguments="{_all}"/>
+
+
+</f:section>
+</html>

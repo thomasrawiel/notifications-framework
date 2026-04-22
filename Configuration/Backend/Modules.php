@@ -101,6 +101,10 @@ return [
             '_default' => [
                 'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsController::class . '::handleRequest',
             ],
+            'detail' => [
+                'path' => '/detail',
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsController::class . '::detail',
+            ],
         ],
     ],
 
