@@ -61,8 +61,8 @@ return [
             'sortField' => 'uid',
             'sortDirection' => 'desc',
             'filter' => [
-                'type' => '',
-                'valid' => '',
+                'type' => 'all',
+                'validClass' => 'all',
                 'status' => 'all',
             ],
             'currentPage' => 1,

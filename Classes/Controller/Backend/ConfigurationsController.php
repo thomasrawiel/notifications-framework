@@ -11,6 +11,7 @@ use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Utility\TreeListUtility;
+use TRAW\NotificationsFramework\Utility\ValidationUtility;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Module\ModuleData;
@@ -31,6 +32,7 @@ class ConfigurationsController extends AbstractController
         protected readonly SettingsUtility         $settingsUtility,
         protected readonly TreeListUtility         $treeListUtility,
         private readonly AudienceUtility           $audienceUtility,
+        private readonly ValidationUtility         $validationUtility,
         private readonly ConfigurationValidation   $configurationValidation,
     )
     {
@@ -42,11 +44,16 @@ class ConfigurationsController extends AbstractController
 
         /** @var ModuleData $moduleData */
         $moduleData = $request->getAttribute('moduleData');
+        $moduleData->cleanUp([
+            'perPage' => [10, 20, 50, 100, 200],
+            'sortField' => ['uid', 'pid', 'type', 'status', 'valid'],
+
+        ], false);
 
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => '', 'status' => 'all'],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => 'all', 'validClass' => 'all', 'status' => 'all'],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
@@ -55,6 +62,7 @@ class ConfigurationsController extends AbstractController
 
         $configurations = array_map(function ($configuration) {
             $configuration['valid'] = $this->configurationValidation->validate($configuration);
+            $configuration['validClass'] = $this->validationUtility->getNotificationLevel($configuration['valid']);
             if (!$configuration['hidden']) {
                 $configuration['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($configuration['uid']));
             } else {
@@ -92,12 +100,12 @@ class ConfigurationsController extends AbstractController
             'demand' => $demand,
             'action' => 'listConfigurations',
             'filters' => [
-                'type' => array_values(array_unique(
+                'type' => array_merge(['all'], array_values(array_unique(
                     array_column($configurations, 'type')
-                )),
-                'valid' => array_values(array_unique(
-                    array_column($configurations, 'valid')
-                )),
+                ))),
+                'validClass' => array_merge(['all'], array_values(array_unique(
+                    array_column($configurations, 'validClass')
+                ))),
                 'status' => ['all', 'ready', 'queue', 'done'],
 
             ],

@@ -168,8 +168,11 @@ final class ConfigurationValid extends AbstractCustomNode
         if ($validation === ConfigurationValidation::NO_RECORD_SELECTED) {
             return $this->error('No record', 'No record selected');
         }
-        if ($validation === ConfigurationValidation::RECORD_DISABLED) {
-            return $this->warning('Record disabled', 'This configuration or the selected record is disabled.', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
+        if ($validation === ConfigurationValidation::RECORD_DISABLED_SELF) {
+            return $this->error('Configuration disabled', 'This configuration is disabled.', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
+        }
+        if ($validation === ConfigurationValidation::RECORD_DISABLED_ATTACHED) {
+            return $this->error('Record disabled', 'The selected record is disabled.', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
         }
 
         return '';

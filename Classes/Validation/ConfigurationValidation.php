@@ -24,11 +24,13 @@ class ConfigurationValidation
     public const int NO_GROUPS = 1 << 1;
     public const int WRONG_PID = 1 << 2;
     public const int NO_RECORD_SELECTED = 1 << 3;
-    public const int RECORD_DISABLED = 1 << 4;
-    public const int EMPTY_AUDIENCE_WARNING = 1 << 5;
-    public const int EMPTY_AUDIENCE_ERROR = 1 << 6;
+    public const int RECORD_DISABLED_SELF = 1 << 4;
+    public const int RECORD_DISABLED_ATTACHED = 1 << 5;
 
-    public const int RECORD_MASK = self::NO_RECORD_SELECTED | self::RECORD_DISABLED | self::WRONG_PID;
+    public const int EMPTY_AUDIENCE_WARNING = 1 << 6;
+    public const int EMPTY_AUDIENCE_ERROR = 1 << 7;
+
+    public const int RECORD_MASK = self::NO_RECORD_SELECTED | self::RECORD_DISABLED_SELF | self::RECORD_DISABLED_ATTACHED | self::WRONG_PID;
     public const int SEL_MASK = self::SEL_USERS | self::SEL_GROUPS | self::SEL_MIXED | self::SEL_INVALID;
     public const int AUDIENCE_MASK = self::NO_USERS | self::NO_GROUPS | self::EMPTY_AUDIENCE_WARNING | self::EMPTY_AUDIENCE_ERROR;
 
@@ -40,7 +42,7 @@ class ConfigurationValidation
 
     private function getCachedValue(int $uid): int
     {
-        $cacheIdentifier = 'tx_notifications_framework_configuration_' . $uid;
+        $cacheIdentifier = Configuration::TABLE_NAME . '_' . $uid;
         $tags = [
             'tx_notifications_framework_validation',
             'tx_notifications_framework_validation_record_' . $uid,
@@ -79,10 +81,10 @@ class ConfigurationValidation
         $audience = $valid & ConfigurationValidation::AUDIENCE_MASK;
 
         if ($priority === false) {
-            if ($selection || $audience) {
-                return self::getAudienceInterpretation($valid);
-            } elseif ($record) {
+            if ($record) {
                 return self::getRecordInterpretation($valid);
+            } elseif ($selection || $audience) {
+                return self::getAudienceInterpretation($valid);
             } else {
                 return $valid;
             }
@@ -106,8 +108,11 @@ class ConfigurationValidation
         if ($valid & ConfigurationValidation::NO_RECORD_SELECTED) {
             return ConfigurationValidation::NO_RECORD_SELECTED;
         }
-        if ($valid & ConfigurationValidation::RECORD_DISABLED) {
-            return ConfigurationValidation::RECORD_DISABLED;
+        if ($valid & ConfigurationValidation::RECORD_DISABLED_SELF) {
+            return ConfigurationValidation::RECORD_DISABLED_SELF;
+        }
+        if ($valid & ConfigurationValidation::RECORD_DISABLED_ATTACHED) {
+            return ConfigurationValidation::RECORD_DISABLED_ATTACHED;
         }
         return 0;
     }
@@ -201,27 +206,34 @@ class ConfigurationValidation
     {
         $type = $this->record['type'];
 
-        if($this->record['hidden']) {
-            return self::RECORD_DISABLED;
+        if ($this->record['hidden']) {
+            return self::RECORD_DISABLED_SELF;
         }
 
         $isRecordType = in_array($type, (GeneralUtility::makeInstance(Type::class))->getTypesWithRecordField());
-        $record = $this->record['record'] ?? null;
 
         if (!$isRecordType) {
             return 0;
         }
+
+        $record = $this->record['record'] ?? null;
 
         if ($record === null) {
             return self::NO_RECORD_SELECTED;
         }
 
         $disabledField = $GLOBALS['TCA'][$this->record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
-        if ($disabledField && (bool)($record['row'][$disabledField] ?? $record[$disabledField] ?? 1)) {
-            return self::RECORD_DISABLED;
+
+        if($disabledField === null) {
+            return 0;
         }
 
+        //depends on context $record['row'] in edit record view; $record in be module list
+        $row = $record['row'] ?? $record;
 
+        if (!empty($row[$disabledField])) {
+            return self::RECORD_DISABLED_ATTACHED;
+        }
 
         return 0;
     }

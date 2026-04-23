@@ -17,7 +17,7 @@
     <td>
         <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
     </td>
-    <td class="{nf:validClass(value:configuration.valid,configuration:configuration)}">
+    <td class="{configuration.validClass}">
         {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()} <code>[{configuration.valid}]</code>
     </td>
     <td>{configuration.audience}</td>

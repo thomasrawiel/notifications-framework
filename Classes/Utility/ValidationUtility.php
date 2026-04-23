@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Utility;
 
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -28,25 +29,24 @@ final readonly class ValidationUtility
                 $data = [
                     'uid' => $configuration['uid'],
                     'field' => 'target_audience',
-                    'table' => 'tx_notifications_framework_configuration',
+                    'table' => Configuration::TABLE_NAME,
                     'value' => 'users',
                     'action' => 'change_audience_users',
-                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetree-page-frontend-users' : '',
+                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetreree-page-frontend-users' : '',
                 ];
                 break;
             case ConfigurationValidation::NO_USERS:
                 $data = [
                     'uid' => $configuration['uid'],
                     'field' => 'target_audience',
-                    'table' => 'tx_notifications_framework_configuration',
+                    'table' => Configuration::TABLE_NAME,
                     'value' => 'groups',
                     'action' => 'change_audience_groups',
                     'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetree-folder-contains-fe_users' : '',
                 ];
                 break;
-            case ConfigurationValidation::RECORD_DISABLED:
+            case ConfigurationValidation::RECORD_DISABLED_ATTACHED:
                 $record = is_array($configuration['record']) ? ($configuration['record'][0] ?? $configuration['record']) : $configuration['record'];
-                //$disabledField = $GLOBALS['TCA'][$record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
                 if (is_array($record)) {
                     $disabledField = $GLOBALS['TCA'][$record['table']]['ctrl']['enablecolumns']['disabled'];
                     if ((bool)$record['row'][$disabledField]) {
@@ -59,17 +59,19 @@ final readonly class ValidationUtility
                             'icon' => 'actions-lightbulb-on',
                         ];
                     }
-                    $disabledField = $GLOBALS['TCA']['tx_notifications_framework_configuration']['ctrl']['enablecolumns']['disabled'];
-                    if ((bool)$configuration[$disabledField]) {
-                        $data = [
-                            'uid' => $configuration['uid'],
-                            'field' => $disabledField,
-                            'table' => 'tx_notifications_framework_configuration',
-                            'value' => 0,
-                            'action' => 'enable_configuration',
-                            'icon' => 'actions-lightbulb-on',
-                        ];
-                    }
+                }
+                break;
+            case ConfigurationValidation::RECORD_DISABLED_SELF:
+                $disabledField = $GLOBALS['TCA'][Configuration::TABLE_NAME]['ctrl']['enablecolumns']['disabled'];
+                if ((bool)$configuration[$disabledField]) {
+                    $data = [
+                        'uid' => $configuration['uid'],
+                        'field' => $disabledField,
+                        'table' => Configuration::TABLE_NAME,
+                        'value' => 0,
+                        'action' => 'enable_configuration',
+                        'icon' => 'actions-lightbulb-on',
+                    ];
                 }
 
 
@@ -93,7 +95,7 @@ final readonly class ValidationUtility
                         'uid' => $configuration['uid'],
                         'field' => 'push',
                         'value' => 1,
-                        'table' => 'tx_notifications_framework_configuration',
+                        'table' => Configuration::TABLE_NAME,
                         'action' => 'queue',
                         'icon' => 'actions-cloud-upload',
                     ];
@@ -104,7 +106,7 @@ final readonly class ValidationUtility
         return $this->getActionMarkup($data ?? [], $linkAction, $iconSize);
     }
 
-    public function getNotificationLevel(int $valid, array $configuration = []): string
+    public function getNotificationLevel(int $valid): string
     {
         $result = ConfigurationValidation::getInterpretation($valid);
         $selection = $valid & ConfigurationValidation::SEL_MASK;
@@ -114,16 +116,14 @@ final readonly class ValidationUtility
                 return $selection === ConfigurationValidation::SEL_MIXED ? 'warning' : 'danger';
             case ConfigurationValidation::NO_USERS:
                 return $selection === ConfigurationValidation::SEL_MIXED ? 'warning' : 'danger';
-            case ConfigurationValidation::RECORD_DISABLED:
-                return 'warning';
+            case ConfigurationValidation::RECORD_DISABLED_SELF:
+            case ConfigurationValidation::RECORD_DISABLED_ATTACHED:
+                return 'danger';
             case ConfigurationValidation::EMPTY_AUDIENCE_WARNING:
                 return 'warning';
-            case 0:
+            default:
                 return 'success';
-
         }
-
-        //return '';
     }
 
     private function getIconMarkup(string $iconIdentifier, string $iconSize, string $title = ''): string
