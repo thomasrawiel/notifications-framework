@@ -15,7 +15,7 @@ return [
         'delete' => 'deleted',
         'sortby' => 'sorting',
         'default_sortby' => 'sorting',
-        'rootLevel' => -1,
+        'rootLevel' => 0,
         'iconfile' => 'EXT:notifications_framework/Resources/Public/Icons/notification-configure.svg',
         'searchFields' => 'title,rowDescription',
         'enablecolumns' => [

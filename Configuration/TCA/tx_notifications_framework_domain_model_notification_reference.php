@@ -11,7 +11,7 @@ return [
         'crdate' => 'crdate',
         'delete' => 'deleted',
         'default_sortby' => 'tstamp',
-        'rootLevel' => -1,
+        'rootLevel' => 0,
         'iconfile' => 'EXT:notifications_framework/Resources/Public/Icons/notification-configure.svg',
         'searchFields' => 'title',
         'enablecolumns' => [
