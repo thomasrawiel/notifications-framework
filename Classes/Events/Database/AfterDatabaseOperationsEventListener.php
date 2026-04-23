@@ -5,10 +5,12 @@ namespace TRAW\NotificationsFramework\Events\Database;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Type;
+use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
 use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
+use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -31,41 +33,36 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
      */
     protected string $expectedEventClass = AfterDatabaseOperationsEvent::class;
 
-    public function __construct(private readonly Type $type, private readonly CacheManager $cacheManager)
+    public function __construct(
+        private readonly Type                    $type,
+        private readonly CacheManager            $cacheManager,
+        private readonly ConfigurationRepository $configurationRepository
+    )
     {
     }
 
     protected function invokeEventAction(AbstractEvent $event)
     {
         if (!$GLOBALS['BE_USER']->isAdmin() && !$GLOBALS['BE_USER']->check('tables_modify', Configuration::TABLE_NAME)) {
-            // not allowed to create notifications
             return;
         }
 
         $recordId = $event->getId();
         $table = $event->getTable();
-        $record = BackendUtility::getRecord($table, $recordId);
 
         if ($event->getStatus() === 'update') {
             if ($table === Configuration::TABLE_NAME) {
-                $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $recordId);
-                $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $recordId);
-            } else {
-                $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(Configuration::TABLE_NAME);
-                $qb->getRestrictions()->removeAll();
-                $linkedConfigurations = $qb->select('uid')
-                    ->from(Configuration::TABLE_NAME)
-                    ->where(
-                        $qb->expr()->eq('record', $qb->createNamedParameter($table.'_'.$recordId))
-                    )->execute()->fetchAllAssociative();
-
-                foreach ($linkedConfigurations as $c) {
-                    $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $c['uid']);
-                    $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $c['uid']);
-                }
+                $uids = [$recordId];
+            } elseif (in_array($table, $this->settingsUtility->getAllowedTables())) {
+                $uids = array_column($this->configurationRepository->getConfigurationsByDemand(['record' => $table . '_' . $recordId]), 'uid');
             }
-
+            foreach ($uids as $uid) {
+                $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $uid);
+                $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $uid);
+            }
         }
+
+        $record = BackendUtility::getRecord($table, $recordId);
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
             if ($this->type->isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {

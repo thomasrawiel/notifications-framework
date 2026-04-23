@@ -55,19 +55,19 @@ class ConfigurationRepository extends Repository
     public function getConfigurationsByDemand(array $demand): array
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tx_notifications_framework_configuration');
+            ->getQueryBuilderForTable(Configuration::TABLE_NAME);
         $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
         $qb->select('*')
-            ->from('tx_notifications_framework_configuration');
+            ->from(Configuration::TABLE_NAME);
         if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
             $qb->where($qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid'])));
             return $qb->execute()->fetchAssociative();
         }
 
         $sortField = $demand['sortField'] ?? 'uid';
-        if (!isset($GLOBALS['TCA']['tx_notifications_framework_configuration']['columns'][$sortField])) {
-            $sortField = $GLOBALS['TCA']['tx_notifications_framework_configuration']['ctrl']['sorting'] ?? 'uid';
+        if (!isset($GLOBALS['TCA'][Configuration::TABLE_NAME]['columns'][$sortField])) {
+            $sortField = $GLOBALS['TCA'][Configuration::TABLE_NAME]['ctrl']['sorting'] ?? 'uid';
         }
 
         $sortDirection = $demand['sortDirection'] ?? 'ASC';

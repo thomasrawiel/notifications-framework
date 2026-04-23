@@ -7,6 +7,8 @@ use Doctrine\DBAL\ParameterType;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -23,56 +25,115 @@ final class AjaxRoutesController
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly ConnectionPool           $connectionPool,
         private readonly CacheManager             $cacheManager,
+        private readonly ConfigurationRepository  $configurationRepository,
     )
     {
     }
 
     public function updateConfigurationWithSuggestion(ServerRequestInterface $request): ResponseInterface
     {
-        $field = $request->getParsedBody()['field']
-            ?? throw new \InvalidArgumentException(
-                'Please provide a fieldname',
-                1580585107,
-            );
-        $value = $request->getParsedBody()['value']
-            ?? throw new \InvalidArgumentException(
-                'Please provide a value',
-                1580585107,
-            );
+        $data = (array)$request->getParsedBody();
 
-        $table = $request->getParsedBody()['table'] ?? null;
+        $field = $data['field'] ?? throw new \InvalidArgumentException('Please provide a fieldname', 1580585107);
+        $value = $data['value'] ?? throw new \InvalidArgumentException('Please provide a value', 1580585107);
+        $table = $data['table'] ?? null;
 
-        $uid = (int)$request->getParsedBody()['uid']
-            ?? throw new \InvalidArgumentException(
-                'Please provide a record uid',
-                1580585107,
-            );
+        $uid = isset($data['uid'])
+            ? (int)$data['uid']
+            : throw new \InvalidArgumentException('Please provide a record uid', 1580585107);
 
-        $valid = $this->validate($field, $value, $uid, $table ?? 'tx_notifications_framework_configuration');
-        $update = $valid ? $this->update($field, $value, $uid, $table ?? 'tx_notifications_framework_configuration') : false;
+        $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)
+            ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE);
 
-        $result = ['success' => $valid && $update];
+        $success = false;
+        $reload = false;
 
-        $response = $this->responseFactory->createResponse()
-            ->withHeader('Content-Type', 'application/json; charset=utf-8');
-        $response->getBody()->write(
-            json_encode($result, JSON_THROW_ON_ERROR),
-        );
+        $beUser = $GLOBALS['BE_USER'];
+        $isAdmin = $beUser->isAdmin();
+        $canModifyTable = $isAdmin
+            || $beUser->check('tables_modify', $table);
 
-        if ($result['success']) {
-            $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $uid);
-            $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $uid);
-            (GeneralUtility::makeInstance(FlashMessageService::class))
-                ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE)
-                ->addMessage(GeneralUtility::makeInstance(FlashMessage::class,
-                    "$field was set to value '$value'",
-                    'Record updated successfully',
-                    $result['success'] ? ContextualFeedbackSeverity::OK : ContextualFeedbackSeverity::WARNING,
+        $isExcludeField = (bool)($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false);
+
+        $canModifyField = $isAdmin
+            || !$isExcludeField
+            || $beUser->check('non_exclude_fields', $table . ':' . $field);
+
+        if (!$canModifyTable || !$canModifyField) {
+            $messageQueue->addMessage(
+                GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    "You don't have permission to modify this field of this record.",
+                    "Permission denied.",
+                    ContextualFeedbackSeverity::ERROR,
                     true
-                ));
+                )
+            );
+
+            return $this->jsonResponse([
+                'success' => false,
+                'reload' => true,
+            ]);
         }
 
+        $tableName = $table ?? Configuration::TABLE_NAME;
+
+        $valid = $this->validate($field, $value, $uid, $tableName);
+        $updated = $valid ? $this->update($field, $value, $uid, $tableName) : false;
+
+        $success = $valid && $updated;
+
+
+        if ($success) {
+            $messageQueue->addMessage(
+                GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    "$field was set to value '$value'",
+                    "Record updated successfully",
+                    ContextualFeedbackSeverity::OK,
+                    true
+                )
+            );
+        }
+
+        $flushUids = $this->resolveFlushUids($tableName, $uid);
+        $this->flushCacheForConfigurations($flushUids);
+
+        return $this->jsonResponse([
+            'success' => $success,
+            'reload' => true,
+        ]);
+    }
+
+    private function jsonResponse(array $data): ResponseInterface
+    {
+        $response = $this->responseFactory->createResponse()
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+
+        $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR));
+
         return $response;
+    }
+
+    private function resolveFlushUids(string $tableName, int $uid): array
+    {
+        if ($tableName === Configuration::TABLE_NAME) {
+            return [$uid];
+        }
+
+        $demand = ['record' => $tableName . '_' . $uid,];
+        return array_column(
+            $this->configurationRepository->getConfigurationsByDemand($demand),
+            'uid'
+        );
+    }
+
+    private function flushCacheForConfigurations(array $uids): void
+    {
+        foreach ($uids as $uid) {
+            $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $uid);
+            $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $uid);
+        }
     }
 
     private function validate(string $field, string $value, int $uid, string $table): bool
