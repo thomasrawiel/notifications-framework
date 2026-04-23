@@ -19,7 +19,7 @@ class Configuration {
                 .post({field, value, uid, table})
                 .then(async (response) => {
                 const data = await response.resolve();
-                if (data && data.success === true) {
+                if (data && data.reload === true) {
                     if (top && top.location) {
                         top.location.href = top.location.href;
                     } else {

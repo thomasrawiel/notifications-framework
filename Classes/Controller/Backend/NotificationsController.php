@@ -50,15 +50,14 @@ final class NotificationsController extends AbstractController
         $this->applyFilters($notifications, $demand['filter']);
         $this->sortList($notifications, $demand['sortField'], $demand['sortDirection']);
 
-
         $this->moduleTemplate->assignMultiple($this->buildPagination($notifications, $demand['currentPage'], $demand['perPage']));
         $this->moduleTemplate->assignMultiple([
             'demand' => $demand,
             'action' => 'listNotifications',
             'filters' => [
-                'type' => array_values(array_unique(
+                'type' => array_merge(['all'], array_values(array_unique(
                     array_column($notifications, 'type')
-                )),
+                ))),
             ],
         ]);
 

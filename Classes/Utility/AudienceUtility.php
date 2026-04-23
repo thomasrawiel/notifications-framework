@@ -29,7 +29,7 @@ class AudienceUtility
 
     private function getCachedValue(Configuration $configuration): int
     {
-        $cacheIdentifier = 'tx_notifications_framework_configuration_audience_' . $configuration->getUid();
+        $cacheIdentifier = Configuration::TABLE_NAME.'_audience_' . $configuration->getUid();
         $tags = [
             'tx_notifications_framework_audience',
             'tx_notifications_framework_audience_record_' . $configuration->getUid(),

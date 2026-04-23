@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\ViewHelpers;
 
 use FluidTYPO3\Vhs\Core\ViewHelper\AbstractViewHelper;
+use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Utility\RecordIconOverlayUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -17,7 +18,7 @@ class TypeIconViewHelper extends AbstractViewHelper
 
     public function render(): string
     {
-        $items = $GLOBALS['TCA']['tx_notifications_framework_configuration']['columns']['type']['config']['items'];
+        $items = $GLOBALS['TCA'][Configuration::TABLE_NAME]['columns']['type']['config']['items'];
 
         $type = $this->arguments['type'];
 

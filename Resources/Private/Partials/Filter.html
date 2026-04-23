@@ -1,0 +1,32 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<form method="post" class="row row-cols-auto align-items-start  ms-2 mb-2 mt-1">
+    <div class="col align-self-end">
+        <core:icon identifier="actions-filter" size="medium"/>
+    </div>
+
+    <f:for as="filter" each="{filters}" key="key">
+        <div class="col ">
+            <label class="form-label">
+                <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.{key}.label">filter.{key}.label</f:translate>
+            </label>
+            <select name="filter[{key}]" class="form-select" onchange="javascript:this.form.submit()">
+                <f:for as="item" each="{filter}">
+                    <option value="{item}" {f:if(condition:'{demand.filter.{key}}=={item}',then:'selected')}>
+                    <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.{key}.{item}">{item} (filter.{key}.{item})</f:translate>
+                    </option>
+                </f:for>
+            </select>
+        </div>
+    </f:for>
+
+    <div class="col align-self-end">
+        <a class="btn btn-link"
+           href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">
+            <core:icon identifier="actions-undo" size="small" />
+            <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.reset" />
+        </a>
+    </div>
+</form>
+</html>
