@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
@@ -59,6 +60,8 @@ final class AjaxRoutesController
         );
 
         if ($result['success']) {
+            $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $uid);
+            $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $uid);
             (GeneralUtility::makeInstance(FlashMessageService::class))
                 ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE)
                 ->addMessage(GeneralUtility::makeInstance(FlashMessage::class,
@@ -68,9 +71,6 @@ final class AjaxRoutesController
                     true
                 ));
         }
-
-        $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_'.$uid);
-        $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_'.$uid);
 
         return $response;
     }
@@ -94,21 +94,23 @@ final class AjaxRoutesController
         return $this->recordExists($uid, $table);
     }
 
-    private function recordExists(int $uid, string $table): bool
+    private function getQb(string $table): QueryBuilder
     {
         $qb = $this->connectionPool->getQueryBuilderForTable($table);
         $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        return $qb;
+    }
+
+    private function recordExists(int $uid, string $table): bool
+    {
+        $qb = $this->getQb($table);
 
         return 0 < $qb->count('uid', $table, ['uid' => $uid]);
     }
 
-    /**
-     * return affected rows
-     */
     private function update(string $field, string $value, int $uid, string $table): bool
     {
-        $qb = $this->connectionPool->getQueryBuilderForTable($table);
-        $qb->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $qb = $this->getQb($table);
 
         return 0 < $qb->update($table)
                 ->where(

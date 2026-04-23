@@ -13,24 +13,20 @@ class Configuration {
             }
             event.preventDefault();
 
-
             const {field, value, uid, table} = el.dataset;
 
             new AjaxRequest(TYPO3.settings.ajaxUrls.notifications_framework_update_configuration)
                 .post({field, value, uid, table})
                 .then(async (response) => {
-                    const data = await response.resolve();
-                    console.log('data-success', data);
-                    if (data && data.success === true) {
-                        // Reload current backend module (iframe)
-                        if (top && top.location) {
-                            top.location.reload();
-                        } else {
-                            // fallback (should normally not happen in BE)
-                            window.location.reload();
-                        }
+                const data = await response.resolve();
+                if (data && data.success === true) {
+                    if (top && top.location) {
+                        top.location.href = top.location.href;
+                    } else {
+                        window.location.reload();
                     }
-                })
+                }
+            })
                 .catch((error) => {
                     console.error('Request failed:', error);
                 });
