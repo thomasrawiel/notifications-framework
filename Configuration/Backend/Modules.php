@@ -63,7 +63,7 @@ return [
             'filter' => [
                 'type' => '',
                 'valid' => '',
-                'status' => '',
+                'status' => 'all',
             ],
             'currentPage' => 1,
             'perPage' => 30,
@@ -74,7 +74,7 @@ return [
             ],
             'detail' => [
                 'path' => '/detail',
-                'target' => \TRAW\NotificationsFramework\Controller\Backend\NotificationsConfigurationsController::class . '::detail',
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\ConfigurationsController::class . '::detail',
             ],
         ],
     ],

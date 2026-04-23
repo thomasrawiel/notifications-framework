@@ -46,7 +46,7 @@ class ConfigurationsController extends AbstractController
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => '', 'status' => ''],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => '', 'status' => 'all'],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
@@ -92,7 +92,9 @@ class ConfigurationsController extends AbstractController
             'demand' => $demand,
             'action' => 'listConfigurations',
             'filters' => [
-                'type' => $GLOBALS['TCA']['tx_notifications_framework_configuration']['columns']['type']['config']['items'],
+                'type' => array_values(array_unique(
+                    array_column($configurations, 'type')
+                )),
                 'valid' => array_values(array_unique(
                     array_column($configurations, 'valid')
                 )),
