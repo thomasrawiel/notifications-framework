@@ -1,37 +1,47 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
       xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
 <tr>
-    <td>
-        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:selectedPageUID}')}">
-            {nf:statusIcon(configuration:configuration) -> f:format.raw()}
-        <core:icon identifier="actions-search"/>
-        {configuration.uid}
-        </a>
-    </td>
+    <td>{configuration.uid}</td>
     <f:if condition="{showPidColumn}">
         <td>
             {configuration.pid}
         </td>
     </f:if>
     <td>
-       <core:icon identifier="{nf:typeIcon(type: configuration.type)}" size="small" title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}')}"/>
+        <core:icon identifier="{nf:typeIcon(type: configuration.type)}" size="small"
+                   title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}')}"/>
     </td>
     <td>
         <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
     </td>
-    <td>
-        <a href="{f:be.uri(route: 'notifications_configurations.detail', parameters:'{configuration:configuration.uid,id:selectedPageUID}')}">
-            <core:icon identifier="actions-search" size="small"></core:icon>
-            <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
-        </a>
-
-    </td>
     <td class="{nf:validClass(value:configuration.valid,configuration:configuration)}">
-        {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()} ({configuration.valid})
+        {nf:validIcon(value: configuration.valid, configuration:configuration) -> f:format.raw()} <code>[{configuration.valid}]</code>
     </td>
     <td>{configuration.audience}</td>
-    <td>{configuration.status}</td>
+    <td> {nf:statusIcon(configuration:configuration) -> f:format.raw()} {configuration.status}</td>
+    <td title="{configuration.title}">
+        <f:format.crop maxCharacters="30">{configuration.title}</f:format.crop>
+    </td>
+    <td>
+        <f:be.link
+            route="notifications_configurations.detail"
+            parameters="{configuration:configuration.uid,id:selectedPageUID}"
+            title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:view')}"
+            class="btn btn-default"
+        >
+            <core:icon identifier="actions-document-view" />
+        </f:be.link>
+        <be:link.editRecord
+            table="tx_notifications_framework_configuration"
+            uid="{configuration.uid}"
+            title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}"
+            class="btn btn-default"
+        >
+            <core:icon identifier="actions-document-edit" />
+        </be:link.editRecord>
+    </td>
 </tr>
 </html>

@@ -1,0 +1,39 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<tr>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'uid', icon:'actions-database', label:'UID'}"/>
+    </th>
+    <f:if condition="{showPidColumn}">
+        <th>
+            <f:render partial="Sort" section="FieldNameSort"
+                      arguments="{module:module,demand:demand, field:'pid', label:'PID'}"/>
+        </th>
+    </f:if>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'type', icon:'actions-tag', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
+    </th>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'crdate', icon:'actions-calendar', label:'Created'}"/>
+    </th>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'valid', icon:'actions-question-circle', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:action.valid\')}'}"/>
+    </th>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'Audience estimate'}"/>
+    </th>
+    <th><!--status--></th>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}'}"/>
+    </th>
+    <th><!--actions--></th>
+</tr>
+</html>

@@ -80,8 +80,14 @@ final readonly class ValidationUtility
                 ];
                 break;
             case ConfigurationValidation::EMPTY_AUDIENCE_WARNING:
-            case 0:
+                $overrideAction = 'valid32';
                 $data = [];
+                $data['icon2'] = 'actions-question';
+            case 0:
+                $data ??= [];
+                $data['icon'] = 'actions-check';
+                $data['action'] = $overrideAction ?? 'valid';
+
                 if (!($configuration['push'] ?? false)) {
                     $data = [
                         'uid' => $configuration['uid'],
@@ -91,9 +97,6 @@ final readonly class ValidationUtility
                         'action' => 'queue',
                         'icon' => 'actions-cloud-upload',
                     ];
-                }
-                if($linkAction === false) {
-                    $data['icon'] = 'actions-check';
                 }
                 break;
         }
@@ -123,25 +126,33 @@ final readonly class ValidationUtility
         //return '';
     }
 
-    private function getIconMarkup(string $iconIdentifier, string $iconSize): string
+    private function getIconMarkup(string $iconIdentifier, string $iconSize, string $title = ''): string
     {
         if ($iconIdentifier === '') {
             return '';
         }
-        return $this->iconFactory->getIcon($iconIdentifier, $iconSize)->render();
+
+        $icon = $this->iconFactory->getIcon($iconIdentifier, $iconSize);
+        if ($title) {
+            $icon->setTitle($title);
+        }
+        return $icon->render();
     }
 
     private function getActionMarkup(array $data, bool $linkAction, string $iconSize): string
     {
-        $iconMarkup = $this->getIconMarkup($data['icon'] ?? '', $iconSize);
+        $actionLabel = $this->translate('action.' . ($data['action'] ?? ''));
+        $iconMarkup = $this->getIconMarkup($data['icon'] ?? '', $iconSize, $actionLabel);
+        if ($data['icon2'] ?? false) {
+            $iconMarkup .= $this->getIconMarkup($data['icon2'] ?? '', $iconSize, $actionLabel);
+        }
 
         if (!isset($data['uid']) || !isset($data['field']) || !isset($data['value']) || $linkAction === false) {
             return $iconMarkup;
         }
 
-        $actionString = $this->translate('action.' . $data['action']);
         $pattern = '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="%s" data-value="%s" data-uid="%s" data-table="%s">%s%s</a>';
-        return sprintf($pattern, $data['field'], $data['value'], $data['uid'], $data['table'] ?? null, $iconMarkup, $actionString);
+        return sprintf($pattern, $data['field'], $data['value'], $data['uid'], $data['table'] ?? null, $iconMarkup, $actionLabel);
     }
 
     private function translate(string $input): string

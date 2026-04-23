@@ -2,60 +2,58 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<form method="post">
-    <div class="row row-cols-auto align-items-start align-items-center">
-        <div class="col">
-            <core:icon identifier="actions-filter" size="medium"/>
-            Filters:
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label class="form-label">Type</label>
-                <select name="filter[type]" class="form-select" onchange="javascript:this.form.submit()">
-                    <option value="">Show all</option>
-                    <f:for as="item" each="{filters.type}">
-                        <option value="{item.value}" {f:if(condition:
-                        '{demand.filter.type}=={item.value}',then:'selected')}>
-                        <f:translate key="{item.label}">{item.label}</f:translate>
-                        </option>
-                    </f:for>
-                </select>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label class="form-label">Valid</label>
-                <select name="filter[valid]" class="form-select" onchange="javascript:this.form.submit()">
-                    <option value="">Show all</option>
-                    <f:for as="item" each="{filters.valid}">
-                        <option value="{item}" {f:if(condition:'{demand.filter.valid}=={item}',then:'selected')}>
-                        {item}
-                        </option>
-                    </f:for>
-                </select>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label class="form-label">Push</label>
-                <div>
-                    <f:for as="item" each="{filters.status}">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="radio" name="filter[status]" value="{item}" onchange="javascript:this.form.submit();    "
-                                   {f:if(condition:'{demand.filter.status}=={item}',then:'checked')}/>{item}
-                        </label>
-                    </f:for>
-                </div>
+<form method="post" class="row row-cols-auto align-items-start  ms-2 mb-2 mt-1">
 
-            </div>
+        <div class="col align-self-end">
+            <core:icon identifier="actions-filter" size="medium"/>
+        </div>
+        <div class="col ">
+            <label class="form-label">Type</label>
+            <select name="filter[type]" class="form-select" onchange="javascript:this.form.submit()">
+                <option value="">Show all</option>
+                <f:for as="item" each="{filters.type}">
+                    <option value="{item.value}" {f:if(condition:
+                    '{demand.filter.type}=={item}',then:'selected')}>
+                    <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{item}">{item}</f:translate>
+                    </option>
+                </f:for>
+            </select>
         </div>
         <div class="col">
-            <a class="btn btn-default"
+            <label class="form-label">
+                <f:translate
+                    key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:action.valid"/>
+            </label>
+            <select name="filter[valid]" class="form-select" onchange="javascript:this.form.submit()">
+                <option value="">Show all</option>
+                <f:for as="item" each="{filters.valid}">
+                    <option value="{item}" {f:if(condition:
+                    '{demand.filter.valid}=={item}',then:'selected')}>
+                    {item}
+                    </option>
+                </f:for>
+            </select>
+
+        </div>
+        <div class="col">
+            <label class="form-label">Status</label>
+            <select name="filter[status]" class="form-select" onchange="javascript:this.form.submit()">
+
+            <f:for as="item" each="{filters.status}">
+                <option value="{item}" {f:if(condition:
+                '{demand.filter.status}=={item}',then:'selected')}>
+                {item}
+                </option>
+            </f:for>
+            </select>
+        </div>
+        <div class="col align-self-end">
+            <a class="btn btn-link"
                href="{f:be.uri(route: module.identifier, parameters: '{id:selectedPageUID,sortField:\'\',sortDirection:\'\',filter:\'\'}')}">
-                <core:icon identifier="actions-undo" size="small"/>
-                Reset filters
+                <core:icon identifier="actions-undo" size="small" />
+                <f:translate key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.reset" />
             </a>
         </div>
-    </div>
+
 </form>
 </html>

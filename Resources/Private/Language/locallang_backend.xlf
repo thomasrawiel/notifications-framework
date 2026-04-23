@@ -26,6 +26,12 @@
 			<trans-unit id="action.enable_record">
 				<source>Enable record</source>
 			</trans-unit>
+			<trans-unit id="action.valid">
+				<source>Configuration valid</source>
+			</trans-unit>
+			<trans-unit id="action.valid32">
+				<source>Configuration valid by settings, but no audience was selected</source>
+			</trans-unit>
 			<trans-unit id="action.change_audience_users">
 				<source>Change audience to users</source>
 			</trans-unit>
@@ -77,7 +83,12 @@
 			<trans-unit id="th.computed.desc">
 				<source>Final values after all processing and events</source>
 			</trans-unit>
-
+			<trans-unit id="filter.reset" resname="filter.reset">
+				<source>Reset</source>
+			</trans-unit>
+			<trans-unit id="filter.no_records">
+				<source>No records match the current selection</source>
+			</trans-unit>
 			<trans-unit id="hint.storeNotificationOnRecordsPid.enabled">
 				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is enabled, the extension will look
 					for configurations without a pid constraint</source>

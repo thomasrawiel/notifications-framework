@@ -16,7 +16,7 @@ final class RecordIconOverlayUtility
     public static function getRecordIconOverlay($row): string
     {
         if ($row['hidden']) {
-            return '';
+            return 'overlay-hidden';
         }
 
         $configurationRecord = BackendUtility::getRecord(
