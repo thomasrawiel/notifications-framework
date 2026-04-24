@@ -69,11 +69,13 @@ class NotificationService
             $site = GeneralUtility::makeInstance(SiteFinder::class)
                 ->getSiteByPageId($configuration->getPid());
             foreach ($site->getAllLanguages() as $language) {
+                // @extensionScannerIgnoreLine
                 if (in_array($language->getLanguageId(), $translationsDone, true)) {
                     //skip, because we already have that one
                     continue;
                 }
                 $translatedNotification = $this->notificationFactory->createNotificationTranslation(
+                    // @extensionScannerIgnoreLine
                     $notification, $configuration, $language->getLanguageId());
                 $event = $this->eventDispatcher
                     ->dispatch(new BeforeNotificationAddedEvent (
@@ -121,6 +123,7 @@ class NotificationService
             $site = GeneralUtility::makeInstance(SiteFinder::class)
                 ->getSiteByPageId($configuration->getPid());
             foreach ($site->getAllLanguages() as $language) {
+                // @extensionScannerIgnoreLine
                 if (in_array($language->getLanguageId(), $translationsDone, true)) {
                     //skip, because we already have that one
                     continue;
@@ -128,6 +131,7 @@ class NotificationService
                 $translatedReference = new Reference($notification->getUid(), $frontendUser->getUid());
                 $translatedReference->setPid($notification->getPid());
                 $translatedReference->setL10nParent($reference->getUid());
+                // @extensionScannerIgnoreLine
                 $translatedReference->setSysLanguageUid($language->getLanguageId());
 
                 $this->referenceRepository->add($translatedReference);

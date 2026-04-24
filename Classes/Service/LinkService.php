@@ -180,7 +180,9 @@ class LinkService
         if (!isset($GLOBALS['TSFE']) || !$GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
             $GLOBALS['TSFE'] = $controller;
         }
+        // @extensionScannerIgnoreLine
         if (!$GLOBALS['TSFE']->sys_page instanceof PageRepository) {
+            // @extensionScannerIgnoreLine
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
         }
         return $controller;
@@ -198,6 +200,7 @@ class LinkService
 
     protected function getPageTsConfig(TypoScriptFrontendController $tsfe, ServerRequestInterface $request): array
     {
+        // @extensionScannerIgnoreLine
         $id = $tsfe->id;
         $runtimeCache = GeneralUtility::makeInstance(CacheManager::class)->getCache('runtime');
         $pageTsConfig = $runtimeCache->get('pageTsConfig-' . $id);

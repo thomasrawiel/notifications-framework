@@ -60,6 +60,7 @@ final class AjaxRoutesController
             || $beUser->check('non_exclude_fields', $table . ':' . $field);
 
         if (!$canModifyTable || !$canModifyField) {
+            // @extensionScannerIgnoreLine
             $messageQueue->addMessage(
                 GeneralUtility::makeInstance(
                     FlashMessage::class,
@@ -85,6 +86,7 @@ final class AjaxRoutesController
 
 
         if ($success) {
+            // @extensionScannerIgnoreLine
             $messageQueue->addMessage(
                 GeneralUtility::makeInstance(
                     FlashMessage::class,

@@ -9,6 +9,7 @@ final class Settings {
     private $afterDatabaseOperations;
 
     public function __construct(private Features $features) {
+        // @extensionScannerIgnoreLine
         $this->afterDatabaseOperations = $this->features->isFeatureEnabled('dispatchEventAfterDatabaseOperations');
     }
 

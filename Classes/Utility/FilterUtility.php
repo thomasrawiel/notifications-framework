@@ -102,6 +102,7 @@ class FilterUtility
             } elseif (method_exists($element, '_getProperty')) {
                 $uid = $element->_getProperty('uid');
             } elseif (property_exists($element, 'uid')) {
+                // @extensionScannerIgnoreLine
                 $uid = $element->uid;
             } elseif (is_array($element)) {
                 $uid = $element['uid'];

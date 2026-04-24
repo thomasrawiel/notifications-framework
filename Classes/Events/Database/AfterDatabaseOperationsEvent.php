@@ -8,7 +8,7 @@ use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 /**
- * Class AfterDatabaseOperationsEvent
+ * @extensionScannerIgnoreFile
  */
 final class AfterDatabaseOperationsEvent extends AbstractEvent
 {
@@ -86,10 +86,10 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
                 . '_'
                 . $this->dataHandler->substNEWwithIDs[$this->id];
         }
-        
+
         return $this->table
-            . '_' 
+            . '_'
             . $this->id;
-        
+
     }
 }

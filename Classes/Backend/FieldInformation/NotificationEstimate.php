@@ -67,7 +67,7 @@ class NotificationEstimate extends AbstractCustomNode
         if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] || $row['deleted'] === 1) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
             if($row['hidden']) {
-                $estimateHtml[] = $this->info('Record hidden', 'No audience was calculated because the record is hidden', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="hidden" data-value="0" data-uid="' . $row['uid'] . '" data-table="tx_notifications_framework_domain_model_configuration">' . $this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render() . 'Enable record</a>');
+                $estimateHtml[] = $this->infoMsg('Record hidden', 'No audience was calculated because the record is hidden', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="hidden" data-value="0" data-uid="' . $row['uid'] . '" data-table="tx_notifications_framework_domain_model_configuration">' . $this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render() . 'Enable record</a>');
             }
         } else {
             /** @var Configuration $configuration */
@@ -108,7 +108,7 @@ class NotificationEstimate extends AbstractCustomNode
 
             if ($totalUsers > 0) {
                 $LLLtotalUsers = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.totalusers');
-                $estimateHtml[] = $this->info('Notifcation estimate', '<strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers));
+                $estimateHtml[] = $this->infoMsg('Notifcation estimate', '<strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers));
             }
         }
 

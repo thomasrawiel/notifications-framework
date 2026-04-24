@@ -95,6 +95,6 @@ class TreeListUtility
 
     public function getTreeListArray($id, $depth, $begin = 0): array
     {
-        return GeneralUtility::intExplode(',', $this->getTreeList($id, $depth, $begin), true);
+        return GeneralUtility::intExplode(',', $this->getTreeListFromId($id, $depth, $begin), true);
     }
 }

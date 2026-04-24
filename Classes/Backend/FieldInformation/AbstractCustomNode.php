@@ -50,22 +50,22 @@ abstract class AbstractCustomNode extends AbstractFormElement
         return $icon->render();
     }
 
-    protected function info(string $title = '', string $body = '', string $action = ''): string
+    protected function infoMsg(string $title = '', string $body = '', string $action = ''): string
     {
         return $this->callout($title, $body, $action, 'info');
     }
 
-    protected function success(string $title = '', string $body = '', string $action = ''): string
+    protected function successMsg(string $title = '', string $body = '', string $action = ''): string
     {
         return $this->callout($title, $body, $action, 'success');
     }
 
-    protected function warning(string $title = '', string $body = '', string $action = ''): string
+    protected function warningMsg(string $title = '', string $body = '', string $action = ''): string
     {
         return $this->callout($title, $body, $action, 'warning');
     }
 
-    protected function error(string $title = '', string $body = '', string $action = ''): string
+    protected function errorMsg(string $title = '', string $body = '', string $action = ''): string
     {
         return $this->callout($title, $body, $action, 'danger');
     }
