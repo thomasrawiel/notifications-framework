@@ -28,8 +28,8 @@ final class ConfigurationValid extends AbstractCustomNode
 
     public static array $requiredTca = [
         'exclude' => true,
-        'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration_pid_valid',
-        'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration_pid_valid.description',
+        'label' => self::langFile_tca . ':configuration_pid_valid',
+        'description' => self::langFile_tca . ':configuration_pid_valid.description',
         'config' => [
             'type' => 'none',
             'renderType' => 'configurationValid',
@@ -63,7 +63,7 @@ final class ConfigurationValid extends AbstractCustomNode
 
         $validationHtml = [];
         if (str_starts_with((string)$this->data['databaseRow']['uid'], 'NEW')) {
-            $validationHtml[] = $this->infoMsg('Validation pending', 'Please save the record first.');
+            $validationHtml[] = $this->infoMsg(self::langFile_backend . ':valid.pending', self::langFile_backend . ':valid.pending.desc');
             return $result;
         }
 
@@ -75,9 +75,9 @@ final class ConfigurationValid extends AbstractCustomNode
 
 
         if ($valid !== 0 && $valid !== ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
-            $validationHtml[] = $this->infoMsg('Configuration incomplete', 'Some options are not valid or ambigious and will lead to the configuration being skipped.');
+            $validationHtml[] = $this->infoMsg(self::langFile_backend . ':valid.incomplete', self::langFile_backend . ':valid.incomplete.desc');
         } else {
-            $validationHtml[] = $this->successMsg('Configuration complete', 'This configuration can be processed.', $this->validationUtility->getAction($valid, $this->data['databaseRow']));
+            $validationHtml[] = $this->successMsg(self::langFile_backend . ':valid.complete', self::langFile_backend . ':valid.complete.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow']));
         }
 
         $validationHtml[] = $this->getValidationTextPid($valid);
@@ -97,31 +97,31 @@ final class ConfigurationValid extends AbstractCustomNode
             return '';
         }
 
-        if ($valid === 0) {
+        $validation = $validation = ConfigurationValidation::getInterpretation($valid, 'audience');
+
+        if ($validation === 0) {
             return '';
         }
 
-        //$interpretation = ConfigurationValidation::getInterpretation($valid, 'audience');
-
-        if ($valid & ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
+        if ($validation & ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
             return $this->warningMsg('Empty audience', 'No audience is selected, but the configuration allows it, so that is okay, if you know what you\'re doing.');
         }
 
-        if ($valid & ConfigurationValidation::EMPTY_AUDIENCE_ERROR) {
+        if ($validation & ConfigurationValidation::EMPTY_AUDIENCE_ERROR) {
             return $this->errorMsg('empty audience is not allowed');
         }
 
         $selection = $valid & ConfigurationValidation::SEL_MASK;
         if ($selection === ConfigurationValidation::SEL_INVALID) {
-            return $this->errorMsg('Invalid audience', 'The selected audience is not valid.');
+            return $this->errorMsg(self::langFile_backend . ':valid.audience_invalid', self::langFile_backend . ':valid.audience_invalid');
         }
 
-        if ($selection === ConfigurationValidation::SEL_USERS && ($valid & ConfigurationValidation::NO_USERS)) {
-            return $this->errorMsg('User audience', 'No users selected');
+        if ($selection === ConfigurationValidation::SEL_USERS && ($validation & ConfigurationValidation::NO_USERS)) {
+            return $this->errorMsg(self::langFile_backend . ':valid.no_users', self::langFile_backend . ':valid.no_users.desc');
         }
 
-        if ($selection === ConfigurationValidation::SEL_GROUPS && ($valid & ConfigurationValidation::NO_GROUPS)) {
-            return $this->errorMsg('Group audience', 'No groups selected');
+        if ($selection === ConfigurationValidation::SEL_GROUPS && ($validation & ConfigurationValidation::NO_GROUPS)) {
+            return $this->errorMsg(self::langFile_backend . ':valid.no_groups', self::langFile_backend . ':valid.no_groups.desc');
         }
 
         if (
@@ -129,19 +129,19 @@ final class ConfigurationValid extends AbstractCustomNode
             && ($valid & ConfigurationValidation::NO_USERS)
             && ($valid & ConfigurationValidation::NO_GROUPS)
         ) {
-            return $this->errorMsg('Mixed audience', 'Mixed audience is selected, but no users or groups selected');
+            return $this->errorMsg(self::langFile_backend . ':valid.mixed_audience.both', self::langFile_backend . ':valid.mixed_audience.both.desc');
         }
 
         $configurationUid = (int)($this->data['databaseRow']['l10n_parent'][0] ?? $this->data['databaseRow']['l10n_parent'] ?? 0);
         if ($configurationUid === 0) {
             $configurationUid = (int)$this->data['databaseRow']['uid'];
         }
-        if ($selection === ConfigurationValidation::SEL_MIXED && ($valid & ConfigurationValidation::NO_USERS)) {
-            return $this->warningMsg('Missing users', 'Mixed audience is selected, but no users are selected.', $this->validationUtility->getAction($valid, $this->data['databaseRow']));
+        if ($selection === ConfigurationValidation::SEL_MIXED && ($validation & ConfigurationValidation::NO_USERS)) {
+            return $this->warningMsg(self::langFile_backend . ':valid.mixed_audience.users', self::langFile_backend . ':valid.mixed_audience.users.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'audience'));
         }
 
-        if ($selection === ConfigurationValidation::SEL_MIXED && ($valid & ConfigurationValidation::NO_GROUPS)) {
-            return $this->warningMsg('Missing groups', 'Mixed audience is selected, but no groups are selected.', $this->validationUtility->getAction($valid, $this->data['databaseRow']));
+        if ($selection === ConfigurationValidation::SEL_MIXED && ($validation & ConfigurationValidation::NO_GROUPS)) {
+            return $this->warningMsg(self::langFile_backend . ':valid.mixed_audience.groups', self::langFile_backend . ':valid.mixed_audience.groups.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'audience'));
         }
 
         return '';
@@ -157,7 +157,7 @@ final class ConfigurationValid extends AbstractCustomNode
         $validation = ConfigurationValidation::getInterpretation($valid, 'record');
 
         return ($validation === ConfigurationValidation::WRONG_PID)
-            ? $this->errorMsg('Wrong storage', 'You have configued a specific notification storage.', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage()[0] . '"  data-uid="' . $configurationUid . '">' . $this->iconFactory->getIcon('apps-pagetree-drag-move-into', Icon::SIZE_MEDIUM)->render() . ' Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage()[0] . '</strong></a>')
+            ? $this->errorMsg(self::langFile_backend . ':valid.storage', self::langFile_backend . ':valid.storage.desc', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="pid" data-value="' . $this->settingsUtility->getNotificationStorage()[0] . '"  data-uid="' . $configurationUid . '">' . $this->iconFactory->getIcon('apps-pagetree-drag-move-into', Icon::SIZE_MEDIUM)->render() . ' Move this configuration to page <strong>' . $this->settingsUtility->getNotificationStorage()[0] . '</strong></a>')
             : '';
     }
 
@@ -166,13 +166,13 @@ final class ConfigurationValid extends AbstractCustomNode
         $validation = ConfigurationValidation::getInterpretation($valid, 'record');
 
         if ($validation === ConfigurationValidation::NO_RECORD_SELECTED) {
-            return $this->errorMsg('No record', 'No record selected');
+            return $this->errorMsg(self::langFile_backend . ':valid.no_record', self::langFile_backend . ':valid.no_record.desc');
         }
         if ($validation === ConfigurationValidation::RECORD_DISABLED_SELF) {
-            return $this->errorMsg('Configuration disabled', 'This configuration is disabled.', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
+            return $this->errorMsg(self::langFile_backend . ':valid.record_disabled_self', self::langFile_backend . ':valid.record_disabled_self.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
         }
         if ($validation === ConfigurationValidation::RECORD_DISABLED_ATTACHED) {
-            return $this->errorMsg('Record disabled', 'The selected record is disabled.', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
+            return $this->errorMsg(self::langFile_backend . ':valid.record_disabled', self::langFile_backend . ':valid.record_disabled.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'record'));
         }
 
         return '';

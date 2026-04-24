@@ -5,21 +5,21 @@
 <tr>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'uid', icon:'actions-database', label:'UID'}"/>
+                  arguments="{module:module,demand:demand,field:'uid',icon:'actions-database',label:'UID'}"/>
     </th>
     <f:if condition="{showPidColumn}">
         <th>
             <f:render partial="Sort" section="FieldNameSort"
-                      arguments="{module:module,demand:demand, field:'pid', label:'PID'}"/>
+                      arguments="{module:module,demand:demand,field:'pid',icon:'actions-database',label:'PID'}"/>
         </th>
     </f:if>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'type', icon:'actions-tag', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
+                  arguments="{module:module,demand:demand,field:'type',icon:'actions-tag',label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type\')}'}"/>
     </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'crdate', icon:'actions-calendar', label:'Created'}"/>
+                  arguments="{module:module,demand:demand, field:'crdate', icon:'actions-calendar', label:'{f:translate(key: \'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.crdate\')}'}"/>
     </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
@@ -27,7 +27,7 @@
     </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'Audience estimate'}"/>
+                  arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:notification_estimate\')}'}"/>
     </th>
     <th><!--status--></th>
     <th>

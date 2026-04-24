@@ -1,103 +1,265 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext"
-          original="EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf"
-          date="2025-04-02T112:00:00Z" product-name="notifications_framework">
-        <header/>
-        <body>
-			<trans-unit id="module.notifications.title">
+	<file source-language="en" datatype="plaintext"
+	      original="EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf"
+	      date="2025-04-02T112:00:00Z" product-name="notifications_framework">
+		<header/>
+		<body>
+			<trans-unit id="module.notifications.title" resname="module.notifications.title">
 				<source>Notifications</source>
 			</trans-unit>
-			<trans-unit id="module.notifications.description">
+			<trans-unit id="module.notifications.description" resname="module.notifications.description">
 				<source>Something something</source>
 			</trans-unit>
-			<trans-unit id="module.notifications.shortDescription">
+			<trans-unit id="module.notifications.shortDescription" resname="module.notifications.shortDescription">
 				<source>Something shorter</source>
 			</trans-unit>
-			<trans-unit id="module.configurations.title">
+			<trans-unit id="module.configurations.title" resname="module.configurations.title">
 				<source>Configurations</source>
 			</trans-unit>
-			<trans-unit id="module.index.title">
+			<trans-unit id="module.index.title" resname="module.index.title">
 				<source>Overview</source>
 			</trans-unit>
-			<trans-unit id="module.settings.title">
+			<trans-unit id="module.settings.title" resname="module.settings.title">
 				<source>Settings</source>
 			</trans-unit>
-			<trans-unit id="action.enable_record">
-				<source>Enable record</source>
+			<trans-unit id="notification_estimate.noselection">
+				<source>Select an audience to calculate or narrow down the notification count estimate.</source>
 			</trans-unit>
-			<trans-unit id="action.valid">
+			<trans-unit id="notification_estimate.count.groups">
+				<source>group(s) selected</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.count.users">
+				<source>user(s) selected</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.totalusers">
+				<source>notification(s) will be generated for this configuration.
+
+					This number is based on the selected target audience and the extension's settings.
+				</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.audience.hidden">
+				<source>Configuration hidden</source>
+			</trans-unit>
+			<trans-unit id="notification_estimate.audience.hidden.desc">
+				<source>No audience was calculated because the configuration is disabled.</source>
+			</trans-unit>
+			<trans-unit id="action.valid" resname="action.valid">
 				<source>Configuration valid</source>
 			</trans-unit>
-			<trans-unit id="action.valid32">
+			<trans-unit id="action.valid.audience_warning" resname="action.valid.audience_warning">
 				<source>Configuration valid by settings, but no audience was selected</source>
 			</trans-unit>
-			<trans-unit id="action.change_audience_users">
+			<trans-unit id="action.change_audience_users" resname="action.change_audience_users">
 				<source>Change audience to users</source>
 			</trans-unit>
-			<trans-unit id="action.change_audience_groups">
+			<trans-unit id="action.change_audience_groups" resname="action.change_audience_groups">
 				<source>Change audience to groups</source>
 			</trans-unit>
-			<trans-unit id="action.enable_configuration">
+			<trans-unit id="action.enable_record" resname="action.enable_record">
+				<source>Enable record</source>
+			</trans-unit>
+			<trans-unit id="action.enable_configuration" resname="action.enable_configuration">
 				<source>Enable configuration</source>
 			</trans-unit>
-			<trans-unit id="action.queue">
+			<trans-unit id="action.queue" resname="action.queue">
 				<source>Queue for processing</source>
 			</trans-unit>
-			<trans-unit id="settings.autoCreateNotifications">
+			<trans-unit id="settings.autoCreateNotifications" resname="settings.autoCreateNotifications">
 				<source>Automatically create notification for new records (in allowed tables)</source>
 			</trans-unit>
-			<trans-unit id="settings.sendToEveryoneIfNoAudienceIsSelected">
+			<trans-unit id="settings.sendToEveryoneIfNoAudienceIsSelected"
+			            resname="settings.sendToEveryoneIfNoAudienceIsSelected">
 				<source>Send notifications to every Frontend user if no specific audience is selected</source>
 			</trans-unit>
-			<trans-unit id="settings.storeNotificationsOnRecordPid">
+			<trans-unit id="settings.storeNotificationsOnRecordPid" resname="settings.storeNotificationsOnRecordPid">
 				<source>Store notifications on record pid</source>
 			</trans-unit>
-			<trans-unit id="settings.allowedTables">
+			<trans-unit id="settings.allowedTables" resname="settings.allowedTables">
 				<source>Commalist of allowed tables</source>
 			</trans-unit>
-			<trans-unit id="settings.feUserLookupUids">
+			<trans-unit id="settings.feUserLookupUids" resname="settings.feUserLookupUids">
 				<source>Frontend user storage</source>
 			</trans-unit>
-			<trans-unit id="settings.feUserLookupRecursive">
+			<trans-unit id="settings.feUserLookupRecursive" resname="settings.feUserLookupRecursive">
 				<source>Frontend user storage recursive levels</source>
 			</trans-unit>
-			<trans-unit id="settings.notificationStorage">
+			<trans-unit id="settings.notificationStorage" resname="settings.notificationStorage">
 				<source>Notification storage</source>
 			</trans-unit>
-			<trans-unit id="settings.notificationStorageRecursive">
+			<trans-unit id="settings.notificationStorageRecursive" resname="settings.notificationStorageRecursive">
 				<source>Notification storage recursive levels</source>
 			</trans-unit>
-			<trans-unit id="hint.lookup">
+			<trans-unit id="hint.lookup" resname="hint.lookup">
 				<source>Visual representation of all pages that are included in the lookup</source>
 			</trans-unit>
-			<trans-unit id="th.settings">
+			<trans-unit id="th.settings" resname="th.settings">
 				<source>Configured</source>
 			</trans-unit>
-			<trans-unit id="th.settings.desc">
+			<trans-unit id="th.settings.desc" resname="th.settings.desc">
 				<source>Values defined in settings.php</source>
 			</trans-unit>
-			<trans-unit id="th.computed">
+			<trans-unit id="th.computed" resname="th.computed">
 				<source>Applied</source>
 			</trans-unit>
-			<trans-unit id="th.computed.desc">
+			<trans-unit id="th.computed.desc" resname="th.computed.desc">
 				<source>Final values after all processing and events</source>
+			</trans-unit>
+			<trans-unit id="hint.storeNotificationOnRecordsPid.enabled"
+			            resname="hint.storeNotificationOnRecordsPid.enabled">
+				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is enabled, the extension will look
+					for configurations without a pid constraint
+				</source>
+			</trans-unit>
+			<trans-unit id="hint.storeNotificationOnRecordsPid.disabled"
+			            resname="hint.storeNotificationOnRecordsPid.disabled">
+				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is disabled, the extension will use
+					the &lt;code&gt;notificationStorage&lt;/code&gt; setting as a pid constraint
+				</source>
 			</trans-unit>
 			<trans-unit id="filter.reset" resname="filter.reset">
 				<source>Reset</source>
 			</trans-unit>
-			<trans-unit id="filter.no_records">
+			<trans-unit id="filter.no_records" resname="filter.no_records">
 				<source>No records match the current selection</source>
 			</trans-unit>
-			<trans-unit id="hint.storeNotificationOnRecordsPid.enabled">
-				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is enabled, the extension will look
-					for configurations without a pid constraint</source>
+			<trans-unit id="filter.type.label" resname="filter.type.label">
+				<source>Type</source>
 			</trans-unit>
-			<trans-unit id="hint.storeNotificationOnRecordsPid.disabled">
-				<source>&lt;code&gt;storeNotificationsOnRecordPid&lt;/code&gt; is disabled, the extension will use
-					the &lt;code&gt;notificationStorage&lt;/code&gt; setting as a pid constraint</source>
+			<trans-unit id="filter.type.all" resname="filter.type.all">
+				<source>Any type</source>
+			</trans-unit>
+			<trans-unit id="filter.type.default" resname="filter.type.default">
+				<source>Default</source>
+			</trans-unit>
+			<trans-unit id="filter.type.success" resname="filter.type.success">
+				<source>Success</source>
+			</trans-unit>
+			<trans-unit id="filter.type.warning" resname="filter.type.warning">
+				<source>Warning</source>
+			</trans-unit>
+			<trans-unit id="filter.type.error" resname="filter.type.error">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="filter.type.info" resname="filter.type.info">
+				<source>Information</source>
+			</trans-unit>
+			<trans-unit id="filter.type.recordadded" resname="filter.type.recordadded">
+				<source>New Record</source>
+			</trans-unit>
+			<trans-unit id="filter.type.recordupdated" resname="filter.type.recordupdated">
+				<source>Record updated</source>
+			</trans-unit>
+			<trans-unit id="filter.validClass.label" resname="filter.validClass.label">
+				<source>Validation</source>
+			</trans-unit>
+			<trans-unit id="filter.validClass.all" resname="filter.validClass.all">
+				<source>Any value</source>
+			</trans-unit>
+			<trans-unit id="filter.validClass.warning" resname="filter.validClass.warning">
+				<source>Warning</source>
+			</trans-unit>
+			<trans-unit id="filter.validClass.danger" resname="filter.validClass.danger">
+				<source>Invalid</source>
+			</trans-unit>
+			<trans-unit id="filter.validClass.success" resname="filter.validClass.success">
+				<source>Valid</source>
+			</trans-unit>
+			<trans-unit id="filter.status.label" resname="filter.status.label">
+				<source>Status</source>
+			</trans-unit>
+			<trans-unit id="filter.status.all" resname="filter.status.all">
+				<source>Any status</source>
+			</trans-unit>
+			<trans-unit id="filter.status.ready" resname="filter.status.ready">
+				<source>Ready</source>
+			</trans-unit>
+			<trans-unit id="filter.status.queue" resname="filter.status.queue">
+				<source>Queued</source>
+			</trans-unit>
+			<trans-unit id="filter.status.done" resname="filter.status.done">
+				<source>Processed</source>
+			</trans-unit>
+			<trans-unit id="valid.pending" resname="valid.pending">
+				<source>Validation pending</source>
+			</trans-unit>
+			<trans-unit id="valid.pending.desc" resname="valid.pending.desc">
+				<source>Please save the record first.</source>
+			</trans-unit>
+			<trans-unit id="valid.incomplete" resname="valid.incomplete">
+				<source>Configuration incomplete</source>
+			</trans-unit>
+			<trans-unit id="valid.incomplete.desc" resname="valid.incomplete.desc">
+				<source>Some options are not valid or ambigious and will lead to the configuration being skipped.
+				</source>
+			</trans-unit>
+			<trans-unit id="valid.complete" resname="valid.complete">
+				<source>Configuration complete</source>
+			</trans-unit>
+			<trans-unit id="valid.complete.desc" resname="valid.complete.desc">
+				<source>This configuration can be processed.</source>
+			</trans-unit>
+			<trans-unit id="valid.audience_invalid" resname="valid.audience_invalid">
+				<source>Invalid audience</source>
+			</trans-unit>
+			<trans-unit id="valid.audience_invalid.desc" resname="valid.audience_invalid.desc">
+				<source>The selected audience is not valid.</source>
+			</trans-unit>
+			<trans-unit id="valid.no_users" resname="valid.no_users">
+				<source>Users audience</source>
+			</trans-unit>
+			<trans-unit id="valid.no_users.desc" resname="valid.no_users.desc">
+				<source>No users selected</source>
+			</trans-unit>
+			<trans-unit id="valid.no_groups" resname="valid.no_groups">
+				<source>Users audience</source>
+			</trans-unit>
+			<trans-unit id="valid.no_groups.desc" resname="valid.no_groups.desc">
+				<source>No users selected</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.users" resname="valid.mixed_audience.users">
+				<source>Missing users</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.users.desc" resname="valid.mixed_audience.users.desc">
+				<source>Mixed audience is selected, but no users are selected.</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.groups" resname="valid.mixed_audience.groups">
+				<source>Missing groups</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.groups.desc" resname="valid.mixed_audience.groups.desc">
+				<source>Mixed audience is selected, but no groups are selected.</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.both" resname="valid.mixed_audience.both">
+				<source>Mixed audience</source>
+			</trans-unit>
+			<trans-unit id="valid.mixed_audience.both.desc" resname="valid.mixed_audience.both.desc">
+				<source>Mixed audience is selected, but no users or groups selected</source>
+			</trans-unit>
+			<trans-unit id="valid.storage" resname="valid.storage">
+				<source>Wrong storage</source>
+			</trans-unit>
+			<trans-unit id="valid.storage.desc" resname="valid.storage.desc">
+				<source>You have configued a specific notification storage.</source>
+			</trans-unit>
+			<trans-unit id="valid.no_record" resname="valid.no_record">
+				<source>No record</source>
+			</trans-unit>
+			<trans-unit id="valid.no_record.desc" resname="valid.no_record.desc">
+				<source>No record selected</source>
+			</trans-unit>
+			<trans-unit id="valid.record_disabled_self" resname="valid.record_disabled_self">
+				<source>Configuration disabled</source>
+			</trans-unit>
+			<trans-unit id="valid.record_disabled_self.desc" resname="valid.record_disabled_self.desc">
+				<source>The current configuration is disabled.</source>
+			</trans-unit>
+			<trans-unit id="valid.record_disabled" resname="valid.record_disabled">
+				<source>Record disabled.</source>
+			</trans-unit>
+			<trans-unit id="valid.record_disabled.desc" resname="valid.record_disabled.desc">
+				<source>The selected record is disabled.</source>
 			</trans-unit>
 
-        </body>
-    </file>
+		</body>
+	</file>
 </xliff>

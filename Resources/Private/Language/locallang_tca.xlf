@@ -124,25 +124,12 @@
 				<source>When enabled, the notification message for this record is automatically translated without the need to translate the configuration. If the configuration is not translated into all languages, the translations are created with the content from the default language.</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate">
-				<source>Notification count estimate</source>
+				<source>Notification audience estimate</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.description">
-				<source>Depending on the extension's settings and your audience selection, this will be the number of generated notifications</source>
+				<source>Depending on the extension's settings and your audience selection, this will be the approximate number of generated notifications</source>
 			</trans-unit>
-			<trans-unit id="notification_estimate.noselection">
-				<source>Select an audience to calculate or narrow down the notification count estimate.</source>
-			</trans-unit>
-			<trans-unit id="notification_estimate.count.groups">
-				<source>group(s) selected</source>
-			</trans-unit>
-			<trans-unit id="notification_estimate.count.users">
-				<source>user(s) selected</source>
-			</trans-unit>
-			<trans-unit id="notification_estimate.totalusers">
-				<source>notification(s) will be generated for this configuration.
 
-					This number is based on the selected target audience and the extension's settings.</source>
-			</trans-unit>
 			<trans-unit id="configuration_pid_valid">
 				<source>Configuration validation</source>
 			</trans-unit>

@@ -7,11 +7,15 @@ use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractCustomNode extends AbstractFormElement
 {
     protected $iconFactory;
+
+    protected const string langFile_tca = 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf';
+    protected const string langFile_backend = 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf';
 
     public function __construct(?NodeFactory $nodeFactory = null, array $data = [])
     {
@@ -24,7 +28,16 @@ abstract class AbstractCustomNode extends AbstractFormElement
     protected function callout(string $title = '', string $body = '', string $action = '', string $type = ''): string
     {
         $pattern = '<div class="t3js-infobox callout callout-sm callout-%s"><div class="media"><div class="media-left"><span class="icon-emphasized">%s</span></div><div class="media-body"><div class="callout-title"><strong>%s</strong></div><div class="callout-body"><p class="mt-2">%s</p>%s</div></div></div></div>';
+
+        if (str_starts_with($title, 'LLL:')) {
+            $title = $this->getLanguageService()->sL($title);
+        }
+        if (str_starts_with($body, 'LLL:')) {
+            $body = $this->getLanguageService()->sL($body);
+        }
+
         $icon = $this->getCalloutIcon($type, $action);
+
         return sprintf($pattern, $type, $icon, $title, $body, $action);
     }
 
@@ -84,5 +97,10 @@ abstract class AbstractCustomNode extends AbstractFormElement
         $html[] = '</div>';
         $html[] = '</div>';
         return implode(LF, $html);
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 }

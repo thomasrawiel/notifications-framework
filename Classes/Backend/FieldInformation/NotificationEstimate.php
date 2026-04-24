@@ -11,7 +11,6 @@ use TYPO3\CMS\Backend\Form\AbstractNode;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
@@ -21,8 +20,8 @@ class NotificationEstimate extends AbstractCustomNode
 
     public static array $requiredTca = [
         'exclude' => true,
-        'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate',
-        'description' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.description',
+        'label' => self::langFile_tca . ':notification_estimate',
+        'description' => self::langFile_tca . ':notification_estimate.description',
         'config' => [
             'type' => 'none',
             'renderType' => 'notificationEstimate',
@@ -63,11 +62,11 @@ class NotificationEstimate extends AbstractCustomNode
 
 
         $estimateHtml = [];
-        $noSelection = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.noselection');
-        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] || $row['deleted'] === 1) {
+        $noSelection = $this->getLanguageService()->sL(self::langFile_backend . ':notification_estimate.noselection');
+        if ($this->data['command'] === 'new' || !MathUtility::canBeInterpretedAsInteger($row['uid']) || $row['hidden'] || $row['deleted']) {
             $estimateHtml[] = '<p class="text-body-secondary">' . $noSelection . '</p>';
-            if($row['hidden']) {
-                $estimateHtml[] = $this->infoMsg('Record hidden', 'No audience was calculated because the record is hidden', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="hidden" data-value="0" data-uid="' . $row['uid'] . '" data-table="tx_notifications_framework_domain_model_configuration">' . $this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render() . 'Enable record</a>');
+            if ($row['hidden']) {
+                $estimateHtml[] = $this->infoMsg(self::langFile_backend.':notification_estimate.audience.hidden', self::langFile_backend.':notification_estimate.audience.hidden.desc', '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="hidden" data-value="0" data-uid="' . $row['uid'] . '" data-table="tx_notifications_framework_domain_model_configuration">' . $this->iconFactory->getIcon('actions-lightbulb-on', Icon::SIZE_MEDIUM)->render() . 'Enable record</a>');
             }
         } else {
             /** @var Configuration $configuration */
@@ -80,8 +79,8 @@ class NotificationEstimate extends AbstractCustomNode
             $estimateHtml[] = '<p class="text-body-secondary">';
             $estimateHtml[] = '<ul>';
             $targetAudience = $configuration->getTargetAudience();
-            $targetAudienceLabel = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.target_audience');
-            $targetAudienceValue = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.target_audience.' . $targetAudience);
+            $targetAudienceLabel = $this->getLanguageService()->sL(self::langFile_tca . ':configuration.target_audience');
+            $targetAudienceValue = $this->getLanguageService()->sL(self::langFile_tca . ':configuration.target_audience.' . $targetAudience);
             if (empty($targetAudienceValue)) {
                 $targetAudienceValue = $targetAudience;
             }
@@ -91,11 +90,11 @@ class NotificationEstimate extends AbstractCustomNode
                 $users = count($audience['users'] ?? []);
 
                 if (in_array($targetAudience, ['users', 'mixed'], true)) {
-                    $usersSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.users');
+                    $usersSelected = $this->getLanguageService()->sL(self::langFile_backend . ':notification_estimate.count.users');
                     $estimateHtml[] = "<li>$users $usersSelected</li>";
                 }
                 if (in_array($targetAudience, ['groups', 'mixed'], true)) {
-                    $groupsSelected = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.count.groups');
+                    $groupsSelected = $this->getLanguageService()->sL(self::langFile_backend . ':notification_estimate.count.groups');
                     $estimateHtml[] = "<li>$groups $groupsSelected</li>";
                 }
 
@@ -107,8 +106,8 @@ class NotificationEstimate extends AbstractCustomNode
             }
 
             if ($totalUsers > 0) {
-                $LLLtotalUsers = $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification_estimate.totalusers');
-                $estimateHtml[] = $this->infoMsg('Notifcation estimate', '<strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers));
+                $LLLtotalUsers = $this->getLanguageService()->sL(self::langFile_backend . ':notification_estimate.totalusers');
+                $estimateHtml[] = $this->infoMsg(self::langFile_backend . ':notification_estimate', '<strong>' . $totalUsers . '</strong> ' . nl2br($LLLtotalUsers));
             }
         }
 
@@ -117,8 +116,4 @@ class NotificationEstimate extends AbstractCustomNode
         return $result;
     }
 
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
 }

@@ -24,6 +24,7 @@ final readonly class ValidationUtility
         $result = ConfigurationValidation::getInterpretation($valid, $priority);
         $selection = $valid & ConfigurationValidation::SEL_MASK;
 
+
         switch ($result) {
             case ConfigurationValidation::NO_GROUPS:
                 $data = [
@@ -74,7 +75,6 @@ final readonly class ValidationUtility
                     ];
                 }
 
-
                 break;
             case ConfigurationValidation::WRONG_PID:
                 $data = [
@@ -82,7 +82,7 @@ final readonly class ValidationUtility
                 ];
                 break;
             case ConfigurationValidation::EMPTY_AUDIENCE_WARNING:
-                $overrideAction = 'valid32';
+                $overrideAction = 'valid.audience_warning';
                 $data = [];
                 $data['icon2'] = 'actions-question';
             case 0:
