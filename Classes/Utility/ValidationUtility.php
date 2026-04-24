@@ -32,7 +32,7 @@ final readonly class ValidationUtility
                     'table' => Configuration::TABLE_NAME,
                     'value' => 'users',
                     'action' => 'change_audience_users',
-                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetreree-page-frontend-users' : '',
+                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetree-page-frontend-users' : '',
                 ];
                 break;
             case ConfigurationValidation::NO_USERS:
