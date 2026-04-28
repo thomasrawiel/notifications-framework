@@ -21,9 +21,12 @@ final readonly class ValidationUtility
 
     public function getAction(int $valid, array $configuration = [], $linkAction = true, string|bool $priority = false, $iconSize = Icon::SIZE_MEDIUM): string
     {
+        if ($valid === -99) {
+            return $this->getActionMarkup(['action' => 'clearCache', 'icon' => 'actions-refresh', 'uid' => $configuration['uid'],], $linkAction, $iconSize);
+        }
+
         $result = ConfigurationValidation::getInterpretation($valid, $priority);
         $selection = $valid & ConfigurationValidation::SEL_MASK;
-
 
         switch ($result) {
             case ConfigurationValidation::NO_GROUPS:
@@ -147,11 +150,16 @@ final readonly class ValidationUtility
             $iconMarkup .= $this->getIconMarkup($data['icon2'] ?? '', $iconSize, $actionLabel);
         }
 
+        if ($data['action'] === 'clearCache') {
+            $pattern = '<a href="#" class="btn btn-default js-notification-configuration-cache-ajax" data-uid="%s">%s%s</a>';
+            return sprintf($pattern, $data['uid'], $iconMarkup, $actionLabel);
+        }
+
         if (!isset($data['uid']) || !isset($data['field']) || !isset($data['value']) || $linkAction === false) {
             return $iconMarkup;
         }
 
-        $pattern = '<a href="#" class="btn btn-default js-notification-configuration-ajax" data-field="%s" data-value="%s" data-uid="%s" data-table="%s">%s%s</a>';
+        $pattern = '<a href="#" class="btn btn-default js-notification-configuration-update-ajax" data-field="%s" data-value="%s" data-uid="%s" data-table="%s">%s%s</a>';
         return sprintf($pattern, $data['field'], $data['value'], $data['uid'], $data['table'] ?? null, $iconMarkup, $actionLabel);
     }
 

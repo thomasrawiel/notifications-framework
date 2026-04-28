@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -46,20 +47,8 @@ final class AjaxRoutesController
             ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE);
 
         $success = false;
-        $reload = false;
 
-        $beUser = $GLOBALS['BE_USER'];
-        $isAdmin = $beUser->isAdmin();
-        $canModifyTable = $isAdmin
-            || $beUser->check('tables_modify', $table);
-
-        $isExcludeField = (bool)($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false);
-
-        $canModifyField = $isAdmin
-            || !$isExcludeField
-            || $beUser->check('non_exclude_fields', $table . ':' . $field);
-
-        if (!$canModifyTable || !$canModifyField) {
+        if (!$this->canModify($table, $field)) {
             // @extensionScannerIgnoreLine
             $messageQueue->addMessage(
                 GeneralUtility::makeInstance(
@@ -107,6 +96,49 @@ final class AjaxRoutesController
         ]);
     }
 
+    public function updateConfigurationCache(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = (array)$request->getParsedBody();
+
+        $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)
+            ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE);
+
+        if(!$this->canModify(Configuration::TABLE_NAME)) {
+            $messageQueue->addMessage(
+                GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    "Not allowed to clear cache for this table",
+                    "Clear cache",
+                    ContextualFeedbackSeverity::ERROR,
+                    true
+                )
+            );
+            return $this->jsonResponse([
+                'success' => false,
+                'reload' => true,
+            ]);
+        }
+
+        $uids = Generalutility::intExplode(',', $data['uid'], true);
+
+        $this->flushCacheForConfigurations($uids);
+
+        $messageQueue->addMessage(
+            GeneralUtility::makeInstance(
+                FlashMessage::class,
+                "Cache cleared for ".implode(',',$uids),
+                "Clear cache",
+                ContextualFeedbackSeverity::OK,
+                true
+            )
+        );
+
+        return $this->jsonResponse([
+            'success' => true,
+            'reload' => true,
+        ]);
+    }
+
     private function jsonResponse(array $data): ResponseInterface
     {
         $response = $this->responseFactory->createResponse()
@@ -128,6 +160,35 @@ final class AjaxRoutesController
             $this->configurationRepository->getConfigurationsByDemand($demand),
             'uid'
         );
+    }
+
+    private function canModify(string $table, ?string $field = null)
+    {
+        $beUser = $GLOBALS['BE_USER'];
+        if (!$beUser instanceof \TYPO3\CMS\Core\Authentication\BackendUserAuthentication) {
+            return false;
+        }
+        $isAdmin = $beUser->isAdmin();
+
+        // Table permission check
+        $canModifyTable = $isAdmin
+            || $beUser->check('tables_modify', $table);
+
+        if (!$canModifyTable) {
+            return false;
+        }
+
+        if ($field === null) {
+            return true;
+        }
+
+        $isExcludeField = (bool)($GLOBALS['TCA'][$table]['columns'][$field]['exclude'] ?? false);
+
+        $canModifyField = $isAdmin
+            || !$isExcludeField
+            || $beUser->check('non_exclude_fields', $table . ':' . $field);
+
+        return $canModifyField;
     }
 
     private function flushCacheForConfigurations(array $uids): void

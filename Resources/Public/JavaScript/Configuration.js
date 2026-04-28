@@ -7,17 +7,42 @@ class Configuration {
 
     addEventListener() {
         document.addEventListener('click', (event) => {
-            const el = event.target.closest('.js-notification-configuration-ajax');
-            if (!el) {
+            event.preventDefault();
+            const updateEl = event.target.closest('.js-notification-configuration-update-ajax');
+            if (updateEl) {
+                this.postUpdate(updateEl);
                 return;
             }
-            event.preventDefault();
 
-            const {field, value, uid, table} = el.dataset;
+            const cacheEl = event.target.closest('.js-notification-configuration-cache-ajax');
+            if(cacheEl) {
+                this.postCache(cacheEl);
+                return;
+            }
+        });
+    }
 
-            new AjaxRequest(TYPO3.settings.ajaxUrls.notifications_framework_update_configuration)
-                .post({field, value, uid, table})
-                .then(async (response) => {
+    postUpdate(el) {
+        const {field, value, uid, table} = el.dataset;
+
+        this.postAjax(
+            TYPO3.settings.ajaxUrls.notifications_framework_update_configuration,
+            {field, value, uid, table}
+        )
+    }
+
+    postCache(el) {
+        const {uid} = el.dataset;
+        this.postAjax(
+            TYPO3.settings.ajaxUrls.notifications_framework_update_cache,
+            {uid}
+        )
+    }
+
+    postAjax(url, params) {
+        new AjaxRequest(url)
+            .post(params)
+            .then(async (response) => {
                 const data = await response.resolve();
                 if (data && data.reload === true) {
                     if (top && top.location) {
@@ -27,10 +52,9 @@ class Configuration {
                     }
                 }
             })
-                .catch((error) => {
-                    console.error('Request failed:', error);
-                });
-        });
+            .catch((error) => {
+                console.error('Request failed:', error);
+            });
     }
 }
 

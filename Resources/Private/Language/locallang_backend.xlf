@@ -65,6 +65,9 @@
 			<trans-unit id="action.queue" resname="action.queue">
 				<source>Queue for processing</source>
 			</trans-unit>
+			<trans-unit id="action.clearCache" resname="action.clearCache">
+				<source>Clear configuration cache &amp; reload</source>
+			</trans-unit>
 			<trans-unit id="settings.autoCreateNotifications" resname="settings.autoCreateNotifications">
 				<source>Automatically create notification for new records (in allowed tables)</source>
 			</trans-unit>
@@ -212,10 +215,10 @@
 				<source>No users selected</source>
 			</trans-unit>
 			<trans-unit id="valid.no_groups" resname="valid.no_groups">
-				<source>Users audience</source>
+				<source>Group audience</source>
 			</trans-unit>
 			<trans-unit id="valid.no_groups.desc" resname="valid.no_groups.desc">
-				<source>No users selected</source>
+				<source>No groups selected</source>
 			</trans-unit>
 			<trans-unit id="valid.mixed_audience.users" resname="valid.mixed_audience.users">
 				<source>Missing users</source>

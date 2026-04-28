@@ -84,6 +84,8 @@ final class ConfigurationValid extends AbstractCustomNode
         $validationHtml[] = $this->getValidationTextRecord($valid);
         $validationHtml[] = $this->getValidationTextAudience($valid);
 
+        $validationHtml[] = $this->validationUtility->getAction(-99, $this->data['databaseRow'], true, false, Icon::SIZE_SMALL);
+
         $result['javaScriptModules'][] = JavaScriptModuleInstruction::create(
             '@traw/notifications-framework/Configuration.js',
         );
