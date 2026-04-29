@@ -133,4 +133,15 @@ abstract class AbstractController
             'paginator' => $paginator,
         ];
     }
+
+    protected function getAllowedSortFields(): array
+    {
+        return [
+            'uid',
+            'pid',
+            'type',
+            'crdate',
+            'title',
+        ];
+    }
 }

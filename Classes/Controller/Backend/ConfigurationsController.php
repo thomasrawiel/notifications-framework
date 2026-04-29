@@ -46,14 +46,9 @@ class ConfigurationsController extends AbstractController
 
         /** @var ModuleData $moduleData */
         $moduleData = $request->getAttribute('moduleData');
-        $moduleData->cleanUp([
-            'perPage' => [10, 20, 50, 100, 200],
-            'sortField' => ['uid', 'pid', 'type', 'status', 'valid'],
-
-        ], false);
 
         $demand = [
-            'sortField' => $moduleData->get('sortField'),
+            'sortField' => in_array($moduleData->get('sortField'), $this->getAllowedSortFields()) ? $moduleData->get('sortField') : 'uid',
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
             'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => 'all', 'validClass' => 'all', 'status' => 'all'],
             'uid' => null,
@@ -130,7 +125,6 @@ class ConfigurationsController extends AbstractController
             ];
         }
 
-
         $configuration['status'] = 'ready';
         if ($configuration['push']) {
             $configuration['status'] = 'queue';
@@ -139,10 +133,23 @@ class ConfigurationsController extends AbstractController
             $configuration['status'] = 'done';
         }
 
-        if($withTranslations) {
-            $configuration['translations'] = $this->configurationRepository->getConfigurationsByDemand(['l10n_parent'=>$configuration['uid']]);
+        if ($withTranslations) {
+            $configuration['translations'] = $this->configurationRepository->getConfigurationsByDemand(['l10n_parent' => $configuration['uid']]);
         }
 
         return $configuration;
+    }
+
+    protected function getAllowedSortFields(): array
+    {
+        return [
+            'uid',
+            'pid',
+            'crdate',
+            'type',
+            'validClass',
+            'audience',
+            'title',
+        ];
     }
 }
