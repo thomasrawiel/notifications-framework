@@ -7,15 +7,16 @@ class Configuration {
 
     addEventListener() {
         document.addEventListener('click', (event) => {
-            event.preventDefault();
             const updateEl = event.target.closest('.js-notification-configuration-update-ajax');
             if (updateEl) {
+                event.preventDefault();
                 this.postUpdate(updateEl);
                 return;
             }
 
             const cacheEl = event.target.closest('.js-notification-configuration-cache-ajax');
             if(cacheEl) {
+                event.preventDefault();
                 this.postCache(cacheEl);
                 return;
             }
