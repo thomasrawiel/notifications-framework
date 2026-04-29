@@ -24,6 +24,7 @@ final class SettingsController extends AbstractController
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly UriBuilder            $uriBuilder,
         protected readonly SettingsUtility       $settingsUtility,
+        protected readonly TreeListUtility        $treeListUtility,
     )
     {
     }
@@ -75,9 +76,8 @@ final class SettingsController extends AbstractController
     private function getPagesArray(array $pidList, int $recursive): array
     {
         $treeList = $pidList;
-        $treeListUtility = GeneralUtility::makeInstance(TreeListUtility::class);
         if ($treeList !== [] && $recursive > 0) {
-            $treeList = $treeListUtility->getTreeListArrayFromArray($treeList, $recursive);
+            $treeList = $this->treeListUtility->getTreeListArrayFromArray($treeList, $recursive);
         }
 
         $data = $this->getTreeListData($treeList);
@@ -117,7 +117,7 @@ final class SettingsController extends AbstractController
             }
         }
 
-        return $treeListUtility->buildTree($pages);
+        return $this->treeListUtility->buildTree($pages);
     }
 
     private function getTreeListData(array $treeList) {

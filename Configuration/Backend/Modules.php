@@ -31,22 +31,6 @@ return [
             ],
         ],
     ],
-    'notifications_settings' => [
-        'parent' => 'notifications',
-        'access' => 'user',
-        'workspaces' => 'live',
-        'path' => '/module/notifications/settings',
-        'labels' => [
-            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.settings.title',
-        ],
-        'extensionName' => 'NotificationsFramework',
-        'iconIdentifier' => 'tx-nf-notification-configure',
-        'routes' => [
-            '_default' => [
-                'target' => \TRAW\NotificationsFramework\Controller\Backend\SettingsController::class . '::handleRequest',
-            ],
-        ],
-    ],
     'notifications_configurations' => [
         'parent' => 'notifications',
         'access' => 'user',
@@ -107,5 +91,20 @@ return [
             ],
         ],
     ],
-
+    'notifications_settings' => [
+        'parent' => 'notifications',
+        'access' => 'user',
+        'workspaces' => 'live',
+        'path' => '/module/notifications/settings',
+        'labels' => [
+            'title' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:module.settings.title',
+        ],
+        'extensionName' => 'NotificationsFramework',
+        'iconIdentifier' => 'tx-nf-notification-configure',
+        'routes' => [
+            '_default' => [
+                'target' => \TRAW\NotificationsFramework\Controller\Backend\SettingsController::class . '::handleRequest',
+            ],
+        ],
+    ],
 ];

@@ -61,16 +61,12 @@
     </tr>
     <tr>
         <td>
-            <f:if condition="{configuration.push}">
-                <core:icon identifier="actions-check" size="small"/>
-            </f:if>
+            <core:icon identifier="{f:if(condition: configuration.push, then:'actions-check-square', else:'actions-square')}" size="small"/>
         </td>
 
 
         <td>
-            <f:if condition="{configuration.done}">
-                <core:icon identifier="actions-check" size="small"/>
-            </f:if>
+            <core:icon identifier="{f:if(condition: configuration.done, then:'actions-check-square', else:'actions-square')}" size="small"/>
         </td>
     </tr>
 </table>

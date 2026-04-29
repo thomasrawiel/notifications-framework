@@ -6,6 +6,7 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -27,13 +28,6 @@ abstract class AbstractController
     protected int $selectedPageUID = 0;
 
     protected array $demand = [];
-
-    public function __construct(
-        protected readonly ModuleTemplateFactory $moduleTemplateFactory,
-        protected readonly SettingsUtility       $settingsUtility,
-    )
-    {
-    }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): void
     {
