@@ -47,15 +47,12 @@ class ConfigurationsController extends AbstractController
         /** @var ModuleData $moduleData */
         $moduleData = $request->getAttribute('moduleData');
 
-        $demand = [
-            'sortField' => in_array($moduleData->get('sortField'), $this->getAllowedSortFields()) ? $moduleData->get('sortField') : 'uid',
-            'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => 'all', 'validClass' => 'all', 'status' => 'all'],
-            'uid' => null,
-            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
-            'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
-            'perPage' => (int)($moduleData->get('perPage') > 0 ? $moduleData->get('perPage') : 10),
-        ];
+        $demand = array_merge(
+            $this->demand,
+            [
+                'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => 'all', 'validClass' => 'all', 'status' => 'all'],
+            ]
+        );
 
         $configurations = array_map(function ($configuration) {
             return $this->enrichConfiguration($configuration);

@@ -26,6 +26,8 @@ abstract class AbstractController
 
     protected int $selectedPageUID = 0;
 
+    protected array $demand = [];
+
     public function __construct(
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly SettingsUtility       $settingsUtility,
@@ -62,9 +64,19 @@ abstract class AbstractController
             'module' => $request->getAttribute('module'),
             'showPidColumn' => $this->settingsUtility->storeNotificationsOnRecordPid(),
             'currentPage' => (int)$moduleData->get('currentPage'),
+            'perPageList' => $this->getAllowedPerPage(),
         ]);
 
         $this->moduleTemplate = $view;
+
+        $this->demand = [
+            'uid' => null,
+            'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
+            'sortField' => in_array($moduleData->get('sortField'), $this->getAllowedSortFields()) ? $moduleData->get('sortField') : 'uid',
+            'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
+            'perPage' => in_array($moduleData->get('perPage'), $this->getAllowedPerPage()) ? ((int)$moduleData->get('perPage')) : $this->getAllowedPerPage()[0],
+            'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),
+        ];
     }
 
     protected function getBackendUser(): BackendUserAuthentication
@@ -143,5 +155,10 @@ abstract class AbstractController
             'crdate',
             'title',
         ];
+    }
+
+    protected function getAllowedPerPage(): array
+    {
+        return [10, 20, 30, 40, 50, 100, 200];
     }
 }
