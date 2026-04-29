@@ -1,20 +1,80 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
 <f:layout name="Module"/>
 <f:section name="Headline">
-    <f:if condition="{selectedPageUID}">
-        <a class="btn btn-default" style="margin-top: calc(var(--typo3-spacing) * 2);margin-right: var(--typo3-spacing); max-height: fit-content;" href="{f:be.uri(route: 'notifications_configurations', parameters:'{id:selectedPageUID}')}">
-            <core:icon identifier="actions-arrow-down-left" size="small" />
+    <h1 class=""
+        style="display:flex;align-items:center;gap: var(--typo3-spacing)"
+    >
+        <be:link.editRecord
+            table="tx_notifications_framework_configuration"
+            uid="{configuration.uid}"
+            title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}"
+            class="btn btn-default"
+        >
+            <core:icon identifier="actions-open"/>
+        </be:link.editRecord>
+        <span>{configuration.title}</span>
+        <f:be.link
+            route="notifications_configurations"
+            parameters="{id:selectedPageUID}"
+            class="btn btn-default ms-auto me-5"
+        >
+            <core:icon identifier="actions-arrow-down-left" size="small"/>
             Back
-        </a>
-    </f:if>
-    <h1>{configuration.title}</h1>
+        </f:be.link>
+    </h1>
 </f:section>
 <f:section name="Content">
     <f:render section="Headline" arguments="{_all}"/>
 
-
+    <div role="tabpanel">
+        <ul class="nav nav-tabs t3js-tabs" role="tablist" id="tabs-tab" data-store-last-tab="1">
+            <li role="presentation" class="t3js-tabmenu-item nav-item">
+                <a href="#summary-tab" class="nav-link active" title="" aria-controls="tab-1" role="tab"
+                   data-bs-toggle="tab">
+                    Summary
+                </a>
+            </li>
+            <li role="presentation" class="t3js-tabmenu-item nav-item ">
+                <a href="#data-tab" class="nav-link" title="" aria-controls="tab-3" role="tab"
+                   data-bs-toggle="tab">
+                    Data
+                </a>
+            </li>
+            <li role="presentation" class="t3js-tabmenu-item nav-item ">
+                <a href="#translations-tab" class="nav-link" title="" aria-controls="tab-2" role="tab"
+                   data-bs-toggle="tab">
+                    Translations
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="summary-tab">
+                <div class="panel panel-tab">
+                    <div class="panel-body">
+                        <f:render partial="Configuration/Summary" arguments="{_all}"/>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="data-tab">
+                <div class="panel panel-tab">
+                    <div class="panel-body">
+                        <f:render partial="Configuration/Data" arguments="{_all}"/>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="translations-tab">
+                <div class="panel panel-tab">
+                    <div class="panel-body">
+                        <f:render partial="Configuration/Translations" arguments="{_all}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </f:section>
 </html>

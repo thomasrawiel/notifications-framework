@@ -17,6 +17,10 @@ class ConfigurationRepository extends Repository
     public function findAll()
     {
         $query = $this->createQuery();
+        $query->setQuerySettings(
+            $query->getQuerySettings()->setRespectStoragePage(false),
+
+        );
 
         $targetAudiences = array_merge(Configuration::AUDIENCE, Configuration::PLACEHOLDER_AUDIENCES);
         $query->matching(
@@ -29,22 +33,22 @@ class ConfigurationRepository extends Repository
         return $query->execute();
     }
 
-    public function getTranslations($configuration)
+    public function getTranslations(int $configurationUid)
     {
         $query = $this->createQuery();
         $query->setQuerySettings(
+            $query->getQuerySettings()->setRespectStoragePage(false),
             $query->getQuerySettings()->setRespectSysLanguage(false),
 
         );
         $query->matching(
             $query->logicalAnd(
                 $query->greaterThan('sys_language_uid', 0),
-                $query->equals('l10n_parent', $configuration->getUid()),
+                $query->equals('l10n_parent', $configurationUid),
             )
         );
         return $query->execute();
     }
-
 
 
     public function getConfiguration(int $configurationUid): array
@@ -61,8 +65,13 @@ class ConfigurationRepository extends Repository
         $qb->select('*')
             ->from(Configuration::TABLE_NAME);
         if ($demand['uid'] ?? false && MathUtility::canBeInterpretedAsInteger($demand['uid'])) {
-            $qb->where($qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid'])));
+            $qb->where($qb->expr()->eq('uid', $qb->createNamedParameter($demand['uid'], ParameterType::INTEGER)));
             return $qb->execute()->fetchAssociative();
+        }
+
+        if ($demand['l10n_parent'] ?? false) {
+            $qb->where($qb->expr()->eq('l10n_parent', $qb->createNamedParameter($demand['l10n_parent'], ParameterType::INTEGER)));
+            return $qb->execute()->fetchAllAssociative();
         }
 
         $sortField = $demand['sortField'] ?? 'uid';
@@ -72,13 +81,14 @@ class ConfigurationRepository extends Repository
 
         $sortDirection = $demand['sortDirection'] ?? 'ASC';
 
-        $constraints = [
-            $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER)),
-        ];
+        $constraints = [];
+        $constraints[] = $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER));
+
+
         if (is_array($demand['pid'])) {
             $constraints[] = $qb->expr()->in('pid', $qb->createNamedParameter($demand['pid'], ArrayParameterType::INTEGER));
         } else {
-            $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
+            $constraints[] = $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
         }
 
         $qb->where(...$constraints);

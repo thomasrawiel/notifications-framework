@@ -400,7 +400,7 @@ return [
         ],
         'automatic' => [
             'exclude' => true,
-            'label' => 'Automatically created',
+            'label' => $LLL . 'configuration.automatic',
             'config' => [
                 'type' => 'check',
                 'default' => 0,
@@ -412,7 +412,7 @@ return [
         ],
         'table' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:table',
+            'label' => $LLL . 'configuration.table',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim',

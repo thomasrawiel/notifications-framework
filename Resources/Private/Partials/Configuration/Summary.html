@@ -1,0 +1,57 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<table class="table table-hover">
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title"/>
+        </th>
+        <td>{configuration.title}</td>
+    </tr>
+    <f:if condition="{configuration.isRecordType}">
+        <f:then>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type"/>
+                </th>
+                <td>
+                    <core:icon identifier="{nf:typeIcon(type: configuration.type)}" size="small"
+                               title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}')}"/>
+                    {f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.type.{configuration.type}')}
+                </td>
+            </tr>
+        </f:then>
+        <f:else>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.label"/>
+                </th>
+                <td>{configuration.label}</td>
+            </tr>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.message"/>
+                </th>
+                <td>{configuration.message}</td>
+            </tr>
+        </f:else>
+    </f:if>
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.status.label"/>
+        </th>
+        <td>
+            {nf:statusIcon(configuration:configuration) -> f:format.raw()}
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.status.{configuration.status}"/>
+        </td>
+    </tr>
+</table>
+</html>

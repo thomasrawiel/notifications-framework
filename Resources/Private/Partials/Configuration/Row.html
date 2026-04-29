@@ -27,12 +27,12 @@
     </td>
     <td>
         <f:be.link
-            route="notifications_configurations.detail"
+            route="{module.identifier}.detail"
             parameters="{configuration:configuration.uid,id:selectedPageUID}"
             title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:view')}"
             class="btn btn-default"
         >
-            <core:icon identifier="actions-document-view" />
+            <core:icon identifier="actions-eye" />
         </f:be.link>
         <be:link.editRecord
             table="tx_notifications_framework_configuration"
@@ -40,7 +40,7 @@
             title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}"
             class="btn btn-default"
         >
-            <core:icon identifier="actions-document-edit" />
+            <core:icon identifier="actions-open" />
         </be:link.editRecord>
     </td>
 </tr>

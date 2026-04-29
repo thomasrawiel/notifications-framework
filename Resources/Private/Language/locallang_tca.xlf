@@ -142,8 +142,11 @@
 			<trans-unit id="notification_create.description">
 				<source>(If automatic creation is enabled)</source>
 			</trans-unit>
-			<trans-unit id="table">
+			<trans-unit id="configuration.table">
 				<source>Database table</source>
+			</trans-unit>
+			<trans-unit id="configuration.automatic">
+				<source>Automatically created</source>
 			</trans-unit>
         </body>
     </file>

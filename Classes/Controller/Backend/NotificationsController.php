@@ -31,10 +31,15 @@ final class NotificationsController extends AbstractController
     {
         $this->initializeModuleTemplate($request);
         $moduleData = $request->getAttribute('moduleData');
+        $moduleData->cleanUp([
+            'perPage' => [10, 20, 50, 100, 200],
+            'sortField' => ['uid', 'pid', 'type', 'status', 'valid'],
+
+        ], false);
         $demand = [
             'sortField' => $moduleData->get('sortField'),
             'sortDirection' => in_array($moduleData->get('sortDirection'), ['asc', 'desc']) ? $moduleData->get('sortDirection') : 'asc',
-            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => '', 'valid' => ''],
+            'filter' => is_array($moduleData->get('filter')) ? $moduleData->get('filter') : ['type' => 'all',],
             'uid' => null,
             'pid' => $this->settingsUtility->storeNotificationsOnRecordPid() ? $this->selectedPageUID : $this->treeListUtility->getTreeListArrayFromArray($this->settingsUtility->getNotificationStorage(), $this->settingsUtility->getNotificationStorageRecursive()),
             'currentPage' => (int)($moduleData->get('currentPage') > 0 ? $moduleData->get('currentPage') : 1),

@@ -50,7 +50,7 @@ class NotificationService
         $notification = $event->getNotification();
         $this->persistNotification($notification);
 
-        $translations = $this->configurationRepository->getTranslations($configuration);
+        $translations = $this->configurationRepository->getTranslations($configuration->getUid());
         $translationsDone = [$notification->getSysLanguageUid()]; // we already saved this
         if ($translations->count()) {
             foreach ($translations as $translation) {
@@ -105,7 +105,7 @@ class NotificationService
 
         $this->persistReference($reference);
 
-        $translations = $this->configurationRepository->getTranslations($configuration);
+        $translations = $this->configurationRepository->getTranslations($configuration->getUid());
         $translationsDone = [$configuration->getSysLanguageUid()]; //
         if ($translations->count()) {
             foreach ($translations as $translation) {

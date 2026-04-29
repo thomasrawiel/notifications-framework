@@ -1,5 +1,6 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
 <f:layout name="Module"/>
@@ -15,6 +16,37 @@
 <f:section name="Content">
     <f:render section="Headline" arguments="{_all}"/>
 
+
+    <tr>
+        <td>
+            {notification.uid}
+        </td>
+        <f:if condition="{showPidColumn}">
+            <td>
+                {notification.pid}
+            </td>
+        </f:if>
+        <td>
+            <core:icon identifier="{nf:typeIcon(type: notification.type)}" size="small"
+                       title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification.type.{notification.type}')}"/>
+        </td>
+        <td>
+            <f:format.date date="{notification.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+        </td>
+        <td>
+            <f:format.crop maxCharacters="30">{notification.title}</f:format.crop>
+        </td>
+        <td>
+            <f:be.link
+                route="{module.identifier}.detail"
+                parameters="{notification:notification.uid,id:selectedPageUID}"
+                title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:view')}"
+                class="btn btn-default"
+            >
+                <core:icon identifier="actions-eye"/>
+            </f:be.link>
+        </td>
+    </tr>
 
 </f:section>
 </html>

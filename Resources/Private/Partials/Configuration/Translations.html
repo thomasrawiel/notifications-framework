@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<table>
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.autotranslate"/>
+        </th>
+        <td>
+            <f:if condition="{configuration.autotranslate}">
+                <core:icon identifier="actions-check" size="small"/>
+            </f:if>
+        </td>
+    </tr>
+</table>
+<f:debug inline="true">{configuration.translations}</f:debug>
+</html>

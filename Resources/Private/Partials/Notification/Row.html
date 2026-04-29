@@ -4,10 +4,7 @@
       data-namespace-typo3-fluid="true">
 <tr>
     <td>
-        <a href="{f:be.uri(route: 'notifications_notifications.detail', parameters:'{notification:notification.uid,id:selectedPageUID}')}">
-        <core:icon identifier="actions-search"/>
         {notification.uid}
-        </a>
     </td>
     <f:if condition="{showPidColumn}">
         <td>
@@ -15,17 +12,24 @@
         </td>
     </f:if>
     <td>
-       <core:icon identifier="{nf:typeIcon(type: notification.type)}" size="small" title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification.type.{notification.type}')}"/>
+        <core:icon identifier="{nf:typeIcon(type: notification.type)}" size="small"
+                   title="{f:translate(key:'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:notification.type.{notification.type}')}"/>
     </td>
     <td>
         <f:format.date date="{notification.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
     </td>
     <td>
-        <a href="{f:be.uri(route: 'notifications_notifications.detail', parameters:'{notification:notification.uid,id:selectedPageUID}')}">
-            <core:icon identifier="actions-search" size="small"></core:icon>
-            <f:format.crop maxCharacters="30">{notification.title}</f:format.crop>
-        </a>
-
+        <f:format.crop maxCharacters="30">{notification.title}</f:format.crop>
+    </td>
+    <td>
+        <f:be.link
+            route="{module.identifier}.detail"
+            parameters="{notification:notification.uid,id:selectedPageUID}"
+            title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:view')}"
+            class="btn btn-default"
+        >
+            <core:icon identifier="actions-eye"/>
+        </f:be.link>
     </td>
 </tr>
 </html>

@@ -28,6 +28,10 @@ class FilterUtility
      */
     public static function filterConfigurations(array $configurations): array
     {
+        if(empty($configurations)) {
+            return $configurations;
+        }
+
         $settingsUtility = GeneralUtility::makeInstance(SettingsUtility::class);
         $validation = GeneralUtility::makeInstance(ConfigurationValidation::class);
         return array_values(array_filter($configurations, function (Configuration $configuration) use ($settingsUtility, $validation) {

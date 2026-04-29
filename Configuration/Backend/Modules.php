@@ -91,10 +91,9 @@ return [
         'moduleData' => [
             'sortField' => 'uid',
             'sortDirection' => 'desc',
-//            'filter' => [
-//                'type' => '',
-//                'valid' => '',
-//            ],
+            'filter' => [
+                'type' => 'all',
+            ],
             'currentPage' => 1,
             'perPage' => 30,
         ],

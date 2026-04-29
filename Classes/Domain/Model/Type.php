@@ -7,54 +7,28 @@ use TRAW\NotificationsFramework\Events\Configuration\TypesWithCustomMessageEvent
 use TRAW\NotificationsFramework\Events\Configuration\TypesWithRecordFieldEvent;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
-/**
- * Class Type
- */
 final class Type
 {
-    /**
-     *
-     */
     const DEFAULT = 'default';
-    /**
-     *
-     */
+
     const INFO = 'info';
-    /**
-     *
-     */
+
     const SUCCESS = 'success';
-    /**
-     *
-     */
+
     const WARNING = 'warning';
-    /**
-     *
-     */
+
     const ERROR = 'error';
-    /**
-     *
-     */
+
     const RECORDADDED = 'recordadded';
-    /**
-     *
-     */
+
     const RECORDUPDATED = 'recordupdated';
-    /**
-     *
-     */
+
     const USEREVENT = 'userevent';
 
-    /**
-     * @param EventDispatcher $eventDispatcher
-     */
     public function __construct(private readonly EventDispatcher $eventDispatcher)
     {
     }
 
-    /**
-     * @return string
-     */
     public function getTypesWithCustomMessage(): array
     {
         return $this->eventDispatcher->dispatch(new TypesWithCustomMessageEvent(
@@ -69,9 +43,6 @@ final class Type
         ))->getTypes();
     }
 
-    /**
-     * @return string
-     */
     public function getTypesWithRecordField(): array
     {
         return $this->eventDispatcher->dispatch(new TypesWithRecordFieldEvent(
@@ -83,17 +54,11 @@ final class Type
         ))->getTypes();
     }
 
-    /**
-     * @return string
-     */
     public function getTypesWithCustomMessageList(): string
     {
         return implode(',', $this->getTypesWithCustomMessage());
     }
 
-    /**
-     * @return string
-     */
     public function getTypesWithRecordFieldList(): string
     {
         return implode(',', $this->getTypesWithRecordField());

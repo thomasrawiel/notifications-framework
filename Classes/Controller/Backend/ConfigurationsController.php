@@ -6,6 +6,7 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
@@ -21,6 +22,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 #[AsController]
 class ConfigurationsController extends AbstractController
@@ -61,35 +63,7 @@ class ConfigurationsController extends AbstractController
         ];
 
         $configurations = array_map(function ($configuration) {
-            $configuration['valid'] = $this->configurationValidation->validate($configuration);
-            $configuration['validClass'] = $this->validationUtility->getNotificationLevel($configuration['valid']);
-            if (!$configuration['hidden']) {
-                $configuration['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($configuration['uid']));
-            } else {
-                $configuration['audience'] = 0;
-            }
-            $recordString = $configuration['record'];
-            if (!empty($recordString)) {
-                $table = RecordUtility::getTableFromRecordString($recordString);
-                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($recordString);
-                $attachedRecord = BackendUtility::getRecord($table, $recordUid);
-                $configuration['record'] = [
-                    'uid' => $attachedRecord['uid'],
-                    'pid' => $attachedRecord['pid'],
-                    'table' => $table,
-                    'row' => $attachedRecord,
-                ];
-            }
-
-            $configuration['status'] = 'ready';
-            if ($configuration['push']) {
-                $configuration['status'] = 'queue';
-            }
-            if ($configuration['done']) {
-                $configuration['status'] = 'done';
-            }
-
-            return $configuration;
+            return $this->enrichConfiguration($configuration);
         }, $this->configurationRepository->getConfigurationsByDemand($demand));
 
         $configurations = $this->applyFilters($configurations, $demand['filter'] ?? []);
@@ -121,11 +95,54 @@ class ConfigurationsController extends AbstractController
         $configurationUid = (int)($request->getQueryParams()['configuration'] ?? null);
 
         if ($configurationUid > 0) {
+            $configuration = $this->enrichConfiguration($this->configurationRepository->getConfiguration($configurationUid), true);
+
             $this->moduleTemplate->assignMultiple([
-                'configuration' => $this->configurationRepository->getConfiguration($configurationUid),
+                'configuration' => $configuration,
             ]);
         }
 
         return $this->moduleTemplate->renderResponse('ConfigurationDetail');
+    }
+
+    private function enrichConfiguration(array $configuration, bool $withTranslations = false): array
+    {
+        $configuration['valid'] = $this->configurationValidation->validate($configuration);
+        $configuration['validClass'] = $this->validationUtility->getNotificationLevel($configuration['valid']);
+        if (!$configuration['hidden']) {
+            $configuration['audience'] = $this->audienceUtility->getUsersCountFromConfiguration($this->configurationRepository->findByUid($configuration['uid']));
+        } else {
+            $configuration['audience'] = 0;
+        }
+        $configuration['isRecordType'] = false;
+        $recordString = $configuration['record'];
+        if (!empty($recordString)) {
+            $types = GeneralUtility::makeInstance(Type::class);
+            $configuration['isRecordType'] = $types->isRecordType($configuration['type']);
+            $table = RecordUtility::getTableFromRecordString($recordString);
+            $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($recordString);
+            $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+            $configuration['record'] = [
+                'uid' => $attachedRecord['uid'],
+                'pid' => $attachedRecord['pid'],
+                'table' => $table,
+                'row' => $attachedRecord,
+            ];
+        }
+
+
+        $configuration['status'] = 'ready';
+        if ($configuration['push']) {
+            $configuration['status'] = 'queue';
+        }
+        if ($configuration['done']) {
+            $configuration['status'] = 'done';
+        }
+
+        if($withTranslations) {
+            $configuration['translations'] = $this->configurationRepository->getConfigurationsByDemand(['l10n_parent'=>$configuration['uid']]);
+        }
+
+        return $configuration;
     }
 }

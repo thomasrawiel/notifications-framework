@@ -50,6 +50,10 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $recordId = $event->getId();
         $table = $event->getTable();
 
+        if(in_array($table, $this->settingsUtility->getAllowedTables()) === false) {
+            return;
+        }
+
         if ($event->getStatus() === 'update') {
             if ($table === Configuration::TABLE_NAME) {
                 $uids = [$recordId];
@@ -115,16 +119,20 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $pid = $recordFieldArray['pid'] ?? false;
         if ($pid === false && $event->getStatus() === 'update') {
             if ($this->settingsUtility->storeNotificationsOnRecordPid()) {
-                $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? 0;
+                $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? null;
             } else {
-                $pid = $this->settingsUtility->getNotificationStorage();
+                $pid = $this->settingsUtility->getNotificationStorage()[0] ?? null;
             }
+        }
+
+        if($pid === null) {
+            return;
         }
 
         $newId = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW');
         $data[Configuration::TABLE_NAME][$newId] = [
             'type' => $event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED,
-            'pid' => $pid,
+            'pid' => (int)$pid,
             'table' => $table,
             'title' => ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . ' in ' . $event->getTable(),
             'label' => BackendUtility::getRecord($table, $recordId, 'title')['title'] ?? ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . 'with ID ' . $recordId,

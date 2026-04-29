@@ -1,0 +1,77 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+      xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<table class="table table-striped table-hover table-fit">
+    <tr>
+        <th>
+            <core:icon identifier="actions-database"/>
+            UID
+        </th>
+        <td>{configuration.uid}</td>
+    </tr>
+    <f:if condition="{showPidColumn}">
+        <tr>
+            <th>
+                <core:icon identifier="actions-database"/>
+                PID
+            </th>
+            <td>{configuration.pid}</td>
+        </tr>
+
+    </f:if>
+    <tr>
+        <th></th>
+        <td>
+            <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.record"/>
+        </th>
+        <td>
+            <f:debug inline="true">{configuration.record}</f:debug>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.automatic"/>
+        </th>
+        <td>
+            <f:if condition="{configuration.automatic}">
+                <core:icon identifier="actions-check" size="small"/>
+            </f:if>
+        </td>
+    </tr>
+</table>
+<table class="table mt-4">
+    <tr>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.push"/>
+        </th>
+        <th>
+            <f:translate
+                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.done"/>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <f:if condition="{configuration.push}">
+                <core:icon identifier="actions-check" size="small"/>
+            </f:if>
+        </td>
+
+
+        <td>
+            <f:if condition="{configuration.done}">
+                <core:icon identifier="actions-check" size="small"/>
+            </f:if>
+        </td>
+    </tr>
+</table>
+</html>
