@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
+use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -21,6 +22,7 @@ final class IndexController extends AbstractController
         protected readonly ConfigurationRepository $configurationRepository,
         protected readonly NotificationRepository  $notificationRepository,
         protected readonly SettingsUtility         $settingsUtility,
+        protected readonly TreeListUtility $treeListUtility,
     )
     {
     }
