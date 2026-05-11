@@ -44,6 +44,9 @@
 			<trans-unit id="notification_estimate.audience.hidden.desc">
 				<source>No audience was calculated because the configuration is disabled.</source>
 			</trans-unit>
+			<trans-unit id="action.valid.head" resname="action.valid.head">
+				<source>Configuration valid [Validation result]</source>
+			</trans-unit>
 			<trans-unit id="action.valid" resname="action.valid">
 				<source>Configuration valid</source>
 			</trans-unit>
@@ -53,8 +56,14 @@
 			<trans-unit id="action.change_audience_users" resname="action.change_audience_users">
 				<source>Change audience to users</source>
 			</trans-unit>
+			<trans-unit id="action.no_users" resname="action.no_users">
+				<source>Select one or more users</source>
+			</trans-unit>
 			<trans-unit id="action.change_audience_groups" resname="action.change_audience_groups">
 				<source>Change audience to groups</source>
+			</trans-unit>
+			<trans-unit id="action.no_groups" resname="action.no_groups">
+				<source>Select one or more groups</source>
 			</trans-unit>
 			<trans-unit id="action.enable_record" resname="action.enable_record">
 				<source>Enable record</source>
@@ -67,6 +76,9 @@
 			</trans-unit>
 			<trans-unit id="action.clearCache" resname="action.clearCache">
 				<source>Clear configuration cache &amp; reload</source>
+			</trans-unit>
+			<trans-unit id="action.question_audience" resname="action.question_audience">
+				<source>Configuration valid, custom rules may apply</source>
 			</trans-unit>
 			<trans-unit id="settings.autoCreateNotifications" resname="settings.autoCreateNotifications">
 				<source>Automatically create notification for new records (in allowed tables)</source>
@@ -237,6 +249,12 @@
 			</trans-unit>
 			<trans-unit id="valid.mixed_audience.both.desc" resname="valid.mixed_audience.both.desc">
 				<source>Mixed audience is selected, but no users or groups selected</source>
+			</trans-unit>
+			<trans-unit id="valid.question_audience" resname="valid.question_audience">
+				<source>Custom audience</source>
+			</trans-unit>
+			<trans-unit id="valid.question_audience.desc" resname="valid.question_audience.desc">
+				<source>A custom audience was selected, custom rules may apply.</source>
 			</trans-unit>
 			<trans-unit id="valid.storage" resname="valid.storage">
 				<source>Wrong storage</source>

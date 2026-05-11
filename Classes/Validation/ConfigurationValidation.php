@@ -19,6 +19,7 @@ class ConfigurationValidation
     public const int SEL_GROUPS = 2 << 8;
     public const int SEL_MIXED = 3 << 8;
     public const int SEL_INVALID = 4 << 8;
+    public const int SEL_QUESTION = 5 << 8;
 
     public const int NO_USERS = 1 << 0;
     public const int NO_GROUPS = 1 << 1;
@@ -31,7 +32,7 @@ class ConfigurationValidation
     public const int EMPTY_AUDIENCE_ERROR = 1 << 7;
 
     public const int RECORD_MASK = self::NO_RECORD_SELECTED | self::RECORD_DISABLED_SELF | self::RECORD_DISABLED_ATTACHED | self::WRONG_PID;
-    public const int SEL_MASK = self::SEL_USERS | self::SEL_GROUPS | self::SEL_MIXED | self::SEL_INVALID;
+    public const int SEL_MASK = self::SEL_USERS | self::SEL_GROUPS | self::SEL_MIXED | self::SEL_INVALID | self::SEL_QUESTION;
     public const int AUDIENCE_MASK = self::NO_USERS | self::NO_GROUPS | self::EMPTY_AUDIENCE_WARNING | self::EMPTY_AUDIENCE_ERROR;
 
     private array $record = [];
@@ -81,10 +82,10 @@ class ConfigurationValidation
         $audience = $valid & ConfigurationValidation::AUDIENCE_MASK;
 
         if ($priority === false) {
-            if ($record) {
-                return self::getRecordInterpretation($valid);
-            } elseif ($selection || $audience) {
+            if ($selection || $audience) {
                 return self::getAudienceInterpretation($valid);
+            } elseif ($record) {
+                return self::getRecordInterpretation($valid);
             } else {
                 return $valid;
             }
@@ -130,6 +131,9 @@ class ConfigurationValidation
         }
         if ($valid & ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
             return ConfigurationValidation::EMPTY_AUDIENCE_WARNING;
+        }
+        if ($valid & ConfigurationValidation::SEL_QUESTION) {
+            return ConfigurationValidation::SEL_QUESTION;
         }
         return 0;
     }
@@ -224,7 +228,7 @@ class ConfigurationValidation
 
         $disabledField = $GLOBALS['TCA'][$this->record['table']]['ctrl']['enablecolumns']['disabled'] ?? null;
 
-        if($disabledField === null) {
+        if ($disabledField === null) {
             return 0;
         }
 
@@ -279,6 +283,8 @@ class ConfigurationValidation
                         $error |= self::NO_GROUPS;
                     }
                     return $error;
+                default:
+                    return self::SEL_QUESTION;
             }
 
             return 0;

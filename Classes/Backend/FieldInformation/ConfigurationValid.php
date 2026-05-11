@@ -74,7 +74,7 @@ final class ConfigurationValid extends AbstractCustomNode
         $valid = $this->configurationValidation->validate($this->data['databaseRow']);
 
 
-        if ($valid !== 0 && $valid !== ConfigurationValidation::EMPTY_AUDIENCE_WARNING) {
+        if ($valid !== 0 && $valid !== ConfigurationValidation::EMPTY_AUDIENCE_WARNING && $valid !== ConfigurationValidation::SEL_QUESTION) {
             $validationHtml[] = $this->infoMsg(self::langFile_backend . ':valid.incomplete', self::langFile_backend . ':valid.incomplete.desc');
         } else {
             $validationHtml[] = $this->successMsg(self::langFile_backend . ':valid.complete', self::langFile_backend . ':valid.complete.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow']));
@@ -99,7 +99,7 @@ final class ConfigurationValid extends AbstractCustomNode
             return '';
         }
 
-        $validation = $validation = ConfigurationValidation::getInterpretation($valid, 'audience');
+        $validation = ConfigurationValidation::getInterpretation($valid, 'audience');
 
         if ($validation === 0) {
             return '';
@@ -144,6 +144,10 @@ final class ConfigurationValid extends AbstractCustomNode
 
         if ($selection === ConfigurationValidation::SEL_MIXED && ($validation & ConfigurationValidation::NO_GROUPS)) {
             return $this->warningMsg(self::langFile_backend . ':valid.mixed_audience.groups', self::langFile_backend . ':valid.mixed_audience.groups.desc', $this->validationUtility->getAction($valid, $this->data['databaseRow'], true, 'audience'));
+        }
+
+        if($selection === ConfigurationValidation::SEL_QUESTION) {
+            return $this->infoMsg(self::langFile_backend . ':valid.question_audience', self::langFile_backend . ':valid.question_audience.desc');
         }
 
         return '';

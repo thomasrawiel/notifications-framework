@@ -35,8 +35,9 @@ final readonly class ValidationUtility
                     'field' => 'target_audience',
                     'table' => Configuration::TABLE_NAME,
                     'value' => 'users',
-                    'action' => 'change_audience_users',
-                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetree-page-frontend-users' : '',
+                    'action' => $selection === ConfigurationValidation::SEL_MIXED ? 'change_audience_users' : 'no_groups',
+                    'icon' => 'apps-pagetree-page-frontend-users',
+                    'icon2' => 'actions-question',
                 ];
                 break;
             case ConfigurationValidation::NO_USERS:
@@ -45,8 +46,9 @@ final readonly class ValidationUtility
                     'field' => 'target_audience',
                     'table' => Configuration::TABLE_NAME,
                     'value' => 'groups',
-                    'action' => 'change_audience_groups',
-                    'icon' => $selection === ConfigurationValidation::SEL_MIXED ? 'apps-pagetree-folder-contains-fe_users' : '',
+                    'action' => $selection === ConfigurationValidation::SEL_MIXED ? 'change_audience_groups' : 'no_users',
+                    'icon' => 'apps-pagetree-folder-contains-fe_users',
+                    'icon2' => 'actions-question',
                 ];
                 break;
             case ConfigurationValidation::RECORD_DISABLED_ATTACHED:
@@ -104,6 +106,13 @@ final readonly class ValidationUtility
                     ];
                 }
                 break;
+                case ConfigurationValidation::SEL_QUESTION:
+
+                    $data = [
+                        'icon' => 'actions-check',
+                        'icon2' => 'actions-info',
+                        'action' => 'question_audience',
+                    ];
         }
 
         return $this->getActionMarkup($data ?? [], $linkAction, $iconSize);
@@ -123,7 +132,7 @@ final readonly class ValidationUtility
             case ConfigurationValidation::RECORD_DISABLED_ATTACHED:
                 return 'danger';
             case ConfigurationValidation::EMPTY_AUDIENCE_WARNING:
-                return 'warning';
+                return 'success';
             default:
                 return 'success';
         }
@@ -146,6 +155,10 @@ final readonly class ValidationUtility
     {
         $actionLabel = $this->translate('action.' . ($data['action'] ?? ''));
         $iconMarkup = $this->getIconMarkup($data['icon'] ?? '', $iconSize, $actionLabel);
+        $data['action'] ??= '';
+        $data['icon'] ??= '';
+        $data['icon2'] ??= '';
+
         if ($data['icon2'] ?? false) {
             $iconMarkup .= $this->getIconMarkup($data['icon2'] ?? '', $iconSize, $actionLabel);
         }
