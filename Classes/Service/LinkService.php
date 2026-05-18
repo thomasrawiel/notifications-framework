@@ -60,48 +60,43 @@ class LinkService
         $this->createGlobals($site, $configuration, $languageUid);
         $controller = $this->bootFrontendController($site, [], $this->request);
         $linkDetails = [];
-
-        //for records and custom message with an attached record, try using LinkHandler to create url
-        if ($this->type->isRecordType($configuration->getType()) || !empty($configuration->getRecord())) {
-            $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
-            $type = $identifier === 'page' ? 'page' : 'record';
-
-            $qs = http_build_query([
-                'identifier' => $identifier !== 'page' ? $identifier : null,
-                'uid' => RecordUtility::getRecordUidAsIntegerFromConfiguration($configuration),
-            ]);
-            $resolveString = 't3://' . $type . '?' . $qs;
-            $linkDetails = $this->linkService->resolve($resolveString);
-        }
-
-        if (empty($linkDetails)) {
-            $linkDetails = $this->linkService->resolve($configuration->getUrl());
-        }
-        //unset request, we dont need that anymore
-        $this->request = null;
-
-        if (!isset($linkDetails['type'], $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']])) {
-            return null;
-        }
-        $linkBuilder = GeneralUtility::makeInstance(
-            $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']],
-            $controller->cObj,
-            $controller
-        );
-        if (!$linkBuilder instanceof AbstractTypolinkBuilder) {
-            // @todo: Add a proper interface.
-            throw new \RuntimeException('Single link builder must extend AbstractTypolinkBuilder', 1646504471);
-        }
-
         try {
-            $config = [
-                'forceAbsoluteUrl' => true,
-                'linkAccessRestrictedPages' => true,
-            ];
-            $result = $linkBuilder->build($linkDetails, '', '', $config);
+            //for records and custom message with an attached record, try using LinkHandler to create url
+            if ($this->type->isRecordType($configuration->getType()) || !empty($configuration->getRecord())) {
+                $identifier = $this->getLinkHandlerIdentifierFromTable($configuration->getTable(), $controller);
+                $type = $identifier === 'page' ? 'page' : 'record';
+
+                $qs = http_build_query([
+                    'identifier' => $identifier !== 'page' ? $identifier : null,
+                    'uid' => RecordUtility::getRecordUidAsIntegerFromConfiguration($configuration),
+                ]);
+                $resolveString = 't3://' . $type . '?' . $qs;
+                $linkDetails = $this->linkService->resolve($resolveString);
+            }
+
+            if (empty($linkDetails)) {
+                $linkDetails = $this->linkService->resolve($configuration->getUrl());
+            }
+            //unset request, we dont need that anymore
+            $this->request = null;
+
+            if (!isset($linkDetails['type'], $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']])) {
+                return null;
+            }
+            $linkBuilder = GeneralUtility::makeInstance(
+                $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkDetails['type']],
+                $controller->cObj,
+                $controller
+            );
+            if (!$linkBuilder instanceof AbstractTypolinkBuilder) {
+                // @todo: Add a proper interface.
+                throw new \RuntimeException('Single link builder must extend AbstractTypolinkBuilder', 1646504471);
+            }
+            
+            $result = $linkBuilder->build($linkDetails, '', '', ['forceAbsoluteUrl' => true, 'linkAccessRestrictedPages' => true,]);
             $this->cleanupTSFE();
             return (new Uri($result->getUrl()))->__toString();
-        } catch (UnableToLinkException $e) {
+        } catch (\Exception $e) {
             $this->cleanupTSFE();
             return null;
         }

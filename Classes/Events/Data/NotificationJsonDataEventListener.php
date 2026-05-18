@@ -31,6 +31,10 @@ class NotificationJsonDataEventListener
     {
         $data = $event->getData();
 
+        if(empty($data)) {
+            return;
+        }
+
         if (empty($data['media'])) {
             $configuration = $this->fetchConfiguration($event->getConfiguration()['configuration']);
             $data['media'] = $this->attachConfigurationImageUrl($configuration);

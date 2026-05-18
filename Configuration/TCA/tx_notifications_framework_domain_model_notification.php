@@ -28,7 +28,7 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
-        'hideTable' => false,
+        'hideTable' => \TYPO3\CMS\Core\Core\Environment::getContext()->isProduction(),
     ],
     'types' => [
         '0' => [

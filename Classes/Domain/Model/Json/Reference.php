@@ -61,7 +61,7 @@ class Reference extends AbstractEntity
     /**
      * @var \TRAW\NotificationsFramework\Domain\Model\Json\Notification
      */
-    protected Notification $notification;
+    protected ?Notification $notification = null;
 
     /**
      * @var int
@@ -88,7 +88,7 @@ class Reference extends AbstractEntity
         return $this->feUser;
     }
 
-    public function getNotification(): \TRAW\NotificationsFramework\Domain\Model\Json\Notification
+    public function getNotification(): ?\TRAW\NotificationsFramework\Domain\Model\Json\Notification
     {
         return $this->notification;
     }
@@ -141,31 +141,35 @@ class Reference extends AbstractEntity
         $tstampIso = new \DateTime();
         $tstampIso->setTimestamp($this->tstamp);
 
-        $data = [
-            'title' => $this->notification->getLabel(),
-            'text' => $this->notification->getMessage(),
-            'timestamp' => $tstampIso,
-            'isUnread' => !$this->read,
-            'type' => match ($this->notification->getType()) {
-                Type::DEFAULT,
-                Type::INFO,
-                Type::SUCCESS,
-                Type::WARNING,
-                Type::ERROR => 'message',
-                Type::RECORDADDED,
-                Type::RECORDUPDATED => 'record',
-                Type::USEREVENT => 'custom',
-                default => $this->notification->getType(),
-            },
-            'url' => $this->notification->getUrl(),
-            'media' => null,
-        ];
-        if ($this->notification->getImage() instanceof ObjectStorage && $this->notification->getImage()->count()) {
-            $imageUtility = GeneralUtility::makeInstance(ImageUtility::class);
-            $processedImage = $imageUtility->getProcessedImage($this->notification->getImage()->getArray()[0] ?? []);
-            if ($processedImage instanceof ProcessedFile) {
-                $data['media'] = PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
+        if($this->notification) {
+            $data = [
+                'title' => $this->notification->getLabel(),
+                'text' => $this->notification->getMessage(),
+                'timestamp' => $tstampIso,
+                'isUnread' => !$this->read,
+                'type' => match ($this->notification->getType()) {
+                    Type::DEFAULT,
+                    Type::INFO,
+                    Type::SUCCESS,
+                    Type::WARNING,
+                    Type::ERROR => 'message',
+                    Type::RECORDADDED,
+                    Type::RECORDUPDATED => 'record',
+                    Type::USEREVENT => 'custom',
+                    default => $this->notification->getType(),
+                },
+                'url' => $this->notification->getUrl(),
+                'media' => null,
+            ];
+            if ($this->notification->getImage() instanceof ObjectStorage && $this->notification->getImage()->count()) {
+                $imageUtility = GeneralUtility::makeInstance(ImageUtility::class);
+                $processedImage = $imageUtility->getProcessedImage($this->notification->getImage()->getArray()[0] ?? []);
+                if ($processedImage instanceof ProcessedFile) {
+                    $data['media'] = PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
+                }
             }
+        }else {
+            $data = [];
         }
 
         return $dispatcher->dispatch(new NotificationJsonDataEvent($data, $this->getEventConfiguration()))->getData();

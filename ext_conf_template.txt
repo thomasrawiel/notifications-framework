@@ -1,7 +1,7 @@
 # customsubcategory=allowed=Allowed tables
 # customsubcategory=storage=Storage
 
-# cat=Features/enable; type=boolean; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autoCreateNotifcations
+# cat=Features/enable; type=boolean; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autoCreateNotifications
 autoCreateNotifications = 0
 # cat=Features/enable; type=boolean; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.sendToEveryoneIfNoAudienceIsSelected
 sendToEveryoneIfNoAudienceIsSelected = 0
