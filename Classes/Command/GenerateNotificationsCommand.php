@@ -8,11 +8,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TRAW\NotificationsFramework\Events\Data\NotificationAllowedForUserEvent;
+use TRAW\NotificationsFramework\Events\Data\NotificationProcessedForUserEvent;
 use TRAW\NotificationsFramework\Service\NotificationService;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
 use TRAW\NotificationsFramework\Utility\FilterUtility;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
@@ -29,6 +32,7 @@ final class GenerateNotificationsCommand extends Command
         private readonly NotificationService         $notificationService,
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly AudienceUtility             $audienceUtility,
+        private readonly EventDispatcher             $eventDispatcher,
     )
     {
         parent::__construct();
@@ -58,7 +62,11 @@ final class GenerateNotificationsCommand extends Command
             }
 
             foreach ($users as $user) {
-                $this->notificationService->createReference($notification, $user, $configuration);
+                $event = $this->eventDispatcher->dispatch(new NotificationAllowedForUserEvent($notification, $user));
+                if ($event->isAllowed()) {
+                    $this->notificationService->createReference($notification, $user, $configuration);
+                }
+                $after = $this->eventDispatcher->dispatch(new NotificationProcessedForUserEvent($notification, $user));
             }
 
             // Mark configuration as done and persist

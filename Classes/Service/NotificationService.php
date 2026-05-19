@@ -12,7 +12,6 @@ use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
 use TRAW\NotificationsFramework\Events\Data\BeforeNotificationAddedEvent;
-use TRAW\NotificationsFramework\Events\Data\NotificationAllowedForUserEvent;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Site\SiteFinder;
@@ -91,11 +90,6 @@ class NotificationService
 
     public function createReference(Notification $notification, FrontendUser $frontendUser, Configuration $configuration): void
     {
-        $event = $this->eventDispatcher->dispatch(new NotificationAllowedForUserEvent($notification, $frontendUser));
-        if ($event->isAllowed() === false) {
-            return;
-        }
-
         if($this->referenceRepository->referenceExists($notification->getUid(), $frontendUser->getUid())) {
             return;
         }

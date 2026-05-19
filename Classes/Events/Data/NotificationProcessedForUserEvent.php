@@ -6,9 +6,8 @@ namespace TRAW\NotificationsFramework\Events\Data;
 use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
 use TRAW\NotificationsFramework\Domain\Model\Notification;
 
-class NotificationAllowedForUserEvent
+class NotificationProcessedForUserEvent
 {
-    private bool $isAllowed = true;
 
     public function __construct(private Notification $notification, private FrontendUser $frontendUser){}
 
@@ -20,15 +19,5 @@ class NotificationAllowedForUserEvent
     public function getFrontendUser(): FrontendUser
     {
         return $this->frontendUser;
-    }
-
-    public function isAllowed(): bool
-    {
-        return $this->isAllowed;
-    }
-
-    public function setIsAllowed(bool $isAllowed): void
-    {
-        $this->isAllowed = $isAllowed;
     }
 }
