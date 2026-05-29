@@ -44,8 +44,8 @@ final class NotificationsController extends AbstractController
             return $notification;
         }, $this->notificationRepository->getNotificationsByDemand($demand));
 
-        $this->applyFilters($notifications, $demand['filter']);
-        $this->sortList($notifications, $demand['sortField'], $demand['sortDirection']);
+        $notifications = $this->applyFilters($notifications, $demand['filter']);
+        $notifications = $this->sortList($notifications, $demand['sortField'], $demand['sortDirection']);
 
         $this->moduleTemplate->assignMultiple($this->buildPagination($notifications, $demand['currentPage'], $demand['perPage']));
         $this->moduleTemplate->assignMultiple([

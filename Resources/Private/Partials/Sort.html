@@ -5,7 +5,14 @@
     <f:variable name="iconMSize" value="{f:if(condition: iconSize,then:iconSize,else:'small')}"/>
     <f:variable name="iconM" value="{f:if(condition: '{icon}',then:'{core:icon(identifier: icon,size: iconMSize)}')}"/>
     <f:if condition="{disableSort}">
-        <f:then>{iconM}{label}</f:then>
+        <f:then>
+            <span title="{label}">
+                 <f:if condition="{iconM}">
+                    <f:then>{iconM -> f:format.raw()}</f:then>
+                    <f:else>{label}</f:else>
+                </f:if>
+            </span>
+        </f:then>
         <f:else>
             <f:variable name="sortIcon" value="actions-sort-amount"/>
             <f:variable name="sortDirection" value="asc"/>
