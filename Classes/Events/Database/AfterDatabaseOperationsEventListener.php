@@ -53,7 +53,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         if ($event->getStatus() === 'update') {
             if ($table === Configuration::TABLE_NAME) {
                 $uids = [$recordId];
-            } elseif (in_array($table, $this->settingsUtility->getAllowedTables())) {
+            } elseif (in_array($table, $this->settingsUtility->getAllowedTables(), true)) {
                 $uids = array_column($this->configurationRepository->getConfigurationsByDemand(['record' => $table . '_' . $recordId]), 'uid');
             } else {
                 return;
@@ -64,7 +64,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             }
         }
 
-        if (in_array($table, $this->settingsUtility->getAllowedTables()) === false) {
+        if (!in_array($table, $this->settingsUtility->getAllowedTables(), true)) {
             return;
         }
 
@@ -82,12 +82,9 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        if (!in_array($table, $this->settingsUtility->getAllowedTables(), true)) {
-            return;
-        }
-
         //we dont need translations for record configurations, we translate the notifications in the Generate command
-        if (($record['sys_language_uid'] ?? false) !== 0) {
+        $recordLanguage = $record['sys_language_uid'] ?? null;
+        if (!in_array($recordLanguage, [0, -1])) {
             return;
         }
 
