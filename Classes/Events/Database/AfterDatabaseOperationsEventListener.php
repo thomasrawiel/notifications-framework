@@ -50,20 +50,22 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $recordId = $event->getId();
         $table = $event->getTable();
 
-        if(in_array($table, $this->settingsUtility->getAllowedTables()) === false) {
-            return;
-        }
-
         if ($event->getStatus() === 'update') {
             if ($table === Configuration::TABLE_NAME) {
                 $uids = [$recordId];
             } elseif (in_array($table, $this->settingsUtility->getAllowedTables())) {
                 $uids = array_column($this->configurationRepository->getConfigurationsByDemand(['record' => $table . '_' . $recordId]), 'uid');
+            } else {
+                return;
             }
             foreach ($uids as $uid) {
                 $this->cacheManager->flushCachesByTag('tx_notifications_framework_validation_record_' . $uid);
                 $this->cacheManager->flushCachesByTag('tx_notifications_framework_audience_record_' . $uid);
             }
+        }
+
+        if (in_array($table, $this->settingsUtility->getAllowedTables()) === false) {
+            return;
         }
 
         $record = BackendUtility::getRecord($table, $recordId);
@@ -125,7 +127,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             }
         }
 
-        if($pid === null) {
+        if ($pid === null) {
             return;
         }
 
