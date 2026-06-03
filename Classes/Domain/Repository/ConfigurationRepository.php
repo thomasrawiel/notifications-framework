@@ -84,13 +84,15 @@ class ConfigurationRepository extends Repository
         $constraints = [];
         $constraints[] = $qb->expr()->eq('sys_language_uid', $qb->createNamedParameter(0, ParameterType::INTEGER));
 
-
-        if (is_array($demand['pid'])) {
-            $constraints[] = $qb->expr()->in('pid', $qb->createNamedParameter($demand['pid'], ArrayParameterType::INTEGER));
-        } else {
-            $constraints[] = $qb->expr()->eq('pid', $qb->createNamedParameter($demand['pid'], ParameterType::INTEGER));
+        $pid = $demand['pid'] ?? null;
+        if ($pid !== null && $pid !== '' && $pid !== []) {
+            if (is_array($pid)) {
+                $constraints[] = $qb->expr()->in('pid', $qb->createNamedParameter($pid, ArrayParameterType::INTEGER));
+            } else {
+                $constraints[] = $qb->expr()->eq('pid', $qb->createNamedParameter($pid, ParameterType::INTEGER));
+            }
         }
-
+        
         $qb->where(...$constraints);
         $qb->orderBy($sortField, $sortDirection);
 
