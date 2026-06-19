@@ -13,11 +13,6 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 final class AfterDatabaseOperationsEvent extends AbstractEvent
 {
     /**
-     * @var string
-     */
-    protected string $type = 'afterDatabaseOperation';
-
-    /**
      * AfterDatabaseOperationsEvent constructor.
      *
      * @param BackendUserInfo $backendUser
@@ -30,6 +25,11 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
     public function __construct(private BackendUserInfo $backendUser, private $status, private $table, private $id, private array $fieldArray, private \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
     {
         parent::__construct($backendUser);
+    }
+
+    public function getBackendUser(): BackendUserInfo
+    {
+        return $this->backendUser;
     }
 
     /**
@@ -77,7 +77,7 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
      */
     public function getRecordIdentifier(): ?string
     {
-        if($this->status === 'new') {
+        if ($this->status === 'new') {
             if (!isset($this->dataHandler->substNEWwithIDs_table[$this->id]) || !isset($this->dataHandler->substNEWwithIDs[$this->id])) {
                 return null;
             }

@@ -141,6 +141,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             'rowDescription' => 'Automatically created by ' . basename(self::class),
         ];
 
+        //if the record has a fe_group, set the target audience of the configuration
         $feGroupField = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['fe_group'] ?? false;
         if ($feGroupField) {
             $feGroups = BackendUtility::getRecord($table, $recordId, $feGroupField)[$feGroupField] ?? null;
