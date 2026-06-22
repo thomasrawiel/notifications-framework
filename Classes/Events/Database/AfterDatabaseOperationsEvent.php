@@ -24,7 +24,6 @@ final class AfterDatabaseOperationsEvent extends AbstractEvent
      */
     public function __construct(private BackendUserInfo $backendUser, private $status, private $table, private $id, private array $fieldArray, private \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
     {
-        parent::__construct($backendUser);
     }
 
     public function getBackendUser(): BackendUserInfo

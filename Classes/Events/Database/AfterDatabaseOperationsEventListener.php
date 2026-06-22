@@ -155,7 +155,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         }
         $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($newId, $data, $event));
         $this->rateLimitService->spamCheck($dataEvent);
-        
+
         if ($dataEvent->isAddConfiguration()) {
             $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
             $dataHandler->start($dataEvent->getData(), []);
