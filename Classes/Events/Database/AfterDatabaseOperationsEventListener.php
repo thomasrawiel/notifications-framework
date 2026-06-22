@@ -133,7 +133,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         $newId = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW');
         $data[Configuration::TABLE_NAME][$newId] = [
             'type' => $event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED,
-            'pid' => (int)$pid,
+            'pid' => $this->settingsUtility->checkPid((int)$pid),
             'table' => $table,
             'title' => ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . ' in ' . $event->getTable(),
             'label' => BackendUtility::getRecord($table, $recordId, 'title')['title'] ?? ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . 'with ID ' . $recordId,
