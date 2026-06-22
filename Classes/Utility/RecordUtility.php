@@ -56,7 +56,7 @@ class RecordUtility
         $table = self::getTableFromRecordString($recordString);
         $uid = self::getRecordUidAsIntegerFromRecordString($recordString);
 
-        return BackendUtility::getRecord($table, $uid);
+        return BackendUtility::getRecord($table, $uid) ?? [];
     }
 
     public static function getRecordTranslations(string $recordString, int $language): false|array
