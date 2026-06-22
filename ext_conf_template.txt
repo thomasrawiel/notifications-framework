@@ -7,6 +7,8 @@ autoCreateNotifications = 0
 sendToEveryoneIfNoAudienceIsSelected = 0
 # cat=Features/enable; type=boolean; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.storeNotificationsOnRecordPid
 storeNotificationsOnRecordPid = 1
+# cat=Features/enable; type=options[LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autotranslate.off=off,LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autotranslate.record=record,LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autotranslate.site=site]; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.autotranslate
+autoTranslateMode = record
 # cat=Features/enable; type=int; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.spamThreshold
 spamThreshold = 300
 

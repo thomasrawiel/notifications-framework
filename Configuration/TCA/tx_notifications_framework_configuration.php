@@ -53,7 +53,7 @@ return [
             'showitem' => 'record',
         ],
         'language' => [
-            'showitem' => 'sys_language_uid,l10n_parent,--linebreak--,autotranslate',
+            'showitem' => 'sys_language_uid,l10n_parent',
         ],
         'audience' => [
             'label' => $LLL . 'palette.audience',
@@ -176,22 +176,6 @@ return [
                     ],
                 ],
                 'readOnly' => getenv('TYPO3_CONTEXT') !== 'Development/DDEV',
-            ],
-        ],
-        'autotranslate' => [
-            'l10n_mode' => 'exclude',
-            'exclude' => true,
-            'label' => $LLL . 'configuration.autotranslate',
-            'description' => $LLL . 'configuration.autotranslate.description',
-            'config' => [
-                'type' => 'check',
-                'renderType' => 'checkboxToggle',
-                'items' => [
-                    [
-                        'label' => '',
-                    ],
-                ],
-                'default' => 1,
             ],
         ],
         'hidden' => [

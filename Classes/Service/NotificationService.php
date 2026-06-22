@@ -12,6 +12,8 @@ use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
 use TRAW\NotificationsFramework\Events\Data\BeforeNotificationAddedEvent;
+use TRAW\NotificationsFramework\Utility\RecordUtility;
+use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Site\SiteFinder;
@@ -28,14 +30,13 @@ class NotificationService
         private readonly PersistenceManager      $persistenceManager,
         private readonly EventDispatcher         $eventDispatcher,
         private readonly ConfigurationValidation $validation,
+        private readonly SettingsUtility         $settingsUtility,
     )
     {
     }
 
     public function createNotification(?Configuration $configuration = null): ?Notification
     {
-        //if($this->validation->validate())
-
         if ($this->notificationRepository->notificationExists($configuration?->getUid() ?? 0)) {
             return $this->notificationRepository->findByConfiguration($configuration->getUid())->getFirst();
         }
@@ -63,19 +64,19 @@ class NotificationService
                 $translationsDone[] = $translatedNotification->getSysLanguageUid();
             }
         }
-        //fill translations when autotranslate=1 with the content from the default language
-        if ($configuration->isAutotranslate()) {
-            $site = GeneralUtility::makeInstance(SiteFinder::class)
-                ->getSiteByPageId($configuration->getPid());
-            foreach ($site->getAllLanguages() as $language) {
+
+        if ($this->settingsUtility->isAutoTranslate() && $configuration->isAutotranslate()) {
+            $languages = $this->getLanguages($configuration);
+            foreach ($languages as $language) {
                 // @extensionScannerIgnoreLine
                 if (in_array($language->getLanguageId(), $translationsDone, true)) {
                     //skip, because we already have that one
                     continue;
                 }
                 $translatedNotification = $this->notificationFactory->createNotificationTranslation(
-                    // @extensionScannerIgnoreLine
-                    $notification, $configuration, $language->getLanguageId());
+                // @extensionScannerIgnoreLine
+                    $notification, $configuration, $language->getLanguageId()
+                );
                 $event = $this->eventDispatcher
                     ->dispatch(new BeforeNotificationAddedEvent (
                         $translatedNotification,
@@ -90,7 +91,7 @@ class NotificationService
 
     public function createReference(Notification $notification, FrontendUser $frontendUser, Configuration $configuration): void
     {
-        if($this->referenceRepository->referenceExists($notification->getUid(), $frontendUser->getUid())) {
+        if ($this->referenceRepository->referenceExists($notification->getUid(), $frontendUser->getUid())) {
             return;
         }
 
@@ -112,11 +113,10 @@ class NotificationService
                 $translationsDone[] = $translatedReference->getSysLanguageUid();
             }
         }
-        //fill translations when autotranslate=1 with the content from the default language
-        if ($configuration->isAutotranslate()) {
-            $site = GeneralUtility::makeInstance(SiteFinder::class)
-                ->getSiteByPageId($configuration->getPid());
-            foreach ($site->getAllLanguages() as $language) {
+
+        if ($this->settingsUtility->isAutoTranslate() && $configuration->isAutotranslate()) {
+            $languages = $this->getLanguages($configuration);
+            foreach ($languages as $language) {
                 // @extensionScannerIgnoreLine
                 if (in_array($language->getLanguageId(), $translationsDone, true)) {
                     //skip, because we already have that one
@@ -132,6 +132,43 @@ class NotificationService
             }
         }
         $this->persistenceManager->persistAll();
+    }
+
+    private function getLanguages(Configuration $configuration): array
+    {
+        $mode = $this->settingsUtility->getAutoTranslateMode();
+
+        if ($mode === SettingsUtility::AUTOTRANSLATE_OFF) {
+            return [];
+        }
+
+        $site = GeneralUtility::makeInstance(SiteFinder::class)
+            ->getSiteByPageId($configuration->getPid());
+        $availableLanguages = $site->getAllLanguages();
+
+        if ($mode === SettingsUtility::AUTOTRANSLATE_SITE) {
+            return $availableLanguages;
+        }
+
+        if ($mode === SettingsUtility::AUTOTRANSLATE_RECORD) {
+            $record = $configuration->getRecord();
+            if (empty($record)) {
+                return [];
+            }
+
+            foreach ($availableLanguages as $key => $language) {
+                if ($language->getLanguageId() === 0) {
+                    continue;
+                }
+                $loc = RecordUtility::getRecordTranslations($record, $language->getLanguageId());
+                if ($loc === false || $loc === []) {
+                    unset($availableLanguages[$key]);
+                }
+            }
+            return $availableLanguages;
+        }
+
+        return [];
     }
 
     private function persistNotification($notification): void

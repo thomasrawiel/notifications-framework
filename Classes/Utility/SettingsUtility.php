@@ -10,6 +10,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class SettingsUtility
 {
+    public const string AUTOTRANSLATE_OFF = 'off';
+    public const string AUTOTRANSLATE_RECORD = 'record';
+    public const string AUTOTRANSLATE_SITE = 'site';
+
+
     public function __construct(private mixed $config = [])
     {
         $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
@@ -29,7 +34,8 @@ final class SettingsUtility
         return implode(',', $this->getAllowedTables());
     }
 
-    public function getSettings(): array {
+    public function getSettings(): array
+    {
         return $this->config;
     }
 
@@ -75,8 +81,19 @@ final class SettingsUtility
             : $this->getNotificationStorage()[0];
     }
 
-    public function getSpamThreshold(): int {
+    public function getSpamThreshold(): int
+    {
         return $this->config['spamThreshold'] ?? 300;
+    }
+
+    public function isAutoTranslate(): bool
+    {
+        return $this->getAutoTranslateMode() !== self::AUTOTRANSLATE_OFF;
+    }
+
+    public function getAutoTranslateMode(): string
+    {
+        return $this->config['autoTranslateMode'] ?? self::AUTOTRANSLATE_OFF;
     }
 
     public function isPidValid(string|int|null $pid): bool

@@ -108,6 +108,18 @@
 			<trans-unit id="settings.spamThreshold" resname="settings.spamThreshold">
 				<source>Spam threshold (seconds): Time window in which repeated identical configurations are treated as spam</source>
 			</trans-unit>
+			<trans-unit id="settings.autotranslate" resname="settings.autotranslate">
+				<source>Autotranslate: Enabled: Automatically translate notifications, options: off, record, site</source>
+			</trans-unit>
+			<trans-unit id="settings.autotranslate.off" resname="settings.autotranslate.off">
+				<source>Disabled, notifications are not automatically translated</source>
+			</trans-unit>
+			<trans-unit id="settings.autotranslate.record" resname="settings.autotranslate.record">
+				<source>Notifications are automatically translated into the records language</source>
+			</trans-unit>
+			<trans-unit id="settings.autotranslate.site" resname="settings.autotranslate.site">
+				<source>Notfications are automatically translated into all site languages, empty translations use the default language</source>
+			</trans-unit>
 			<trans-unit id="hint.lookup" resname="hint.lookup">
 				<source>Visual representation of all pages that are included in the lookup</source>
 			</trans-unit>

@@ -120,8 +120,11 @@
 			<trans-unit id="configuration.autotranslate">
 				<source>Auto translate notification</source>
 			</trans-unit>
-			<trans-unit id="configuration.autotranslate.description">
-				<source>When enabled, the notification message for this record is automatically translated without the need to translate the configuration. If the configuration is not translated into all languages, the translations are created with the content from the default language.</source>
+			<trans-unit id="configuration.autotranslate.description.site">
+				<source>Mode Site: The notification message for this record is automatically translated into all languages of the current Site without the need to translate the configuration. If the configuration is not translated into all languages, the translations are created with the content from the default language.</source>
+			</trans-unit>
+			<trans-unit id="configuration.autotranslate.description.record">
+				<source>Mode Record: The notification message for this record is automatically translated into all languages of the attached record. If no record is attached, e.g. message based configuration, this setting is ignored.</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate">
 				<source>Notification audience estimate</source>
