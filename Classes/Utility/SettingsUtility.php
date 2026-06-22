@@ -75,6 +75,10 @@ final class SettingsUtility
             : $this->getNotificationStorage()[0];
     }
 
+    public function getSpamThreshold(): int {
+        return $this->config['spamThreshold'] ?? 300;
+    }
+
     public function isPidValid(string|int|null $pid): bool
     {
         if ($this->storeNotificationsOnRecordPid()) {

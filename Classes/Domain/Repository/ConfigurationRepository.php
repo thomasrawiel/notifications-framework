@@ -92,7 +92,21 @@ class ConfigurationRepository extends Repository
                 $constraints[] = $qb->expr()->eq('pid', $qb->createNamedParameter($pid, ParameterType::INTEGER));
             }
         }
-        
+
+        $restOfDemand = array_diff_key(
+            $demand,
+            array_flip(['uid', 'pid', 'l10n_parent', 'sortDirection', 'sortField', 'maxitems'])
+        );
+        if($restOfDemand !== []) {
+            foreach($restOfDemand as $key => $value) {
+                $constraints[] = $qb->expr()->eq($key, $qb->createNamedParameter($value, ParameterType::STRING));
+            }
+        }
+
+        if($demand['maxitems'] ?? false) {
+            $qb->setMaxResults((int)$demand['maxitems']);
+        }
+
         $qb->where(...$constraints);
         $qb->orderBy($sortField, $sortDirection);
 

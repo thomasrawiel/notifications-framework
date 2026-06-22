@@ -105,6 +105,9 @@
 			<trans-unit id="settings.notificationStorageRecursive" resname="settings.notificationStorageRecursive">
 				<source>Notification storage recursive levels</source>
 			</trans-unit>
+			<trans-unit id="settings.spamThreshold" resname="settings.spamThreshold">
+				<source>Spam threshold (seconds): Time window in which repeated identical configurations are treated as spam</source>
+			</trans-unit>
 			<trans-unit id="hint.lookup" resname="hint.lookup">
 				<source>Visual representation of all pages that are included in the lookup</source>
 			</trans-unit>

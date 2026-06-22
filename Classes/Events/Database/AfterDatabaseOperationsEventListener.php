@@ -10,6 +10,7 @@ use TRAW\NotificationsFramework\Events\AbstractEvent;
 use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
 use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
+use TRAW\NotificationsFramework\Service\RateLimitService;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -36,7 +37,8 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
     public function __construct(
         private readonly Type                    $type,
         private readonly CacheManager            $cacheManager,
-        private readonly ConfigurationRepository $configurationRepository
+        private readonly ConfigurationRepository $configurationRepository,
+        private readonly RateLimitService        $rateLimitService,
     )
     {
     }
@@ -152,7 +154,8 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             }
         }
         $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($newId, $data, $event));
-
+        $this->rateLimitService->spamCheck($dataEvent);
+        
         if ($dataEvent->isAddConfiguration()) {
             $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
             $dataHandler->start($dataEvent->getData(), []);

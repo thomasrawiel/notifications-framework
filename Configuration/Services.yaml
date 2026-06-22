@@ -27,7 +27,13 @@ services:
       - name: event.listener
         event: TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent
         identifier: 'traw-notifications/record-allowed'
-
+  TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEventListener:
+    tags:
+      - name: event.listener
+        event: TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent
+        identifier: 'traw-notifications/before-configuration-added'
+  TRAW\NotificationsFramework\Service\RateLimitService:
+    public: true
   TRAW\NotificationsFramework\OperationHandler\GetUserNotificationsOperationHandler:
     public: true
   TRAW\NotificationsFramework\OperationHandler\PatchUserNotificationsOperationHandler:
