@@ -13,6 +13,7 @@ final class Notification
             'config' => [
                 'type' => 'check',
                 'renderType' => 'checkboxToggle',
+                'default' => 1,
             ],
         ],
     ];

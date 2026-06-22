@@ -14,7 +14,7 @@ spamThreshold = 300
 
 
 # cat=Storage/allowed/a; type=string; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.allowedTables
-allowedTables = pages
+allowedTables =
 
 # cat=Storage/storage/c; type=string; label=LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:settings.feUserLookupUids
 feUserLookupUids = 0
