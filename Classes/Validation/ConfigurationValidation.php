@@ -144,9 +144,7 @@ class ConfigurationValidation
             if (is_array($record['record'])) {
                 $attachedRecord = $record['record'][0] ?? null;
             } elseif (is_string($record['record'])) {
-                $table = RecordUtility::getTableFromRecordString($record['record']);
-                $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($record['record']);
-                $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+                $attachedRecord = RecordUtility::getRecord($table, $recordUid);
             } else {
                 $attachedRecord = null;
             }
@@ -166,9 +164,7 @@ class ConfigurationValidation
         }
 
         if ($record instanceof Configuration) {
-            $table = RecordUtility::getTableFromRecordString($record->getRecord());
-            $recordUid = RecordUtility::getRecordUidAsIntegerFromRecordString($record->getRecord());
-            $attachedRecord = BackendUtility::getRecord($table, $recordUid);
+            $attachedRecord = RecordUtility::getRecord($table, $recordUid);
 
             return [
                 'uid' => $record->getUid(),
