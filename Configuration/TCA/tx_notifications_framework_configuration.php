@@ -133,8 +133,7 @@ return [
                     ],
                 ],
                 'foreign_table' => \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME,
-                // no sys_language_uid = -1 allowed explicitly!
-                'foreign_table_where' => 'AND {#' . \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME . '}.{#uid}=###CURRENT_PID### AND {#' . \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME . '}.{#sys_language_uid} = 0',
+                'foreign_table_where' => 'AND {#' . \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME . '}.{#pid}=###CURRENT_PID### AND {#' . \TRAW\NotificationsFramework\Domain\Model\Configuration::TABLE_NAME . '}.{#sys_language_uid}=0',
                 'default' => 0,
             ],
         ],
