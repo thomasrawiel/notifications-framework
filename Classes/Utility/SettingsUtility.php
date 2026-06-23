@@ -83,7 +83,7 @@ final class SettingsUtility
 
     public function getSpamThreshold(): int
     {
-        return $this->config['spamThreshold'] ?? 300;
+        return (int)($this->config['spamThreshold'] ?? 300);
     }
 
     public function isAutoTranslate(): bool
@@ -93,7 +93,7 @@ final class SettingsUtility
 
     public function getAutoTranslateMode(): string
     {
-        return $this->config['autoTranslateMode'] ?? self::AUTOTRANSLATE_OFF;
+        return (string)($this->config['autoTranslateMode'] ?? self::AUTOTRANSLATE_OFF);
     }
 
     public function isPidValid(string|int|null $pid): bool

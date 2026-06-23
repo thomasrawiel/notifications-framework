@@ -34,12 +34,14 @@ class RateLimitService
             'type' => $data['type'],
             'pid' => $data['pid'],
             'record' => $data['record'],
-            'target_audience' => $data['target_audience'],
             'maxitems' => 1,
             'sortField' => 'tstamp',
             'sortDirection' => 'desc',
         ];
 
+        if (isset($data['target_audience'])) {
+            $demand['target_audience'] = $data['target_audience'];
+        }
         if (isset($data['fe_users'])) {
             $demand['fe_users'] = $data['fe_users'];
         }
@@ -54,7 +56,7 @@ class RateLimitService
             $latest = (int)($latestRecord['tstamp'] ?? 0);
             $current = (int)($data['tstamp'] ?? time());
 
-            $threshold = 300;
+            $threshold = $this->settingsUtility->getSpamThreshold();
 
             if ($current < $latest + $threshold) {
                 $event->setAddConfiguration(false);
