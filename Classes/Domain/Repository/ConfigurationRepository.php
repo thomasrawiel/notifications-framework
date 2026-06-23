@@ -95,7 +95,7 @@ class ConfigurationRepository extends Repository
 
         $restOfDemand = array_diff_key(
             $demand,
-            array_flip(['uid', 'pid', 'l10n_parent', 'sortDirection', 'sortField', 'maxitems'])
+            array_flip(['uid', 'pid', 'l10n_parent', 'sortDirection', 'sortField', 'maxitems', 'perPage', 'currentPage', 'filter'])
         );
         if($restOfDemand !== []) {
             foreach($restOfDemand as $key => $value) {

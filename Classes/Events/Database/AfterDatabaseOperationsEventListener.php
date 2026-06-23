@@ -18,6 +18,10 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
@@ -124,7 +128,7 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
 
         $newId = StringUtility::getUniqueId('NEW');
         $recordTypeTitle = $GLOBALS['TCA'][$table]['ctrl']['title'] ?? null;
-        if($recordTypeTitle !== null) {
+        if ($recordTypeTitle !== null) {
             $recordTypeTitle = LanguageUtility::translate($recordTypeTitle);
         }
 
@@ -150,13 +154,38 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
                 $data[Configuration::TABLE_NAME][$newId]['fe_groups'] = $feGroups;
             }
         }
+        /** @var BeforeConfigurationAddedEvent $dataEvent */
         $dataEvent = $eventDispatcher->dispatch(new BeforeConfigurationAddedEvent($newId, $data, $event));
         $this->rateLimitService->spamCheck($dataEvent);
+
+        $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)
+            ->getMessageQueueByIdentifier(FlashMessageQueue::NOTIFICATION_QUEUE);
 
         if ($dataEvent->isAddConfiguration()) {
             $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
             $dataHandler->start($dataEvent->getData(), []);
             $dataHandler->process_datamap();
+
+            $messageQueue->addMessage(
+                GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    "A notification configuration has been added for this record",
+                    "Configuration added",
+                    ContextualFeedbackSeverity::OK,
+                    true
+                )
+            );
+
+        } else {
+            $messageQueue->addMessage(
+                GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    "A notification configuration with the same specifications has been already added",
+                    "Configuration not added",
+                    ContextualFeedbackSeverity::INFO,
+                    true
+                )
+            );
         }
     }
 }

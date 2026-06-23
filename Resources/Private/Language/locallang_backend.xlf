@@ -210,6 +210,9 @@
 			<trans-unit id="filter.status.done" resname="filter.status.done">
 				<source>Processed</source>
 			</trans-unit>
+			<trans-unit id="filter.notification_estimate.label" resname="filter.notification_estimate.label">
+				<source>Notification audience estimate</source>
+			</trans-unit>
 			<trans-unit id="valid.pending" resname="valid.pending">
 				<source>Validation pending</source>
 			</trans-unit>

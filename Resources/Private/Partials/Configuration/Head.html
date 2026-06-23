@@ -23,13 +23,16 @@
     </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'valid', icon:'actions-question-circle', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:action.valid.head\')}'}"/>
+                  arguments="{module:module,demand:demand, field:'valid', icon:'actions-check', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:action.valid.head\')}'}"/>
     </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
-                  arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:notification_estimate\')}'}"/>
+                  arguments="{module:module,demand:demand, field:'audience', icon:'actions-users', iconSize:'small', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.notification_estimate.label\')}'}"/>
     </th>
-    <th><!--status--></th>
+    <th>
+        <f:render partial="Sort" section="FieldNameSort"
+                  arguments="{module:module,demand:demand, field:'status', icon:'actions-question-circle', iconSize:'small', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:filter.status.label\')}'}"/>
+    </th>
     <th>
         <f:render partial="Sort" section="FieldNameSort"
                   arguments="{module:module,demand:demand, field:'title', label:'{f:translate(key: \'LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.title\')}'}"/>
