@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Backend\FieldInformation;
 
+use TRAW\NotificationsFramework\Utility\LanguageUtility;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -30,10 +31,10 @@ abstract class AbstractCustomNode extends AbstractFormElement
         $pattern = '<div class="t3js-infobox callout callout-sm callout-%s"><div class="media"><div class="media-left"><span class="icon-emphasized">%s</span></div><div class="media-body"><div class="callout-title"><strong>%s</strong></div><div class="callout-body"><p class="mt-2">%s</p>%s</div></div></div></div>';
 
         if (str_starts_with($title, 'LLL:')) {
-            $title = $this->getLanguageService()->sL($title);
+            $title = LanguageUtility::translate($title);
         }
         if (str_starts_with($body, 'LLL:')) {
-            $body = $this->getLanguageService()->sL($body);
+            $body = LanguageUtility::translate($body);
         }
 
         $icon = $this->getCalloutIcon($type, $action);
@@ -97,10 +98,5 @@ abstract class AbstractCustomNode extends AbstractFormElement
         $html[] = '</div>';
         $html[] = '</div>';
         return implode(LF, $html);
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 }

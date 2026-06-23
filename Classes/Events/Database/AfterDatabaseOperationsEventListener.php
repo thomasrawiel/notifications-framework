@@ -11,6 +11,7 @@ use TRAW\NotificationsFramework\Events\AbstractEventListener;
 use TRAW\NotificationsFramework\Events\Configuration\BeforeConfigurationAddedEvent;
 use TRAW\NotificationsFramework\Events\Configuration\RecordAllowedEvent;
 use TRAW\NotificationsFramework\Service\RateLimitService;
+use TRAW\NotificationsFramework\Utility\LanguageUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -20,6 +21,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Utility\StringUtility;
 
 /**
  * Class AfterDatabaseOperationsEventListener
@@ -70,7 +72,6 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        $record = BackendUtility::getRecord($table, $recordId);
         //if we're updating an existing default to a record config, we need to write the table name
         if ($table === Configuration::TABLE_NAME && !str_starts_with((string)$recordId, 'NEW')) {
             if ($this->type->isRecordType($record['type']) && !empty($record['record']) && !str_starts_with($record['record'], $record['table'] . '_')) {
@@ -84,14 +85,14 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        //we dont need translations for record configurations, we translate the notifications in the Generate command
-        $recordLanguage = $record['sys_language_uid'] ?? null;
-        if (!in_array($recordLanguage, [0, -1])) {
+        $recordFieldArray = $event->getFieldArray();
+        if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($recordFieldArray['notification_create'] ?? true) === false) {
             return;
         }
 
-        $recordFieldArray = $event->getFieldArray();
-        if ($this->settingsUtility->automaticallyCreateNotifications() === false && (bool)($recordFieldArray['notification_create'] ?? true) === false) {
+        $record = BackendUtility::getRecord($table, $recordId);
+        //we dont need translations for record configurations, we translate the notifications in the Generate command
+        if (!in_array(($record['sys_language_uid'] ?? null), [0, -1])) {
             return;
         }
 
@@ -117,26 +118,22 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             return;
         }
 
-        $pid = $recordFieldArray['pid'] ?? false;
-        if ($pid === false && $event->getStatus() === 'update') {
-            if ($this->settingsUtility->storeNotificationsOnRecordPid()) {
-                $pid = BackendUtility::getRecord($table, $recordId, 'pid')['pid'] ?? null;
-            } else {
-                $pid = $this->settingsUtility->getNotificationStorage()[0] ?? null;
-            }
+        $pid = $this->settingsUtility->checkPid(
+            $recordFieldArray['pid'] ?? $record['pid'] ?? 0
+        );
+
+        $newId = StringUtility::getUniqueId('NEW');
+        $recordTypeTitle = $GLOBALS['TCA'][$table]['ctrl']['title'] ?? null;
+        if($recordTypeTitle !== null) {
+            $recordTypeTitle = LanguageUtility::translate($recordTypeTitle);
         }
 
-        if ($pid === null) {
-            return;
-        }
-
-        $newId = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId('NEW');
         $data[Configuration::TABLE_NAME][$newId] = [
             'type' => $event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED,
-            'pid' => $this->settingsUtility->checkPid((int)$pid),
+            'pid' => $pid,
             'table' => $table,
-            'title' => ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . ' in ' . $event->getTable(),
-            'label' => BackendUtility::getRecord($table, $recordId, 'title')['title'] ?? ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . 'with ID ' . $recordId,
+            'title' => sprintf('%s: %s (%s)', $recordTypeTitle, $record['title'], $event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED),
+            'label' => $record['title'] ?? ($event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED) . 'with ID ' . $recordId,
             'message' => $event->getStatus() === 'new' ? Type::RECORDADDED : Type::RECORDUPDATED,
             'record' => $event->getRecordIdentifier(),
             'automatic' => 1,
@@ -146,9 +143,9 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
         //if the record has a fe_group, set the target audience of the configuration
         $feGroupField = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['fe_group'] ?? false;
         if ($feGroupField) {
-            $feGroups = BackendUtility::getRecord($table, $recordId, $feGroupField)[$feGroupField] ?? null;
+            $feGroups = $record[$feGroupField] ?? '';
 
-            if (!empty($feGroups)) {
+            if ($feGroups !== '') {
                 $data[Configuration::TABLE_NAME][$newId]['target_audience'] = 'groups';
                 $data[Configuration::TABLE_NAME][$newId]['fe_groups'] = $feGroups;
             }

@@ -178,11 +178,6 @@ final readonly class ValidationUtility
 
     private function translate(string $input): string
     {
-        return $this->getLanguageService()->sL('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:' . $input);
-    }
-
-    private function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
+        return LanguageUtility::translate('LLL:EXT:notifications_framework/Resources/Private/Language/locallang_backend.xlf:' . $input);
     }
 }

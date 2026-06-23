@@ -6,6 +6,7 @@ namespace TRAW\NotificationsFramework\Controller\Backend;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
+use TRAW\NotificationsFramework\Utility\LanguageUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TYPO3\CMS\Backend\Attribute\AsController;
@@ -48,7 +49,7 @@ final class SettingsController extends AbstractController
         $tables = [];
         foreach ($this->settingsUtility->getAllowedTables() as $table) {
             $tables[$table] = [
-                'title' => $this->translate($GLOBALS['TCA'][$table]['ctrl']['title']),
+                'title' => LanguageUtility::translate($GLOBALS['TCA'][$table]['ctrl']['title']),
                 'iconfile' => $GLOBALS['TCA'][$table]['ctrl']['iconfile'] ?? null,
                 'icon' => $GLOBALS['TCA'][$table]['ctrl']['typeicon_classes']['default'] ?? null,
             ];
@@ -130,16 +131,5 @@ final class SettingsController extends AbstractController
                 $qb->expr()->in('uid', $treeList)
             )->execute()
             ->fetchAllAssociative();
-    }
-
-
-    private function translate(string $input): string
-    {
-        return $this->getLanguageService()->sL($input);
-    }
-
-    private function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 }
