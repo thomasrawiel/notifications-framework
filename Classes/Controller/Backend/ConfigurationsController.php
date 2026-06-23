@@ -107,15 +107,15 @@ class ConfigurationsController extends AbstractController
             $configuration['audience'] = 0;
         }
         $configuration['isRecordType'] = false;
-        $recordString = $configuration['record'];
-        if (!empty($recordString)) {
+
+        if (!empty($configuration['record'])) {
             $types = GeneralUtility::makeInstance(Type::class);
             $configuration['isRecordType'] = $types->isRecordType($configuration['type']);
-            $attachedRecord = RecordUtility::getRecord($table, $recordUid);
+            $attachedRecord = RecordUtility::getRecord($configuration['record']);
             $configuration['record'] = [
                 'uid' => $attachedRecord['uid'],
                 'pid' => $attachedRecord['pid'],
-                'table' => $table,
+                'table' => RecordUtility::getTableFromRecordString($configuration['record']),
                 'row' => $attachedRecord,
             ];
         }
