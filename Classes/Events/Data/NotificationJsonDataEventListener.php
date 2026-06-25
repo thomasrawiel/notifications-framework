@@ -31,7 +31,7 @@ class NotificationJsonDataEventListener
     {
         $data = $event->getData();
 
-        if(empty($data)) {
+        if (empty($data)) {
             return;
         }
 
@@ -77,11 +77,7 @@ class NotificationJsonDataEventListener
 
     private function getProcessedImageUrl(FileReference $fileReference): ?string
     {
-        $processedImage = $this->imageUtility->getProcessedImage($fileReference);
-        if ($processedImage instanceof ProcessedFile) {
-            return PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
-        }
-        return null;
+        return $this->imageUtility->getProcessedImageUrl($fileReference);
     }
 
     private function fetchConfiguration(int $configurationUid)

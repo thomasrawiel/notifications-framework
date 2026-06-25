@@ -12,12 +12,22 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 
 class ImageUtility
 {
     public function __construct(private readonly EventDispatcher $eventDispatcher)
     {
+    }
+
+    public function getProcessedImageUrl(FileReference $fileReference): ?string
+    {
+        $processedImage = $this->getProcessedImage($fileReference);
+        if ($processedImage instanceof ProcessedFile) {
+            return PathUtility::getAbsoluteWebPath($processedImage->getPublicUrl());
+        }
+        return null;
     }
 
     public function getProcessedImage(\TRAW\NotificationsFramework\Domain\Model\FileReference|FileReference|null $fileReference): ?FileInterface

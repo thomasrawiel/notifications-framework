@@ -3,7 +3,7 @@
       xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
       xmlns:nf="http://typo3.org/ns/TRAW/NotificationsFramework/ViewHelpers"
       data-namespace-typo3-fluid="true">
-<table>
+<table class="table">
     <tr>
         <th>
             <f:translate
@@ -15,6 +15,25 @@
             </f:if>
         </td>
     </tr>
+    <f:if condition="{configuration.translations}">
+        <f:then>
+            <f:for as="translation" each="{configuration.translations}">
+                <tr>
+                    <td colspan="2">
+                        <details>
+                            <summary><core:icon identifier="{translation.language.flag}" size="small"/> {translation.language.title} <code>[{translation.language.id}]</code></summary>
+
+                            <f:render partial="Configuration/Data" arguments="{configuration: translation}" />
+                        </details>
+                    </td>
+                </tr>
+            </f:for>
+        </f:then>
+        <f:else>
+            <tr>
+                <td colspan="2" class="info">No translations.</td>
+            </tr>
+        </f:else>
+    </f:if>
 </table>
-<f:debug inline="true">{configuration.translations}</f:debug>
 </html>

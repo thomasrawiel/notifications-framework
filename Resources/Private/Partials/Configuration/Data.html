@@ -27,15 +27,61 @@
             <f:format.date date="{configuration.crdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
         </td>
     </tr>
-    <tr>
-        <th>
-            <f:translate
-                key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.record"/>
-        </th>
-        <td>
-            <f:debug inline="true">{configuration.record}</f:debug>
-        </td>
-    </tr>
+    <f:if condition="{configuration.record}">
+        <f:then>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.record"/>
+                </th>
+                <td>
+                    <div>{configuration.record.row.title} <code>[{configuration.record.uid}]</code></div>
+                    <div><i>{configuration.table}</i></div>
+                    <f:debug inline="true" title="Data">{configuration.record}</f:debug>
+                </td>
+            </tr>
+        </f:then>
+        <f:else>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.label"/>
+                </th>
+                <td>
+                    {configuration.label}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.message"/>
+                </th>
+                <td>
+                    {configuration.message}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.url"/>
+                </th>
+                <td>
+                    {configuration.url}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <f:translate
+                        key="LLL:EXT:notifications_framework/Resources/Private/Language/locallang_tca.xlf:configuration.image"/>
+                </th>
+                <td>
+                    <f:if condition="{configuration.image}">
+                       <img src="{configuration.image}" width="100" />
+                    </f:if>
+                </td>
+            </tr>
+        </f:else>
+    </f:if>
     <tr>
         <th>
             <f:translate

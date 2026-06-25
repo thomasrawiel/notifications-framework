@@ -271,6 +271,9 @@ return [
                         'description' => false,
                     ],
                 ],
+                'behaviour' => [
+                    'allowLanguageSynchronization' => true,
+                ],
             ],
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],

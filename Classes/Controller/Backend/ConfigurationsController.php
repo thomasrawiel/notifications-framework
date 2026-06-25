@@ -9,6 +9,7 @@ use TRAW\NotificationsFramework\Domain\Model\Configuration;
 use TRAW\NotificationsFramework\Domain\Model\Type;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Utility\AudienceUtility;
+use TRAW\NotificationsFramework\Utility\ImageUtility;
 use TRAW\NotificationsFramework\Utility\RecordUtility;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Utility\TreeListUtility;
@@ -22,6 +23,8 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
+use TYPO3\CMS\Core\Resource\FileRepository;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 #[AsController]
@@ -36,6 +39,7 @@ class ConfigurationsController extends AbstractController
         private readonly AudienceUtility           $audienceUtility,
         private readonly ValidationUtility         $validationUtility,
         private readonly ConfigurationValidation   $configurationValidation,
+        private readonly ImageUtility              $imageUtility,
     )
     {
     }
@@ -128,8 +132,39 @@ class ConfigurationsController extends AbstractController
             $configuration['status'] = 'done';
         }
 
+        $fileRepository = GeneralUtility::makeInstance(FileRepository::class);
+        if ($configuration['image']) {
+            $files = $fileRepository->findByRelation(Configuration::TABLE_NAME, 'image', $configuration['uid']);
+            if($files !== []) {
+                $configuration['image'] = $this->imageUtility->getProcessedImageUrl($files[0]);
+            }
+        }
+
         if ($withTranslations) {
             $configuration['translations'] = $this->configurationRepository->getConfigurationsByDemand(['l10n_parent' => $configuration['uid']]);
+            if (!empty($configuration['translations'])) {
+                $site = GeneralUtility::makeInstance(SiteFinder::class)
+                    ->getSiteByPageId($configuration['pid']);
+                foreach ($configuration['translations'] as $key => $translation) {
+                    $language = $site->getLanguageById($translation['sys_language_uid']);
+                    $configuration['translations'][$key]['language'] = [
+                        'id' => $language->getLanguageId(),
+                        'title' => $language->getTitle(),
+                        'flag' => $language->getFlagIdentifier(),
+                        'enabled' => $language->isEnabled(),
+                    ];
+
+                    if ($translation['image']) {
+                        $files = $fileRepository->findByRelation(Configuration::TABLE_NAME, 'image', $translation['uid']);
+                        if($files !== []) {
+                            $configuration['translations'][$key]['image'] = $this->imageUtility->getProcessedImageUrl($files[0]);
+                        }
+                    }
+                }
+
+
+                //$availableLanguages = $site->getLanguageById();
+            }
         }
 
         return $configuration;
