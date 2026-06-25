@@ -76,9 +76,18 @@ final class SettingsUtility
 
     public function checkPid(string|int|null $pid): int
     {
-        return $this->storeNotificationsOnRecordPid()
-            ? (int)$pid
-            : $this->getNotificationStorage()[0];
+        $pid = (int)$pid;
+
+        if ($this->storeNotificationsOnRecordPid()) {
+            return $pid;
+        }
+
+        $storage = $this->getNotificationStorage();
+        if ($storage !== [] && in_array($pid, $storage, true)) {
+            return $pid;
+        }
+
+        return $storage[0] ?? 0;
     }
 
     public function getSpamThreshold(): int
