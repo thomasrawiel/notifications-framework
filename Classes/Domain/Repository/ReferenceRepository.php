@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace TRAW\NotificationsFramework\Domain\Repository;
 
-use TYPO3\CMS\Extbase\Persistence\Repository;
+use TRAW\NotificationsFramework\Domain\Model\Reference;
 
-class ReferenceRepository extends Repository
+final class ReferenceRepository extends AbstractDemandRepository
 {
     public function referenceExists(int $notification, int $frontendUser): bool
     {
@@ -17,5 +17,10 @@ class ReferenceRepository extends Repository
                     $query->equals('fe_user', $frontendUser),
                 )
             )->count() > 0;
+    }
+
+    public function getReferencesByDemand(array $demand = []): array
+    {
+        return $this->getByDemand(Reference::TABLE_NAME, $demand);
     }
 }
