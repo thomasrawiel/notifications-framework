@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\NotificationRepository;
+use TRAW\NotificationsFramework\Domain\Repository\ReferenceRepository;
 use TRAW\NotificationsFramework\Utility\SettingsUtility;
 use TRAW\NotificationsFramework\Utility\TreeListUtility;
 use TYPO3\CMS\Backend\Attribute\AsController;
@@ -21,8 +22,9 @@ final class IndexController extends AbstractController
         protected readonly UriBuilder              $uriBuilder,
         protected readonly ConfigurationRepository $configurationRepository,
         protected readonly NotificationRepository  $notificationRepository,
+        protected readonly ReferenceRepository     $referenceRepository,
         protected readonly SettingsUtility         $settingsUtility,
-        protected readonly TreeListUtility $treeListUtility,
+        protected readonly TreeListUtility         $treeListUtility,
     )
     {
     }
@@ -31,16 +33,22 @@ final class IndexController extends AbstractController
     {
         $this->initializeModuleTemplate($request);
 
-//        $backendUser = $this->getBackendUser();
-//        $currentModule = $request->getAttribute('module');
-//        $currentModuleIdentifier = $currentModule->getIdentifier();
-////        $pageId = (int)($request->getQueryParams()['id'] ?? 0);
-////        $pageRecord = BackendUtility::readPageAccess($pageId, $backendUser->getPagePermsClause(Permission::PAGE_SHOW)) ?: [];
-//
-//        $moduleData = $request->getAttribute('moduleData');
-//        if ($moduleData->cleanUp([])) {
-//            $backendUser->pushModuleData($currentModuleIdentifier, $moduleData->toArray());
-//        }
+        $configurations = $this->configurationRepository->getConfigurationsByDemand();
+        $notifications = $this->notificationRepository->getNotificationsByDemand();
+        $configurationPids = $this->countByPid($configurations);
+        $configurationTypes = $this->countByType($configurations);
+        $notificationPids = $this->countByPid($notifications);
+        $notificationTypes = $this->countByType($notifications);
+        $references = $this->referenceRepository->getReferencesByDemand();
+        $referencePids = $this->countByPid($references);
+
+        $this->moduleTemplate->assignMultiple([
+            'configurationPids' => $configurationPids,
+            'notificationPids' => $notificationPids,
+            'referencePids' => $referencePids,
+            'configurationTypes' => $configurationTypes,
+            'notificationTypes' => $notificationTypes,
+        ]);
 
         return $this->moduleTemplate->renderResponse('Index');
     }

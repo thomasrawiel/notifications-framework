@@ -1,0 +1,22 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>PID</th>
+            <th>PID is valid</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        <f:for as="pid" each="{pids}">
+            <tr class="{f:if(condition: pid.valid,then:'success',else:'warning')}">
+                <td>{pid.pid}</td>
+                <td><core:icon identifier="{f:if(condition: pid.valid,then:'actions-check',else:'actions-ban')}" /></td>
+                <td>{pid.count}</td>
+            </tr>
+        </f:for>
+    </tbody>
+</table>
+</html>

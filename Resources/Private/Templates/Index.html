@@ -8,6 +8,21 @@
 </f:section>
 <f:section name="Content">
     <f:render section="Headline" arguments="{_all}"/>
-    <f:debug inline="true">{_all}</f:debug>
+    <h3>Numbers by storage pid</h3>
+    <h5>Configurations</h5>
+    <f:render partial="Index/Pids" arguments="{pids:configurationPids}" />
+
+    <h5>Notifications</h5>
+    <f:render partial="Index/Pids" arguments="{pids:notificationPids}" />
+
+    <h5>References</h5>
+    <f:render partial="Index/Pids" arguments="{pids:referencePids}" />
+
+    <h3>Numbers by type</h3>
+    <h5>Configurations</h5>
+    <f:render partial="Index/Types" arguments="{types:configurationTypes}" />
+
+    <h5>Notifications</h5>
+    <f:render partial="Index/Types" arguments="{types:notificationTypes}" />
 </f:section>
 </html>

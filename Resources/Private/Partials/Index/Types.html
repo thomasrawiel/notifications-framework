@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        <f:for as="type" each="{types}">
+            <tr>
+                <td>{type.type}</td>
+                <td>{type.count}</td>
+            </tr>
+        </f:for>
+    </tbody>
+</table>
+</html>

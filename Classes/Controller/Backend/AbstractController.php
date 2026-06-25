@@ -155,4 +155,50 @@ abstract class AbstractController
     {
         return [10, 20, 30, 40, 50, 100, 200];
     }
+
+    protected function countObjectsByField(array $objects, string $countField): array
+    {
+        $countedObjects = [];
+
+        foreach ($objects as $object) {
+            $countFieldValue = $object[$countField] ?? null;
+
+            if($countFieldValue === null) {
+                continue;
+            }
+
+            if (!isset($countedObjects[$countFieldValue])) {
+                $countedObjects[$countFieldValue] = [
+                    $countField => $countFieldValue,
+                    'count' => 0,
+                ];
+
+                if ($countField === 'pid') {
+                    $countedObjects[$countFieldValue]['valid'] =
+                        $countFieldValue === $this->settingsUtility->checkPid($countFieldValue);
+                }
+            }
+
+            $countedObjects[$countFieldValue]['count']++;
+        }
+
+        uasort(
+            $countedObjects,
+            static function (array $a, array $b): int {
+                return $b['count'] <=> $a['count']; // DESC
+            }
+        );
+
+        return $countedObjects;
+    }
+
+    protected function countByPid(array $objects): array
+    {
+        return $this->countObjectsByField($objects, 'pid');
+    }
+
+    protected function countByType(array $objects): array
+    {
+        return $this->countObjectsByField($objects, 'type');
+    }
 }
