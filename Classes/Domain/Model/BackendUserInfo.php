@@ -95,16 +95,18 @@ final class BackendUserInfo
         $this->email = $backendUser['email'];
         $this->realName = $backendUser['realName'];
 
-        $request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
-        $normalizedParams = $request->getAttribute('normalizedParams');
+        if (!\TYPO3\CMS\Core\Core\Environment::isCli()) {
+            $request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+            $normalizedParams = $request->getAttribute('normalizedParams');
 
-        if (!$normalizedParams instanceof NormalizedParams) {
-            $normalizedParams = NormalizedParams::createFromServerParams($_SERVER);
+            if (!$normalizedParams instanceof NormalizedParams) {
+                $normalizedParams = NormalizedParams::createFromServerParams($_SERVER);
+            }
+            $this->remoteAddress = $normalizedParams->getRemoteAddress();
+            $this->httpAcceptLanguage = $normalizedParams->getHttpAcceptLanguage();
+            $this->httpUserAgent = $normalizedParams->getHttpUserAgent();
+            $this->host = $normalizedParams->getRequestHost();
         }
-        $this->remoteAddress = $normalizedParams->getRemoteAddress();
-        $this->httpAcceptLanguage = $normalizedParams->getHttpAcceptLanguage();
-        $this->httpUserAgent = $normalizedParams->getHttpUserAgent();
-        $this->host = $normalizedParams->getRequestHost();
         $this->siteName = $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
         $this->isSystemMaintainer = in_array((int)$backendUser['uid'], array_map('intval', $GLOBALS['TYPO3_CONF_VARS']['SYS']['systemMaintainers'] ?? []), true);
     }

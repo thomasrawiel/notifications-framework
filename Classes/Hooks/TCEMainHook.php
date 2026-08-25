@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
+
 namespace TRAW\NotificationsFramework\Hooks;
 
 
 use TRAW\NotificationsFramework\Events\Database\AfterDatabaseOperationsEvent;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 
@@ -22,6 +24,9 @@ class TCEMainHook extends AbstractHook
     public function processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, DataHandler $dataHandler): void
     {
         if ($this->settings->getAfterDatabaseOperations()) {
+            if (Environment::isCli()) {
+                return;
+            }
             $this->dispatchEvent(new AfterDatabaseOperationsEvent($this->getBeUserInfo(), $status, $table, $id, $fieldArray, $dataHandler));
         }
     }
