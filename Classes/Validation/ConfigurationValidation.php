@@ -174,10 +174,11 @@ class ConfigurationValidation
                 'record' => [
                     'uid' => $attachedRecord['uid'],
                     'pid' => $attachedRecord['pid'],
-                    'table' => $table,
+                    'table' => $record->getTable(),
                     'row' => $attachedRecord,
                 ],
-                'table' => $table,
+                'type' => $record->getType(),
+                'table' => $record->getTable(),
                 'target_audience' => $record->getTargetAudience(),
                 'fe_users' => $record->getFeUsers(),
                 'fe_groups' => $record->getFeGroups(),
