@@ -21,6 +21,8 @@ class FrontendUser extends AbstractEntity
      */
     protected ?ObjectStorage $notifications = null;
 
+    protected string $usergroup;
+
     public function __construct() {
         $this->notifications = new ObjectStorage();
     }
@@ -43,5 +45,15 @@ class FrontendUser extends AbstractEntity
     public function setNotifications(?ObjectStorage $notifications): void
     {
         $this->notifications = $notifications;
+    }
+
+    public function getUsergroup(): string
+    {
+        return $this->usergroup;
+    }
+
+    public function setUsergroup(string $usergroup): void
+    {
+        $this->usergroup = $usergroup;
     }
 }
