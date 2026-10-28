@@ -144,6 +144,10 @@ final class AfterDatabaseOperationsEventListener extends AbstractEventListener
             'rowDescription' => 'Automatically created by ' . basename(self::class),
         ];
 
+        if($this->settingsUtility->isAutoTranslate()) {
+            $data[Configuration::TABLE_NAME][$newId]['autotranslate'] = 1;
+        }
+
         //if the record has a fe_group, set the target audience of the configuration
         $feGroupField = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['fe_group'] ?? false;
         if ($feGroupField) {
