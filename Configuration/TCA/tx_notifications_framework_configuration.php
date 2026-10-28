@@ -274,10 +274,12 @@ return [
                 'maxitems' => 1,
                 'allowed' => 'common-image-types',
                 'overrideChildTca' => [
-                    'columns' => [
-                        'title' => false,
-                        'link' => false,
-                        'description' => false,
+                    'types' => [
+                        \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                            'showitem' => '
+                                alternative,crop,
+                                --palette--;;filePalette',
+                        ],
                     ],
                 ],
                 'behaviour' => [
