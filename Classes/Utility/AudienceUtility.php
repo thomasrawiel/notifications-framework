@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
-use TRAW\NotificationsFramework\Domain\Repository\ConfigurationRepository;
 use TRAW\NotificationsFramework\Domain\Repository\FrontendUserRepository;
-use TRAW\NotificationsFramework\Events\Audience\GetAdditionalAudienceEvent;
+use TRAW\NotificationsFramework\Events\Audience\FilterFinalAudienceEvent;
+use TRAW\NotificationsFramework\Events\Audience\FilterGroupsFromConfigurationEvent;
+use TRAW\NotificationsFramework\Events\Audience\FilterUsersFromConfigurationEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalGroupsCsvEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersCsvEvent;
 use TRAW\NotificationsFramework\Events\Audience\GetAdditionalUsersEvent;
@@ -29,7 +30,7 @@ class AudienceUtility
 
     private function getCachedValue(Configuration $configuration): int
     {
-        $cacheIdentifier = Configuration::TABLE_NAME.'_audience_' . $configuration->getUid();
+        $cacheIdentifier = Configuration::TABLE_NAME . '_audience_' . $configuration->getUid();
         $tags = [
             'tx_notifications_framework_audience',
             'tx_notifications_framework_audience_record_' . $configuration->getUid(),
@@ -66,9 +67,15 @@ class AudienceUtility
             ->dispatch(new GetAdditionalGroupsCsvEvent($configuration))
             ->getAdditionalGroupsCsv();
 
+        $users = FilterUtility::filterUniqueAndJoin(',', $users, $additionalUsers);
+        $users = $this->eventDispatcher->dispatch(new FilterUsersFromConfigurationEvent($users))->getUsers();
+        $groups = FilterUtility::filterUniqueAndJoin(',', $groups, $additionalGroups);
+        $groups = $this->eventDispatcher->dispatch(new FilterGroupsFromConfigurationEvent($groups))->getGroups();
+
+
         return [
-            'users' => FilterUtility::filterUniqueAndJoin(',', $users, $additionalUsers),
-            'groups' => FilterUtility::filterUniqueAndJoin(',', $groups, $additionalGroups),
+            'users' => FilterUtility::filterUniqueByUid($users),
+            'groups' => FilterUtility::filterUniqueByUid($groups),
         ];
     }
 
@@ -95,6 +102,9 @@ class AudienceUtility
             $groupUsers = $this->frontendUserRepository->findUsersByGroups($audience['groups']);
             $users = [...$users, ...$groupUsers];
         }
+
+        $users = FilterUtility::filterUniqueByUid($users);
+        $users = $this->eventDispatcher->dispatch(new FilterFinalAudienceEvent($users))->getUsers();
 
         return FilterUtility::filterUniqueByUid($users);
     }

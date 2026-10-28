@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Configuration;
+use TRAW\NotificationsFramework\Domain\Model\FrontendUser;
 use TRAW\NotificationsFramework\Validation\ConfigurationValidation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 class FilterUtility
 {
@@ -28,7 +30,7 @@ class FilterUtility
      */
     public static function filterConfigurations(array $configurations): array
     {
-        if(empty($configurations)) {
+        if (empty($configurations)) {
             return $configurations;
         }
 
@@ -39,12 +41,12 @@ class FilterUtility
                 return false;
             }
 
-            if($settingsUtility->storeNotificationsOnRecordPid() === false
-                    && $settingsUtility->isPidValid($configuration->getPid()) === false) {
+            if ($settingsUtility->storeNotificationsOnRecordPid() === false
+                && $settingsUtility->isPidValid($configuration->getPid()) === false) {
                 return false;
             }
 
-            if(!$validation->validateConfiguration($configuration)) {
+            if (!$validation->validateConfiguration($configuration)) {
                 return false;
             }
 
@@ -92,7 +94,7 @@ class FilterUtility
         );
     }
 
-    public static function filterUniqueByUid(array $elements): array
+    public static function filterUniqueByUid(array $elements, $csv = false): array
     {
         $seen = [];
         $filtered = [];
@@ -101,16 +103,9 @@ class FilterUtility
             if (empty($element)) {
                 continue;
             }
-            if (method_exists($element, 'getUid')) {
-                $uid = $element->getUid();
-            } elseif (method_exists($element, '_getProperty')) {
-                $uid = $element->_getProperty('uid');
-            } elseif (property_exists($element, 'uid')) {
-                // @extensionScannerIgnoreLine
-                $uid = $element->uid;
-            } elseif (is_array($element)) {
-                $uid = $element['uid'];
-            } else {
+
+            $uid = self::determineUid($element);
+            if ($uid === null) {
                 throw new \Exception('Could not determine uid');
             }
 
@@ -121,9 +116,28 @@ class FilterUtility
         }
 
         usort($filtered, function ($a, $b) {
-            return $a->getUid() <=> $b->getUid();
+            return ($a instanceof FrontendUser)
+                ? $a->getUid() <=> $b->getUid()
+                : $a <=> $b;
         });
 
         return $filtered;
+    }
+
+    private static function determineUid($element): ?int
+    {
+        if (method_exists($element, 'getUid')) {
+            return (int)$element->getUid();
+        } elseif (method_exists($element, '_getProperty')) {
+            return (int)$element->_getProperty('uid');
+        } elseif (property_exists($element, 'uid')) {
+            // @extensionScannerIgnoreLine
+            return (int)$element->uid;
+        } elseif (is_array($element)) {
+            return (int)$element['uid'];
+        } elseif (MathUtility::canBeInterpretedAsInteger($element)) {
+            return (int)$element;
+        }
+        return null;
     }
 }
