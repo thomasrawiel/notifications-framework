@@ -47,7 +47,9 @@ return [
                 --palette--;;hidden,
                 --palette--;;access,
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-                --palette--;;notes',
+                --palette--;;notes,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
+                ',
         ],
     ],
     'columns' => [

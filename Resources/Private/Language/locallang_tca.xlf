@@ -20,6 +20,12 @@
 			<trans-unit id="palette.audience.description">
 				<source>Select who should be notified with this configuration</source>
 			</trans-unit>
+			<trans-unit id="palette.audience_additional">
+				<source>Additional</source>
+			</trans-unit>
+			<trans-unit id="palette.audience_additional.description">
+				<source>Add additional target audience settings</source>
+			</trans-unit>
 			<trans-unit id="palette.message">
 				<source>Custom message for this notification</source>
 			</trans-unit>
