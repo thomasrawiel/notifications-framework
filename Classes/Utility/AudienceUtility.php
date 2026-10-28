@@ -46,6 +46,9 @@ class AudienceUtility
         return $value;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getAudienceFromConfiguration(Configuration $configuration): array
     {
         $targetAudience = $configuration->getTargetAudience();
@@ -79,6 +82,9 @@ class AudienceUtility
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getUsersFromAudience(array $audience): array
     {
         $users = [];
@@ -101,10 +107,7 @@ class AudienceUtility
         if (!empty($audience['groups'])) {
             $groupUsers = $this->frontendUserRepository->findUsersByGroups($audience['groups']);
             $users = [...$users, ...$groupUsers];
-        }
-
-        $users = FilterUtility::filterUniqueByUid($users);
-        $users = $this->eventDispatcher->dispatch(new FilterFinalAudienceEvent($users))->getUsers();
+        }       
 
         return FilterUtility::filterUniqueByUid($users);
     }
@@ -154,10 +157,12 @@ class AudienceUtility
         $audience = $this->getAudienceFromConfiguration($configuration);
         $usersFromAudience = $this->getUsersFromAudience($audience);
 
-        return FilterUtility::filterUniqueByUid([
+        $users = FilterUtility::filterUniqueByUid([
             ...$usersFromAudience,
             ...$additionalUsers,
         ]);
+
+        return $this->eventDispatcher->dispatch(new FilterFinalAudienceEvent($configuration, $users))->getUsers();
     }
 
     public function getUsersCountFromConfiguration(Configuration $configuration): int

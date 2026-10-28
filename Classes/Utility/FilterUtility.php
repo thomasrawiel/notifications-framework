@@ -94,6 +94,9 @@ class FilterUtility
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function filterUniqueByUid(array $elements, $csv = false): array
     {
         $seen = [];

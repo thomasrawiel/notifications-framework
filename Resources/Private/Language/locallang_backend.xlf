@@ -35,7 +35,7 @@
 			<trans-unit id="notification_estimate.totalusers">
 				<source>notification(s) will be generated for this configuration.
 
-					This number is based on the selected target audience and the extension's settings.
+					This number is based on the selected target audience, possibly additional filters and the extension's settings.
 				</source>
 			</trans-unit>
 			<trans-unit id="notification_estimate.audience.hidden">
