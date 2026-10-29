@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TRAW\NotificationsFramework\Utility;
 
 use TRAW\NotificationsFramework\Domain\Model\Notification;
+use TRAW\NotificationsFramework\Events\Data\NotificationPreviewImageCropVariantEvent;
 use TRAW\NotificationsFramework\Events\Utility\ImageFieldPerTableEvent;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -36,13 +37,18 @@ class ImageUtility
             return null;
         }
         $cropVariantCollection = CropVariantCollection::create($fileReference->getProperty('crop'));
-        $cropVariantName = 'default';
-        $cropArea = $cropVariantCollection->getCropArea($cropVariantName);
+        $cropVariantIdentifier = $this->eventDispatcher->dispatch(new NotificationPreviewImageCropVariantEvent('default', $fileReference))->getCropVariantIdentifier();
+        
+        if(!array_key_exists($cropVariantIdentifier, $cropVariantCollection->asArray())) {
+            $cropVariantIdentifier = 'default';
+        }
+
+        $cropArea = $cropVariantCollection->getCropArea($cropVariantIdentifier);
         $crop = $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile());
 
         $processingConfiguration = [
             'crop' => $crop,
-            'maxWidth' => 400,
+            'maxWidth' => 200,
         ];
 
         // The image needs to be processed if:
