@@ -248,6 +248,7 @@ return [
             ],
         ],
         'label' => [
+            'l10n_mode' => 'prefixLangTitle',
             'exclude' => true,
             'label' => $LLL . 'configuration.label',
             'config' => [
@@ -257,6 +258,7 @@ return [
             'displayCond' => 'FIELD:type:IN:' . $typesWithCustomMessageList,
         ],
         'message' => [
+            'l10n_mode' => 'prefixLangTitle',
             'exclude' => true,
             'label' => $LLL . 'configuration.message',
             'config' => [
